@@ -6,3 +6,8 @@
 * **合法授權素材：** 全站圖片皆透過 Unsplash API 動態獲取，並嚴格遵守官方導流與攝影師致謝規範（Attribution）。
 * **API 金鑰保護：** 實作後端代理層（Proxy Layer），前端不直接暴露 Unsplash Access Key，提升網站安全性。
 * **資料庫輕量化：** 資料庫僅儲存圖片 ID、CDN 網址與必要元數據（Metadata），不佔用伺服器儲存空間。
+
+---
+
+### ⚖️ 著作權與免責聲明
+本網站為個人程式設計練習專案，非營利使用。網站內所有攝影圖片皆經由 Unsplash API 引入，圖片著作權屬原攝影師與 Unsplash 平台所有。本專案之實作嚴格遵循 Unsplash API Terms of Service。
