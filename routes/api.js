@@ -38,4 +38,33 @@ router.get('/v1/photos/:unsplashId', async (req, res, next) => {
   }
 });
 
+router.get('/v1/photos', async (req, res, next) => {
+  const { q, page = 1 } = req.query;
+  if (!q) {
+    return res
+      .status(400)
+      .json({ status: 'error', message: '搜尋關鍵字(q)為必填' });
+  }
+
+  try {
+    const response = await fetch(
+      `${baseUrl}/search/photos?page=${page}&query=${q}`,
+      {
+        headers
+      }
+    );
+
+    if (!response.ok) {
+      return res
+        .status(response.status)
+        .json({ status: 'error', message: 'Unsplash API error' });
+    }
+
+    const data = await response.json();
+    res.status(200).json({ data });
+  } catch (error) {
+    next(error);
+  }
+});
+
 module.exports = router;

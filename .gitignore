@@ -2,5 +2,4 @@ node_modules
 *.log
 *.gz
 .env
-develop.md
-unsplash-response-sample.json
+/develop
