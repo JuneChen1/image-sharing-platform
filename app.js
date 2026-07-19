@@ -1,4 +1,10 @@
 require('dotenv').config();
+
+if (!process.env.UNSPLASH_ACCESS_KEY) {
+  console.error(`缺少必要環境變數：UNSPLASH_ACCESS_KEY`);
+  process.exit(1);
+}
+
 const express = require('express');
 const cors = require('cors');
 const apiRouter = require('./routes/api');

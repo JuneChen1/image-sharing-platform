@@ -15,11 +15,17 @@ const limiter = rateLimit({
   message: { status: 'error', message: '請求過於頻繁，請稍後再試' }
 });
 
-router.use(limiter);
-
 // get information of one image
-router.get('/v1/photos/:unsplashId', async (req, res, next) => {
+router.get('/v1/photos/:unsplashId', limiter, async (req, res, next) => {
   const { unsplashId } = req.params;
+  const unsplashIdPattern = /^[\w-]{5,20}$/;
+
+  if (!unsplashIdPattern.test(unsplashId)) {
+    return res
+      .status(400)
+      .json({ status: 'error', message: '無效的 unsplashId 格式' });
+  }
+
   try {
     const response = await fetch(`${baseUrl}/photos/${unsplashId}`, {
       headers
@@ -32,13 +38,13 @@ router.get('/v1/photos/:unsplashId', async (req, res, next) => {
     }
 
     const data = await response.json();
-    res.status(200).json({ data });
+    res.status(200).json({ status: 'success', data });
   } catch (error) {
     next(error);
   }
 });
 
-router.get('/v1/photos', async (req, res, next) => {
+router.get('/v1/photos', limiter, async (req, res, next) => {
   const { q, page = 1 } = req.query;
   if (!q) {
     return res
@@ -46,9 +52,16 @@ router.get('/v1/photos', async (req, res, next) => {
       .json({ status: 'error', message: '搜尋關鍵字(q)為必填' });
   }
 
+  const pageNumber = Number(page);
+  if (!Number.isInteger(pageNumber) || pageNumber < 1) {
+    return res
+      .status(400)
+      .json({ status: 'error', message: '頁數(page)只能是正整數' });
+  }
+
   try {
     const response = await fetch(
-      `${baseUrl}/search/photos?page=${page}&query=${q}`,
+      `${baseUrl}/search/photos?page=${page}&query=${encodeURIComponent(q)}`,
       {
         headers
       }
@@ -61,7 +74,7 @@ router.get('/v1/photos', async (req, res, next) => {
     }
 
     const data = await response.json();
-    res.status(200).json({ data });
+    res.status(200).json({ status: 'success', data });
   } catch (error) {
     next(error);
   }
