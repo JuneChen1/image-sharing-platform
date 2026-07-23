@@ -1,4 +1,4 @@
-# 📸 圖個方便 | PicShare - 圖片分享網站
+# 圖個方便 | PicShare - 圖片分享網站
 
 一個基於 [Unsplash API](https://unsplash.com/documentation) 開發的圖片分享與收藏社群網站。本專案為架站與全端開發練習作品，旨在練習第三方 API 串接、前後端代理整合、資料庫設計（CRUD）以及符合著作權規範的網頁呈現。
 
@@ -53,12 +53,12 @@ git clone https://github.com/JuneChen1/image-sharing-platform.git
 cd image-sharing-platform
 ```
 
-3. 環境變數設定
-在後端專案根目錄建立 `.env` 檔案，並填入你的 API 金鑰：
+3. 環境變數設定：將 `.env.example` 改成 `.env`，並填入相關欄位
 ```env
-PORT=5000
-UNSPLASH_ACCESS_KEY=你的_unsplash_access_key_放這裡
-DATABASE_URL=你的_資料庫_連線字串
+PORT=3000
+UNSPLASH_ACCESS_KEY=your_unsplash_access_key
+DATABASE_URL=postgresql://user:password@localhost:port/dbname
+
 ```
 
 4. 安裝套件並啟動專案：
