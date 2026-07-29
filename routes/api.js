@@ -1,11 +1,13 @@
 const express = require('express');
 const { rateLimit } = require('express-rate-limit');
+const {
+  getUnsplashImageId,
+  verifyUnsplashImageId,
+  fetchUnsplashPhoto
+} = require('../utils/apiUtils');
+const { unsplashBaseUrl, headers } = require('../config/constants');
 const router = express.Router();
 
-const baseUrl = 'https://api.unsplash.com';
-const headers = {
-  Authorization: `Client-ID ${process.env.UNSPLASH_ACCESS_KEY}`
-};
 const limiter = rateLimit({
   windowMs: 60 * 60 * 1000,
   limit: 50,
@@ -18,27 +20,29 @@ const limiter = rateLimit({
 // get information of one image
 router.get('/v1/photos/:unsplashId', limiter, async (req, res, next) => {
   const { unsplashId } = req.params;
-  const unsplashIdPattern = /^[\w-]{5,20}$/;
 
-  if (!unsplashIdPattern.test(unsplashId)) {
+  if (!verifyUnsplashImageId(unsplashId)) {
     return res
       .status(400)
       .json({ status: 'error', message: '無效的 unsplashId 格式' });
   }
 
   try {
-    const response = await fetch(`${baseUrl}/photos/${unsplashId}`, {
-      headers
-    });
+    const result = await fetchUnsplashPhoto(unsplashId);
+    if (!result.success) {
+      const status = result.status === 404 ? 404 : 502;
+      console.error(
+        'Unsplash API error:',
+        result.status,
+        result.unsplashMessage
+      );
 
-    if (!response.ok) {
       return res
-        .status(response.status)
+        .status(status)
         .json({ status: 'error', message: 'Unsplash API error' });
     }
 
-    const data = await response.json();
-    res.status(200).json({ status: 'success', data });
+    res.status(200).json({ status: 'success', data: result.data });
   } catch (error) {
     next(error);
   }
@@ -61,7 +65,7 @@ router.get('/v1/photos', limiter, async (req, res, next) => {
 
   try {
     const response = await fetch(
-      `${baseUrl}/search/photos?page=${page}&query=${encodeURIComponent(q)}`,
+      `${unsplashBaseUrl}/search/photos?page=${page}&query=${encodeURIComponent(q)}`,
       {
         headers
       }
@@ -75,6 +79,39 @@ router.get('/v1/photos', limiter, async (req, res, next) => {
 
     const data = await response.json();
     res.status(200).json({ status: 'success', data });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.post('/v1/shared-photos', limiter, async (req, res, next) => {
+  const { url } = req.body;
+  const { success, imageId } = getUnsplashImageId(url);
+  if (!success || !verifyUnsplashImageId(imageId)) {
+    return res.status(400).json({
+      status: 'error',
+      message: '網址錯誤，或無效的 unsplashId 格式'
+    });
+  }
+
+  try {
+    const result = await fetchUnsplashPhoto(imageId);
+    if (!result.success) {
+      const status = result.status === 404 ? 404 : 502;
+      console.error(
+        'Unsplash API error:',
+        result.status,
+        result.unsplashMessage
+      );
+
+      return res
+        .status(status)
+        .json({ status: 'error', message: 'Unsplash API error' });
+    }
+
+    console.log(result.data);
+    // 後續再寫入資料庫
+    res.status(200).json({ status: 'success' });
   } catch (error) {
     next(error);
   }
