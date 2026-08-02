@@ -1,17 +1,22 @@
 require('dotenv').config();
 
-if (!process.env.UNSPLASH_ACCESS_KEY || !process.env.DATABASE_URL) {
+const { hasRequiredEnvs } = require('./utils/env');
+
+if (!hasRequiredEnvs()) {
   console.error(`缺少必要環境變數：UNSPLASH_ACCESS_KEY 或 DATABASE_URL`);
   process.exit(1);
 }
 
-const pool = require('./controllers/database');
+const { dataSource } = require('./db/data-source');
 
 async function main() {
-  await pool.query('SELECT 1').catch((err) => {
-    console.error('資料庫連線失敗：', err.message);
+  try {
+    await dataSource.initialize();
+    console.log('資料庫連線成功');
+  } catch (error) {
+    console.error('資料庫連線失敗：', error);
     process.exit(1);
-  });
+  }
 
   const express = require('express');
   const cors = require('cors');

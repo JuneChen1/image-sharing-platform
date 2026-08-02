@@ -26,9 +26,10 @@
 1. Node.js v24.12.0
 2. Express v5.2.1
 3. pg v8.22.0
-4. dotenv v17.4.2
-5. cors v2.8.6
-6. express-rate-limit v8.6.0
+4. typeorm v1.1.0
+5. dotenv v17.4.2
+6. cors v2.8.6
+7. express-rate-limit v8.6.0
 
 ---
 
