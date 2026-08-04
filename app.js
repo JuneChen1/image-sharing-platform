@@ -20,6 +20,7 @@ async function main() {
 
   const express = require('express');
   const cors = require('cors');
+  const healthRouter = require('./routes/health');
   const apiRouter = require('./routes/api');
 
   const app = express();
@@ -27,6 +28,7 @@ async function main() {
   app.use(cors());
   app.use(express.json());
   app.use(express.static('public'));
+  app.use('/health', healthRouter);
   app.use('/api', apiRouter);
 
   app.use((req, res) => {
