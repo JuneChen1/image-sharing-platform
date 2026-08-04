@@ -19,7 +19,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "migration:generate": "typeorm migration:generate -d ./db/data-source.js -o",
     "migration:run": "typeorm migration:run -d ./db/data-source.js",
-    "migration:revert": "typeorm migration:revert -d ./db/data-source.js"
+    "migration:revert": "typeorm migration:revert -d ./db/data-source.js",
+    "dev": "nodemon app.js"
   },
   "dependencies": {
     "cors": "^2.8.6",
