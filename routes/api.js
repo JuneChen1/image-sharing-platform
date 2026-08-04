@@ -1,12 +1,17 @@
 const express = require('express');
 const { rateLimit } = require('express-rate-limit');
+const { In } = require('typeorm');
 const {
   getUnsplashImageId,
   verifyUnsplashImageId,
-  fetchUnsplashPhoto
+  fetchUnsplashPhoto,
+  getUnsplashImageInfo,
+  verifyCustomCategories
 } = require('../utils/apiUtils');
 const { unsplashBaseUrl, headers } = require('../config/constants');
 const router = express.Router();
+
+const { dataSource } = require('../db/data-source');
 
 const limiter = rateLimit({
   windowMs: 60 * 60 * 1000,
@@ -85,7 +90,19 @@ router.get('/v1/photos', limiter, async (req, res, next) => {
 });
 
 router.post('/v1/shared-photos', limiter, async (req, res, next) => {
-  const { url } = req.body;
+  const { url, customCategories } = req.body;
+  if (typeof url !== 'string' || !url.trim()) {
+    return res
+      .status(400)
+      .json({ status: 'error', message: '網址(url)為必填' });
+  }
+  if (!verifyCustomCategories(customCategories)) {
+    return res.status(400).json({
+      status: 'error',
+      message: 'customCategories 需為陣列，且至少包含一個分類，分類皆須為字串'
+    });
+  }
+
   const { success, imageId } = getUnsplashImageId(url);
   if (!success || !verifyUnsplashImageId(imageId)) {
     return res.status(400).json({
@@ -109,9 +126,44 @@ router.post('/v1/shared-photos', limiter, async (req, res, next) => {
         .json({ status: 'error', message: 'Unsplash API error' });
     }
 
-    console.log(result.data);
-    // 後續再寫入資料庫
-    res.status(200).json({ status: 'success' });
+    const uniqueNames = [
+      ...new Map(
+        customCategories.map((name) => [name.trim().toLowerCase(), name.trim()])
+      ).values()
+    ];
+    const shareInfo = getUnsplashImageInfo(result);
+
+    // save to the database
+    await dataSource.transaction(async (manager) => {
+      const sharePhotosRepo = manager.getRepository('SharedPhotos');
+      const categoriesRepo = manager.getRepository('Categories');
+      const joinRepo = manager.getRepository('SharedPhotoCategories');
+
+      const foundCategories = await categoriesRepo.find({
+        where: { name: In(uniqueNames) }
+      });
+      const exist = foundCategories.map((c) => c.name.toLowerCase());
+
+      const notExist = uniqueNames
+        .filter((c) => !exist.includes(c.toLowerCase()))
+        .map((n) => ({
+          name: n
+        }));
+
+      let createdCategories = [];
+      if (notExist.length > 0) {
+        createdCategories = await categoriesRepo.save(notExist);
+      }
+
+      const savedPhoto = await sharePhotosRepo.save(shareInfo);
+
+      const links = [...foundCategories, ...createdCategories].map((category) =>
+        joinRepo.create({ sharePhotos: savedPhoto, categories: category })
+      );
+      await joinRepo.save(links);
+    });
+
+    res.status(200).json({ status: 'success', data: shareInfo });
   } catch (error) {
     next(error);
   }

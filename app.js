@@ -36,7 +36,8 @@ async function main() {
   });
 
   app.use((err, req, res, next) => {
-    res.status(500).json({ status: 'error', message: err.message });
+    console.error(err);
+    res.status(500).json({ status: 'error', message: '伺服器發生錯誤' });
   });
 
   const PORT = process.env.PORT || 3000;

@@ -34,8 +34,33 @@ async function fetchUnsplashPhoto(unsplashId) {
   return { success: true, data };
 }
 
+function getUnsplashImageInfo(result) {
+  const { id, links, urls, user } = result.data;
+  return {
+    unsplash_id: id,
+    unsplash_page_url: links.html,
+    image_url: urls.regular,
+    photographer_name: user.username,
+    photographer_url: `https://unsplash.com/@${user.username}`
+  };
+}
+
+function verifyCustomCategories(customCategories) {
+  if (!Array.isArray(customCategories) || customCategories.length === 0) {
+    return false;
+  }
+
+  const isValid = customCategories.every(
+    (name) => typeof name === 'string' && name.trim().length > 0
+  );
+
+  return isValid;
+}
+
 module.exports = {
   getUnsplashImageId,
   verifyUnsplashImageId,
-  fetchUnsplashPhoto
+  fetchUnsplashPhoto,
+  getUnsplashImageInfo,
+  verifyCustomCategories
 };
