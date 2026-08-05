@@ -1,0 +1,90 @@
+<nav class="navbar navbar-dark bg-dark mb-4">
+  <div class="container">
+    <a class="navbar-brand mb-0 h1 text-decoration-none" href="/">📸 圖個方便 | PicShare</a>
+    <div>
+      <button
+        type="button"
+        class="btn btn-outline-light me-2"
+        data-bs-toggle="modal"
+        data-bs-target="#shareModal"
+      >
+        分享
+      </button>
+      <button
+        type="button"
+        id="nav-search-btn"
+        class="btn btn-outline-light"
+        data-bs-toggle="modal"
+        data-bs-target="#searchModal"
+      >
+        從 Unsplash 搜尋
+      </button>
+    </div>
+  </div>
+</nav>
+
+<div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="searchModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="searchModalLabel">搜尋 Unsplash 照片</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form id="nav-search-form">
+        <div class="modal-body">
+          <input
+            type="text"
+            id="nav-search-input"
+            class="form-control"
+            placeholder="輸入關鍵字搜尋 Unsplash 圖片，例如 Long-tailed Tit"
+            required
+          />
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+          <button type="submit" class="btn btn-dark">搜尋</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="shareModal" tabindex="-1" aria-labelledby="shareModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="shareModalLabel">分享 Unsplash 照片</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form id="share-form">
+        <div class="modal-body">
+          <input
+            type="text"
+            id="share-input"
+            class="form-control mb-3"
+            placeholder="Unsplash 圖片網址，例如 https://unsplash.com/photos/xxxxx"
+            required
+          />
+
+          <label for="category-input" class="form-label">分類（至少一個）</label>
+          <div class="d-flex gap-2 mb-2">
+            <input
+              type="text"
+              id="category-input"
+              class="form-control"
+              placeholder="輸入分類名稱，按 Enter 新增"
+            />
+            <button type="button" id="category-add-btn" class="btn btn-outline-dark text-nowrap">新增</button>
+          </div>
+          <div id="category-list" class="d-flex flex-wrap gap-2 mb-2"></div>
+
+          <div id="share-status" class="text-muted mt-2"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+          <button type="submit" class="btn btn-dark">分享</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
