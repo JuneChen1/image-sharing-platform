@@ -6,8 +6,7 @@ function getUnsplashImageId(url) {
       success: false
     };
   }
-  const index = url.lastIndexOf('-');
-  const imageId = url.slice(index + 1);
+  const imageId = url.slice(-11);
 
   return { success: true, imageId };
 }
