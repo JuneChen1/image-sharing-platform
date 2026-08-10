@@ -1,7 +1,7 @@
 const { dataSource } = require('./data-source');
-const Categories = require('./entities/categories');
-const SharedPhotos = require('./entities/shared_photos');
-const SharedPhotoCategories = require('./entities/shared_photo_categories');
+const Categories = require('../entities/categories');
+const SharedPhotos = require('../entities/shared_photos');
+const SharedPhotoCategories = require('../entities/shared_photo_categories');
 
 async function clearAll() {
   const ORDER = [SharedPhotoCategories, SharedPhotos, Categories];

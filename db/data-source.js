@@ -1,8 +1,8 @@
 require('dotenv').config();
 const { DataSource } = require('typeorm');
-const Categories = require('./entities/categories');
-const SharePhotos = require('./entities/shared_photos');
-const SharePhotosCategories = require('./entities/shared_photo_categories');
+const Categories = require('../entities/categories');
+const SharePhotos = require('../entities/shared_photos');
+const SharePhotosCategories = require('../entities/shared_photo_categories');
 
 const dataSource = new DataSource({
   type: 'postgres',
