@@ -6,6 +6,7 @@ const {
   verifyCustomCategories
 } = require('../utils/apiUtils');
 const { unsplashBaseUrl, headers } = require('../config/constants');
+const appError = require('../utils/appError');
 const { dataSource } = require('../db/data-source');
 const { In } = require('typeorm');
 
@@ -13,9 +14,8 @@ const getOneImageInfo = async (req, res, next) => {
   const { unsplashId } = req.params;
 
   if (!verifyUnsplashImageId(unsplashId)) {
-    return res
-      .status(400)
-      .json({ status: 'error', message: '無效的 unsplashId 格式' });
+    next(appError(400, '無效的 unsplashId 格式'));
+    return;
   }
 
   try {
@@ -28,9 +28,8 @@ const getOneImageInfo = async (req, res, next) => {
         result.unsplashMessage
       );
 
-      return res
-        .status(status)
-        .json({ status: 'error', message: 'Unsplash API error' });
+      next(appError(status, 'Unsplash API error'));
+      return;
     }
 
     res.status(200).json({ status: 'success', data: result.data });
@@ -42,16 +41,14 @@ const getOneImageInfo = async (req, res, next) => {
 const getImagesWithKeyword = async (req, res, next) => {
   const { q, page = 1 } = req.query;
   if (!q) {
-    return res
-      .status(400)
-      .json({ status: 'error', message: '搜尋關鍵字(q)為必填' });
+    next(appError(400, '搜尋關鍵字(q)為必填'));
+    return;
   }
 
   const pageNumber = Number(page);
   if (!Number.isInteger(pageNumber) || pageNumber < 1) {
-    return res
-      .status(400)
-      .json({ status: 'error', message: '頁數(page)只能是正整數' });
+    next(appError(400, '頁數(page)只能是正整數'));
+    return;
   }
 
   try {
@@ -63,9 +60,15 @@ const getImagesWithKeyword = async (req, res, next) => {
     );
 
     if (!response.ok) {
-      return res
-        .status(response.status)
-        .json({ status: 'error', message: 'Unsplash API error' });
+      const status = response.status === 404 ? 404 : 502;
+      console.error(
+        'Unsplash API error:',
+        response.status,
+        response.unsplashMessage
+      );
+
+      next(appError(status, 'Unsplash API error'));
+      return;
     }
 
     const data = await response.json();
@@ -78,23 +81,18 @@ const getImagesWithKeyword = async (req, res, next) => {
 const shareImageWithUrl = async (req, res, next) => {
   const { url, customCategories } = req.body;
   if (typeof url !== 'string' || !url.trim()) {
-    return res
-      .status(400)
-      .json({ status: 'error', message: '網址(url)為必填' });
+    next(appError(400, '網址(url)為必填'));
+    return;
   }
   if (!verifyCustomCategories(customCategories)) {
-    return res.status(400).json({
-      status: 'error',
-      message: 'customCategories 需為陣列，且至少包含一個分類，分類皆須為字串'
-    });
+    next(appError(400, 'customCategories 格式錯誤'));
+    return;
   }
 
   const { success, imageId } = getUnsplashImageId(url);
   if (!success || !verifyUnsplashImageId(imageId)) {
-    return res.status(400).json({
-      status: 'error',
-      message: '網址錯誤，或無效的 unsplashId 格式'
-    });
+    next(appError(400, '網址錯誤，或無效的 unsplashId 格式'));
+    return;
   }
 
   try {
@@ -107,9 +105,8 @@ const shareImageWithUrl = async (req, res, next) => {
         result.unsplashMessage
       );
 
-      return res
-        .status(status)
-        .json({ status: 'error', message: 'Unsplash API error' });
+      next(appError(status, 'Unsplash API error'));
+      return;
     }
 
     const uniqueNames = [

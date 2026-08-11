@@ -28,16 +28,25 @@ async function main() {
   app.use(cors());
   app.use(express.json());
   app.use(express.static('public'));
+
   app.use('/health', healthRouter);
-  app.use('/api', apiRouter);
+  app.use('/api/v1', apiRouter);
 
   app.use((req, res) => {
     res.status(404).json({ status: 'error', message: 'Page Not Found' });
   });
 
   app.use((err, req, res, next) => {
+    if (err.isOperational) {
+      return res.status(err.statusCode).json({
+        status: 'error',
+        message: err.message
+      });
+    }
     console.error(err);
-    res.status(500).json({ status: 'error', message: '伺服器發生錯誤' });
+    res
+      .status(500)
+      .json({ status: 'error', message: '伺服器發生錯誤，請稍後再試' });
   });
 
   const PORT = process.env.PORT || 3000;
