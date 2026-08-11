@@ -43,10 +43,12 @@ async function main() {
         message: err.message
       });
     }
+    
     console.error(err);
-    res
-      .status(500)
-      .json({ status: 'error', message: '伺服器發生錯誤，請稍後再試' });
+    res.status(500).json({
+    status: 'failed',
+    message: '伺服器發生錯誤，請稍後再試'
+  });
   });
 
   const PORT = process.env.PORT || 3000;
