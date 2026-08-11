@@ -1,10 +1,12 @@
 const {
   getUnsplashImageId,
-  verifyUnsplashImageId,
   fetchUnsplashPhoto,
-  getUnsplashImageInfo,
-  verifyCustomCategories
+  getUnsplashImageInfo
 } = require('../utils/apiUtils');
+const {
+  verifyUnsplashImageId,
+  verifyCustomCategories
+} = require('../utils/validUtils');
 const { unsplashBaseUrl, headers } = require('../config/constants');
 const appError = require('../utils/appError');
 const { dataSource } = require('../db/data-source');

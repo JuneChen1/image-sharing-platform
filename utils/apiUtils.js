@@ -11,11 +11,6 @@ function getUnsplashImageId(url) {
   return { success: true, imageId };
 }
 
-function verifyUnsplashImageId(unsplashId) {
-  const unsplashIdPattern = /^[\w-]{5,20}$/;
-  return unsplashIdPattern.test(unsplashId);
-}
-
 async function fetchUnsplashPhoto(unsplashId) {
   const response = await fetch(`${unsplashBaseUrl}/photos/${unsplashId}`, {
     headers
@@ -44,22 +39,8 @@ function getUnsplashImageInfo(result) {
   };
 }
 
-function verifyCustomCategories(customCategories) {
-  if (!Array.isArray(customCategories) || customCategories.length === 0) {
-    return false;
-  }
-
-  const isValid = customCategories.every(
-    (name) => typeof name === 'string' && name.trim().length > 0
-  );
-
-  return isValid;
-}
-
 module.exports = {
   getUnsplashImageId,
-  verifyUnsplashImageId,
   fetchUnsplashPhoto,
-  getUnsplashImageInfo,
-  verifyCustomCategories
+  getUnsplashImageInfo
 };
