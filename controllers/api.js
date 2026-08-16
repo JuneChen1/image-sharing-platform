@@ -6,7 +6,8 @@ const {
 const {
   verifyUnsplashImageId,
   verifyCustomCategories,
-  isPositiveInteger
+  isPositiveInteger,
+  isValidString
 } = require('../utils/validUtils');
 const { unsplashBaseUrl, headers } = require('../config/constants');
 const appError = require('../utils/appError');
@@ -43,13 +44,13 @@ const getOneImageInfo = async (req, res, next) => {
 
 const getImagesWithKeyword = async (req, res, next) => {
   const { q, page = 1 } = req.query;
-  if (!q) {
+  if (!isValidString(q)) {
     next(appError(400, '搜尋關鍵字(q)為必填'));
     return;
   }
 
   const pageNumber = Number(page);
-  if (!Number.isInteger(pageNumber) || pageNumber < 1) {
+  if (!isPositiveInteger(pageNumber)) {
     next(appError(400, '頁數(page)只能是正整數'));
     return;
   }
@@ -83,7 +84,7 @@ const getImagesWithKeyword = async (req, res, next) => {
 
 const shareImageWithUrl = async (req, res, next) => {
   const { url, customCategories } = req.body;
-  if (typeof url !== 'string' || !url.trim()) {
+  if (!isValidString(url)) {
     next(appError(400, '網址(url)為必填'));
     return;
   }

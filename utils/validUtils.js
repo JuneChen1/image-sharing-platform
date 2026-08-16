@@ -10,9 +10,7 @@ function verifyCustomCategories(customCategories) {
     return false;
   }
 
-  const isValid = customCategories.every(
-    (name) => typeof name === 'string' && name.trim().length > 0
-  );
+  const isValid = customCategories.every((name) => isValidString(name));
 
   return isValid;
 }
@@ -21,8 +19,13 @@ function isPositiveInteger(number) {
   return Number.isInteger(number) && number > 0;
 }
 
+function isValidString(value) {
+  return typeof value === 'string' && value.trim() !== '';
+}
+
 module.exports = {
   verifyUnsplashImageId,
   verifyCustomCategories,
-  isPositiveInteger
+  isPositiveInteger,
+  isValidString
 };
