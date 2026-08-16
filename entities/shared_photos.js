@@ -36,6 +36,10 @@ module.exports = new EntitySchema({
     created_at: {
       type: 'timestamp',
       createDate: true
+    },
+    canceled_at: {
+      type: 'timestamp',
+      nullable: true
     }
   }
 });

@@ -5,12 +5,13 @@ const {
 } = require('../utils/apiUtils');
 const {
   verifyUnsplashImageId,
-  verifyCustomCategories
+  verifyCustomCategories,
+  isPositiveInteger
 } = require('../utils/validUtils');
 const { unsplashBaseUrl, headers } = require('../config/constants');
 const appError = require('../utils/appError');
 const { dataSource } = require('../db/data-source');
-const { In } = require('typeorm');
+const { In, IsNull } = require('typeorm');
 
 const getOneImageInfo = async (req, res, next) => {
   const { unsplashId } = req.params;
@@ -154,4 +155,41 @@ const shareImageWithUrl = async (req, res, next) => {
   }
 };
 
-module.exports = { getOneImageInfo, getImagesWithKeyword, shareImageWithUrl };
+const getSharedImages = async (req, res, next) => {
+  const pageNumber = req.query.page === undefined ? 1 : Number(req.query.page);
+  const limitNumber =
+    req.query.limit === undefined ? 20 : Number(req.query.limit);
+
+  if (!isPositiveInteger(pageNumber) || !isPositiveInteger(limitNumber)) {
+    return next(appError(400, '頁數(page)和每頁筆數(limit)只能是正整數'));
+  }
+
+  if (limitNumber > 100) {
+    return next(appError(400, '每頁筆數(limit)不能大於100'));
+  }
+
+  try {
+    const sharePhotosRepo = dataSource.getRepository('SharedPhotos');
+    const [data, total] = await sharePhotosRepo.findAndCount({
+      where: { canceled_at: IsNull() },
+      skip: (pageNumber - 1) * limitNumber,
+      take: limitNumber,
+      order: { created_at: 'DESC' }
+    });
+
+    res.status(200).json({
+      status: 'success',
+      data,
+      pagination: { page: pageNumber, limit: limitNumber, total }
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = {
+  getOneImageInfo,
+  getImagesWithKeyword,
+  shareImageWithUrl,
+  getSharedImages
+};

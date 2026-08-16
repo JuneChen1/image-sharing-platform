@@ -17,7 +17,12 @@ function verifyCustomCategories(customCategories) {
   return isValid;
 }
 
+function isPositiveInteger(number) {
+  return Number.isInteger(number) && number > 0;
+}
+
 module.exports = {
   verifyUnsplashImageId,
-  verifyCustomCategories
+  verifyCustomCategories,
+  isPositiveInteger
 };
