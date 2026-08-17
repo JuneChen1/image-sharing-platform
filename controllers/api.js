@@ -7,7 +7,8 @@ const {
   verifyUnsplashImageId,
   verifyCustomCategories,
   isPositiveInteger,
-  isValidString
+  isValidString,
+  isValidUUID
 } = require('../utils/validUtils');
 const { unsplashBaseUrl, headers } = require('../config/constants');
 const appError = require('../utils/appError');
@@ -206,9 +207,41 @@ const getSharedImages = async (req, res, next) => {
   }
 };
 
+const cancelSharedPhoto = async (req, res, next) => {
+  const { sharedId } = req.params;
+  if (!isValidUUID(sharedId)) {
+    return next(appError(400, 'ID格式錯誤'));
+  }
+
+  try {
+    const sharePhotosRepo = dataSource.getRepository('SharedPhotos');
+    const data = await sharePhotosRepo.findOneBy({
+      id: sharedId,
+      canceled_at: IsNull()
+    });
+
+    if (!data) {
+      return next(appError(404, '查無此ID'));
+    }
+
+    await sharePhotosRepo.save({
+      ...data,
+      canceled_at: new Date()
+    });
+
+    res.status(200).json({
+      status: 'success',
+      message: '刪除成功'
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getOneImageInfo,
   getImagesWithKeyword,
   shareImageWithUrl,
-  getSharedImages
+  getSharedImages,
+  cancelSharedPhoto
 };

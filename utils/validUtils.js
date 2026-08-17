@@ -23,9 +23,19 @@ function isValidString(value) {
   return typeof value === 'string' && value.trim() !== '';
 }
 
+function isValidUUID(value) {
+  return (
+    typeof value === 'string' &&
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+      value
+    )
+  );
+}
+
 module.exports = {
   verifyUnsplashImageId,
   verifyCustomCategories,
   isPositiveInteger,
-  isValidString
+  isValidString,
+  isValidUUID
 };
