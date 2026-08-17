@@ -238,10 +238,27 @@ const cancelSharedPhoto = async (req, res, next) => {
   }
 };
 
+const getCategories = async (req, res, next) => {
+  try {
+    const categoriesRepo = dataSource.getRepository('Categories');
+    const data = await categoriesRepo.find({
+      order: { name: 'ASC' }
+    });
+
+    res.status(200).json({
+      status: 'success',
+      data
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getOneImageInfo,
   getImagesWithKeyword,
   shareImageWithUrl,
   getSharedImages,
-  cancelSharedPhoto
+  cancelSharedPhoto,
+  getCategories
 };
