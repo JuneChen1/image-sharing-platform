@@ -160,6 +160,7 @@ const getSharedImages = async (req, res, next) => {
   const pageNumber = req.query.page === undefined ? 1 : Number(req.query.page);
   const limitNumber =
     req.query.limit === undefined ? 20 : Number(req.query.limit);
+  const category = req.query.category;
 
   if (!isPositiveInteger(pageNumber) || !isPositiveInteger(limitNumber)) {
     return next(appError(400, '頁數(page)和每頁筆數(limit)只能是正整數'));
@@ -170,13 +171,30 @@ const getSharedImages = async (req, res, next) => {
   }
 
   try {
-    const sharePhotosRepo = dataSource.getRepository('SharedPhotos');
-    const [data, total] = await sharePhotosRepo.findAndCount({
-      where: { canceled_at: IsNull() },
-      skip: (pageNumber - 1) * limitNumber,
-      take: limitNumber,
-      order: { created_at: 'DESC' }
-    });
+    let data, total;
+    if (category === undefined) {
+      const sharePhotosRepo = dataSource.getRepository('SharedPhotos');
+      [data, total] = await sharePhotosRepo.findAndCount({
+        where: { canceled_at: IsNull() },
+        skip: (pageNumber - 1) * limitNumber,
+        take: limitNumber,
+        order: { created_at: 'DESC' }
+      });
+    } else {
+      const relationRepo = dataSource.getRepository('SharedPhotoCategories');
+      const [plainData, count] = await relationRepo.findAndCount({
+        relations: { categories: true, sharePhotos: true },
+        where: {
+          sharePhotos: { canceled_at: IsNull() },
+          categories: { name: category }
+        },
+        skip: (pageNumber - 1) * limitNumber,
+        take: limitNumber,
+        order: { sharePhotos: { created_at: 'DESC' } }
+      });
+      data = plainData.map((item) => item.sharePhotos);
+      total = count;
+    }
 
     res.status(200).json({
       status: 'success',
