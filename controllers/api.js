@@ -19,15 +19,21 @@ const getOneImageInfo = async (req, res, next) => {
   try {
     const result = await fetchUnsplashPhoto(unsplashId);
     if (!result.success) {
-      const status = result.status === 404 ? 404 : 502;
+      let status = result.status === 404 ? 404 : 502;
+      let errorMessage;
+
+      if (result.status === 403) {
+        errorMessage = '圖片服務目前較忙碌，請稍後再試';
+      } else {
+        errorMessage = 'Unsplash API error';
+      }
       console.error(
         'Unsplash API error:',
         result.status,
         result.unsplashMessage
       );
 
-      next(appError(status, 'Unsplash API error'));
-      return;
+      return next(appError(status, errorMessage));
     }
 
     res.status(200).json({ status: 'success', data: result.data });
@@ -58,15 +64,21 @@ const getImagesWithKeyword = async (req, res, next) => {
     );
 
     if (!response.ok) {
-      const status = response.status === 404 ? 404 : 502;
+      let status = response.status === 404 ? 404 : 502;
+      let errorMessage;
+
+      if (response.status === 403) {
+        errorMessage = '圖片服務目前較忙碌，請稍後再試';
+      } else {
+        errorMessage = 'Unsplash API error';
+      }
       console.error(
         'Unsplash API error:',
         response.status,
-        response.unsplashMessage
+        response.statusText
       );
 
-      next(appError(status, 'Unsplash API error'));
-      return;
+      return next(appError(status, errorMessage));
     }
 
     const data = await response.json();
