@@ -61,3 +61,37 @@ body {
   border-color: #212529;
   color: #fff;
 }
+
+.lightbox-trigger {
+  cursor: pointer;
+}
+
+#lightboxModal .modal-body {
+  padding: 20px;
+}
+
+#lightboxModal .modal-dialog {
+  max-height: 90vh;
+}
+
+#lightboxModal .modal-content {
+  max-height: 90vh;
+}
+
+.lightbox-image-wrap {
+  position: relative;
+}
+
+#lightbox-image {
+  max-height: 65vh;
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+}
+
+.lightbox-close {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  z-index: 1;
+}

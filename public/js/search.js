@@ -51,8 +51,23 @@
 
   resultsEl.addEventListener('click', (event) => {
     const button = event.target.closest('button[data-share-url]');
-    if (!button) return;
-    window.openShareModal(button.dataset.shareUrl);
+    if (button) {
+      window.openShareModal(button.dataset.shareUrl);
+      return;
+    }
+
+    const img = event.target.closest('img[data-photo-id]');
+    if (!img) return;
+
+    const photo = currentPhotos.find((p) => p.id === img.dataset.photoId);
+    if (!photo) return;
+
+    window.openLightbox({
+      imageUrl: photo.urls.regular,
+      photographerName: photo.user.name,
+      photographerUrl: photo.user.links.html,
+      downloadUrl: photo.links.html
+    });
   });
 
   const initialQuery = new URLSearchParams(window.location.search).get('q');
@@ -170,7 +185,12 @@
   function renderPhotoCard(photo) {
     return `
       <div class="card">
-        <img src="${photo.urls.small}" class="card-img-top" alt="${photo.alt_description ?? ''}" />
+        <img
+          src="${photo.urls.small}"
+          class="card-img-top lightbox-trigger"
+          data-photo-id="${photo.id}"
+          alt="${photo.alt_description ?? ''}"
+        />
         <div class="card-body">
           <p class="card-text">
             Photo by

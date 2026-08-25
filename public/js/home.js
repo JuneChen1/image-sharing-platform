@@ -34,6 +34,21 @@
     }
   });
 
+  resultsEl.addEventListener('click', (event) => {
+    const img = event.target.closest('img[data-photo-id]');
+    if (!img) return;
+
+    const photo = currentPhotos.find((p) => p.id === img.dataset.photoId);
+    if (!photo) return;
+
+    window.openLightbox({
+      imageUrl: photo.image_url,
+      photographerName: photo.photographer_name,
+      photographerUrl: photo.photographer_url,
+      downloadUrl: photo.unsplash_page_url
+    });
+  });
+
   paginationEl.addEventListener('click', async (event) => {
     const link = event.target.closest('a[data-page]');
     if (!link) return;
@@ -211,7 +226,12 @@
   function renderPhotoCard(photo) {
     return `
       <div class="card">
-        <img src="${photo.image_url}" class="card-img-top" alt="${photo.photographer_name} 的照片" />
+        <img
+          src="${photo.image_url}"
+          class="card-img-top lightbox-trigger"
+          data-photo-id="${photo.id}"
+          alt="${photo.photographer_name} 的照片"
+        />
         <div class="card-body">
           <p class="card-text">
             Photo by

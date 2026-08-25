@@ -10,51 +10,10 @@
       >
         分享照片
       </button>
-      <button
-        type="button"
-        id="nav-search-btn"
-        class="btn btn-outline-light"
-        data-bs-toggle="modal"
-        data-bs-target="#searchModal"
-      >
-        從 Unsplash 搜尋
-      </button>
+      <a href="/search.html" class="btn btn-outline-light">從 Unsplash 搜尋</a>
     </div>
   </div>
 </nav>
-
-<div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="searchModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="searchModalLabel">搜尋 Unsplash 照片</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <form id="nav-search-form">
-        <div class="modal-body">
-          <div class="search-box">
-            <span class="search-box-icon">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
-              </svg>
-            </span>
-            <input
-              type="text"
-              id="nav-search-input"
-              class="form-control"
-              placeholder="輸入關鍵字搜尋 Unsplash 圖片，例如 Long-tailed Tit"
-              required
-            />
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-          <button type="submit" class="btn btn-dark">搜尋</button>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
 
 <div class="modal fade" id="shareModal" tabindex="-1" aria-labelledby="shareModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
@@ -92,6 +51,32 @@
           <button type="submit" class="btn btn-dark">分享</button>
         </div>
       </form>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="lightboxModal" tabindex="-1" aria-labelledby="lightboxModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <h5 class="modal-title visually-hidden" id="lightboxModalLabel">照片預覽</h5>
+      <div class="modal-body text-center">
+        <div class="lightbox-image-wrap">
+          <button type="button" class="btn-close lightbox-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <img id="lightbox-image" src="" alt="" class="img-fluid rounded" />
+        </div>
+      </div>
+      <div class="modal-footer d-flex align-items-center justify-content-between">
+        <p class="mb-0">
+          Photo by
+          <a id="lightbox-photographer" href="" target="_blank" rel="noopener"></a>
+          on
+          <a href="https://unsplash.com" target="_blank" rel="noopener">Unsplash</a>
+        </p>
+        <div class="d-flex gap-2">
+          <button type="button" id="lightbox-share" class="btn btn-outline-dark">分享</button>
+          <a id="lightbox-download" href="" target="_blank" rel="noopener" class="btn btn-outline-dark">下載</a>
+        </div>
+      </div>
     </div>
   </div>
 </div>
