@@ -21,6 +21,7 @@ async function main() {
   const express = require('express');
   const cors = require('cors');
   const healthRouter = require('./routes/health');
+  const sharedPhotosRouter = require('./routes/sharedPhotos');
   const apiRouter = require('./routes/api');
 
   const app = express();
@@ -30,6 +31,7 @@ async function main() {
   app.use(express.static('public'));
 
   app.use('/health', healthRouter);
+  app.use('/api/v1/shared-photos', sharedPhotosRouter);
   app.use('/api/v1', apiRouter);
 
   app.use((req, res) => {
@@ -43,12 +45,12 @@ async function main() {
         message: err.message
       });
     }
-    
+
     console.error(err);
     res.status(500).json({
-    status: 'failed',
-    message: '伺服器發生錯誤，請稍後再試'
-  });
+      status: 'failed',
+      message: '伺服器發生錯誤，請稍後再試'
+    });
   });
 
   const PORT = process.env.PORT || 3000;

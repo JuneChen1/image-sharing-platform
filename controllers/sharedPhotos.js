@@ -1,0 +1,176 @@
+const {
+  getUnsplashImageId,
+  fetchUnsplashPhoto,
+  getUnsplashImageInfo
+} = require('../utils/apiUtils');
+const {
+  verifyUnsplashImageId,
+  verifyCustomCategories,
+  isPositiveInteger,
+  isValidString,
+  isValidUUID
+} = require('../utils/validUtils');
+const appError = require('../utils/appError');
+const { dataSource } = require('../db/data-source');
+const { In, IsNull } = require('typeorm');
+
+const shareImageWithUrl = async (req, res, next) => {
+  const { url, customCategories } = req.body;
+  if (!isValidString(url)) {
+    next(appError(400, '網址為必填'));
+    return;
+  }
+  if (!verifyCustomCategories(customCategories)) {
+    next(appError(400, '分類格式錯誤'));
+    return;
+  }
+
+  const { success, imageId } = getUnsplashImageId(url);
+  if (!success || !verifyUnsplashImageId(imageId)) {
+    next(appError(400, '網址錯誤'));
+    return;
+  }
+
+  try {
+    const result = await fetchUnsplashPhoto(imageId);
+    if (!result.success) {
+      const status = result.status === 404 ? 404 : 502;
+      console.error(
+        'Unsplash API error:',
+        result.status,
+        result.unsplashMessage
+      );
+
+      next(appError(status, 'Unsplash API error'));
+      return;
+    }
+
+    const uniqueNames = [
+      ...new Map(
+        customCategories.map((name) => [name.trim().toLowerCase(), name.trim()])
+      ).values()
+    ];
+    const shareInfo = getUnsplashImageInfo(result);
+
+    // save to the database
+    await dataSource.transaction(async (manager) => {
+      const sharePhotosRepo = manager.getRepository('SharedPhotos');
+      const categoriesRepo = manager.getRepository('Categories');
+      const joinRepo = manager.getRepository('SharedPhotoCategories');
+
+      const foundCategories = await categoriesRepo.find({
+        where: { name: In(uniqueNames) }
+      });
+      const exist = foundCategories.map((c) => c.name.toLowerCase());
+
+      const notExist = uniqueNames
+        .filter((c) => !exist.includes(c.toLowerCase()))
+        .map((n) => ({
+          name: n
+        }));
+
+      let createdCategories = [];
+      if (notExist.length > 0) {
+        createdCategories = await categoriesRepo.save(notExist);
+      }
+
+      const savedPhoto = await sharePhotosRepo.save(shareInfo);
+
+      const links = [...foundCategories, ...createdCategories].map((category) =>
+        joinRepo.create({ sharePhotos: savedPhoto, categories: category })
+      );
+      await joinRepo.save(links);
+    });
+
+    res.status(200).json({ status: 'success', data: shareInfo });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getSharedImages = async (req, res, next) => {
+  const pageNumber = req.query.page === undefined ? 1 : Number(req.query.page);
+  const limitNumber =
+    req.query.limit === undefined ? 20 : Number(req.query.limit);
+  const category = req.query.category;
+
+  if (!isPositiveInteger(pageNumber) || !isPositiveInteger(limitNumber)) {
+    return next(appError(400, '頁數(page)和每頁筆數(limit)只能是正整數'));
+  }
+
+  if (limitNumber > 100) {
+    return next(appError(400, '每頁筆數(limit)不能大於100'));
+  }
+
+  try {
+    let data, total;
+    if (category === undefined) {
+      const sharePhotosRepo = dataSource.getRepository('SharedPhotos');
+      [data, total] = await sharePhotosRepo.findAndCount({
+        where: { canceled_at: IsNull() },
+        skip: (pageNumber - 1) * limitNumber,
+        take: limitNumber,
+        order: { created_at: 'DESC' }
+      });
+    } else {
+      const relationRepo = dataSource.getRepository('SharedPhotoCategories');
+      const [plainData, count] = await relationRepo.findAndCount({
+        relations: { categories: true, sharePhotos: true },
+        where: {
+          sharePhotos: { canceled_at: IsNull() },
+          categories: { name: category }
+        },
+        skip: (pageNumber - 1) * limitNumber,
+        take: limitNumber,
+        order: { sharePhotos: { created_at: 'DESC' } }
+      });
+      data = plainData.map((item) => item.sharePhotos);
+      total = count;
+    }
+
+    res.status(200).json({
+      status: 'success',
+      data,
+      pagination: { page: pageNumber, limit: limitNumber, total }
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const cancelSharedPhoto = async (req, res, next) => {
+  const { sharedId } = req.params;
+  if (!isValidUUID(sharedId)) {
+    return next(appError(400, 'ID格式錯誤'));
+  }
+
+  try {
+    const sharePhotosRepo = dataSource.getRepository('SharedPhotos');
+    const data = await sharePhotosRepo.findOneBy({
+      id: sharedId,
+      canceled_at: IsNull()
+    });
+
+    if (!data) {
+      return next(appError(404, '查無此ID'));
+    }
+
+    await sharePhotosRepo.save({
+      ...data,
+      canceled_at: new Date()
+    });
+
+    res.status(200).json({
+      status: 'success',
+      message: '刪除成功'
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = {
+  shareImageWithUrl,
+  getSharedImages,
+  cancelSharedPhoto
+};
