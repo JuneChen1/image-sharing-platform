@@ -1,10 +1,12 @@
-const { fetchUnsplashPhoto } = require('../utils/apiUtils');
+const {
+  fetchUnsplashPhoto,
+  fetchImagesWithKeyword
+} = require('../utils/unsplashApiUtils');
 const {
   verifyUnsplashImageId,
   isPositiveInteger,
   isValidString
 } = require('../utils/validUtils');
-const { unsplashBaseUrl, headers } = require('../config/constants');
 const appError = require('../utils/appError');
 const { dataSource } = require('../db/data-source');
 
@@ -19,7 +21,7 @@ const getOneImageInfo = async (req, res, next) => {
   try {
     const result = await fetchUnsplashPhoto(unsplashId);
     if (!result.success) {
-      let status = result.status === 404 ? 404 : 502;
+      const status = result.status === 404 ? 404 : 502;
       let errorMessage;
 
       if (result.status === 403) {
@@ -56,33 +58,27 @@ const getImagesWithKeyword = async (req, res, next) => {
   }
 
   try {
-    const response = await fetch(
-      `${unsplashBaseUrl}/search/photos?page=${page}&query=${encodeURIComponent(q)}`,
-      {
-        headers
-      }
-    );
+    const result = await fetchImagesWithKeyword(page, q);
 
-    if (!response.ok) {
-      let status = response.status === 404 ? 404 : 502;
+    if (!result.success) {
+      const status = result.status === 404 ? 404 : 502;
       let errorMessage;
 
-      if (response.status === 403) {
+      if (result.status === 403) {
         errorMessage = '圖片服務目前較忙碌，請稍後再試';
       } else {
         errorMessage = 'Unsplash API error';
       }
       console.error(
         'Unsplash API error:',
-        response.status,
-        response.statusText
+        result.status,
+        result.unsplashMessage
       );
 
       return next(appError(status, errorMessage));
     }
 
-    const data = await response.json();
-    res.status(200).json({ status: 'success', data });
+    res.status(200).json({ status: 'success', data: result.data });
   } catch (error) {
     next(error);
   }

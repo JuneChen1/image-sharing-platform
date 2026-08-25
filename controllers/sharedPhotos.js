@@ -2,7 +2,7 @@ const {
   getUnsplashImageId,
   fetchUnsplashPhoto,
   getUnsplashImageInfo
-} = require('../utils/apiUtils');
+} = require('../utils/unsplashApiUtils');
 const {
   verifyUnsplashImageId,
   verifyCustomCategories,
