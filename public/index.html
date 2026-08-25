@@ -15,16 +15,24 @@
 
   <main class="container">
     <div class="d-flex gap-2 mb-4">
-      <input
-        type="text"
-        class="form-control"
-        placeholder="搜尋本站分享的照片（開發中）"
-        disabled
-      />
+      <div class="search-box">
+        <span class="search-box-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
+          </svg>
+        </span>
+        <input
+          type="text"
+          class="form-control"
+          placeholder="搜尋本站分享的照片（開發中）"
+          disabled
+        />
+      </div>
       <button type="button" class="btn btn-outline-dark text-nowrap" disabled>搜尋</button>
     </div>
+    <div id="category-bar" class="d-flex flex-wrap gap-2 mb-4"></div>
     <div id="status" class="text-muted mb-3"></div>
-    <div id="results" class="masonry-columns"></div>
+    <div id="results" class="masonry-grid"></div>
     <nav aria-label="Page navigation" class="mt-4">
       <ul id="pagination" class="pagination justify-content-center"></ul>
     </nav>

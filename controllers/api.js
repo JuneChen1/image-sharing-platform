@@ -46,13 +46,13 @@ const getOneImageInfo = async (req, res, next) => {
 const getImagesWithKeyword = async (req, res, next) => {
   const { q, page = 1 } = req.query;
   if (!isValidString(q)) {
-    next(appError(400, '搜尋關鍵字(q)為必填'));
+    next(appError(400, '搜尋關鍵字為必填'));
     return;
   }
 
   const pageNumber = Number(page);
   if (!isPositiveInteger(pageNumber)) {
-    next(appError(400, '頁數(page)只能是正整數'));
+    next(appError(400, '頁數只能是正整數'));
     return;
   }
 
@@ -86,17 +86,17 @@ const getImagesWithKeyword = async (req, res, next) => {
 const shareImageWithUrl = async (req, res, next) => {
   const { url, customCategories } = req.body;
   if (!isValidString(url)) {
-    next(appError(400, '網址(url)為必填'));
+    next(appError(400, '網址為必填'));
     return;
   }
   if (!verifyCustomCategories(customCategories)) {
-    next(appError(400, 'customCategories 格式錯誤'));
+    next(appError(400, '分類格式錯誤'));
     return;
   }
 
   const { success, imageId } = getUnsplashImageId(url);
   if (!success || !verifyUnsplashImageId(imageId)) {
-    next(appError(400, '網址錯誤，或無效的 unsplashId 格式'));
+    next(appError(400, '網址錯誤'));
     return;
   }
 

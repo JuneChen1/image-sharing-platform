@@ -4,8 +4,35 @@
   const statusEl = document.getElementById('status');
   const resultsEl = document.getElementById('results');
   const paginationEl = document.getElementById('pagination');
+  const categoryBarEl = document.getElementById('category-bar');
 
   const LIMIT = 20;
+  const CARD_TEXT_HEIGHT = 100;
+  let currentCategory = undefined;
+  let currentPhotos = [];
+
+  function setStatus(text, isError) {
+    statusEl.textContent = text;
+    statusEl.classList.toggle('text-danger', isError);
+    statusEl.classList.toggle('fw-bold', isError);
+    statusEl.classList.toggle('text-muted', !isError);
+  }
+
+  categoryBarEl.addEventListener('click', async (event) => {
+    const button = event.target.closest('button[data-category]');
+    if (!button || button.classList.contains('active')) return;
+
+    currentCategory = button.dataset.category || undefined;
+    renderCategoryBarActive();
+
+    setStatus('載入中...', false);
+    try {
+      await fetchAndRenderPhotos(1);
+      setStatus('', false);
+    } catch (error) {
+      setStatus(error.message || '連線錯誤，請確認伺服器是否啟動', true);
+    }
+  });
 
   paginationEl.addEventListener('click', async (event) => {
     const link = event.target.closest('a[data-page]');
@@ -18,20 +45,75 @@
     try {
       await fetchAndRenderPhotos(Number(link.dataset.page));
     } catch (error) {
-      statusEl.textContent = error.message || '連線錯誤，請確認伺服器是否啟動';
+      setStatus(error.message || '連線錯誤，請確認伺服器是否啟動', true);
     }
   });
 
-  statusEl.textContent = '載入中...';
+  window.addEventListener(
+    'resize',
+    debounce(() => {
+      if (currentPhotos.length > 0) {
+        renderMasonry(currentPhotos);
+      }
+    }, 200)
+  );
+
+  setStatus('載入中...', false);
   try {
+    await loadCategories();
     await fetchAndRenderPhotos(1);
-    statusEl.textContent = '';
+    setStatus('', false);
   } catch (error) {
-    statusEl.textContent = error.message || '連線錯誤，請確認伺服器是否啟動';
+    setStatus(error.message || '連線錯誤，請確認伺服器是否啟動', true);
+  }
+
+  function debounce(fn, delay) {
+    let timeoutId;
+    return (...args) => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => fn(...args), delay);
+    };
+  }
+
+  async function loadCategories() {
+    const response = await fetch('/api/v1/categories');
+    const body = await response.json();
+
+    if (!response.ok) {
+      throw new Error(body.message);
+    }
+
+    categoryBarEl.innerHTML = [{ name: '全部' }, ...body.data]
+      .map(
+        (category) => `
+          <button
+            type="button"
+            class="btn btn-sm ${category.name === '全部' ? 'btn-dark active' : 'btn-outline-dark'}"
+            data-category="${category.name === '全部' ? '' : category.name}"
+          >
+            ${category.name}
+          </button>
+        `
+      )
+      .join('');
+  }
+
+  function renderCategoryBarActive() {
+    categoryBarEl.querySelectorAll('button[data-category]').forEach((button) => {
+      const isActive = (button.dataset.category || undefined) === currentCategory;
+      button.classList.toggle('active', isActive);
+      button.classList.toggle('btn-dark', isActive);
+      button.classList.toggle('btn-outline-dark', !isActive);
+    });
   }
 
   async function fetchAndRenderPhotos(page) {
-    const response = await fetch(`/api/v1/shared-photos?page=${page}&limit=${LIMIT}`);
+    const categoryParam = currentCategory
+      ? `&category=${encodeURIComponent(currentCategory)}`
+      : '';
+    const response = await fetch(
+      `/api/v1/shared-photos?page=${page}&limit=${LIMIT}${categoryParam}`
+    );
     const body = await response.json();
 
     if (!response.ok) {
@@ -41,13 +123,54 @@
     if (body.data.length === 0 && page === 1) {
       resultsEl.innerHTML = '';
       paginationEl.innerHTML = '';
-      statusEl.textContent = '目前尚無分享照片，敬請期待！';
+      setStatus('目前尚無分享照片，敬請期待！', false);
       return;
     }
 
-    resultsEl.innerHTML = body.data.map(renderPhotoCard).join('');
+    currentPhotos = await Promise.all(body.data.map(withDimensions));
+    renderMasonry(currentPhotos);
     const totalPages = Math.ceil(body.pagination.total / body.pagination.limit);
     renderPagination(page, totalPages);
+  }
+
+  function withDimensions(photo) {
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () =>
+        resolve({ ...photo, width: img.naturalWidth, height: img.naturalHeight });
+      img.onerror = () => resolve({ ...photo, width: 4, height: 3 });
+      img.src = photo.image_url;
+    });
+  }
+
+  function getColumnCount() {
+    return window.innerWidth >= 768 ? 4 : 2;
+  }
+
+  function renderMasonry(photos) {
+    const columnCount = getColumnCount();
+    const columnWidth = resultsEl.clientWidth / columnCount;
+    const columns = Array.from({ length: columnCount }, () => ({
+      height: 0,
+      photos: []
+    }));
+
+    photos.forEach((photo) => {
+      const estimatedHeight =
+        (columnWidth * photo.height) / photo.width + CARD_TEXT_HEIGHT;
+      const shortestColumn = columns.reduce((shortest, column) =>
+        column.height < shortest.height ? column : shortest
+      );
+      shortestColumn.photos.push(photo);
+      shortestColumn.height += estimatedHeight;
+    });
+
+    resultsEl.innerHTML = columns
+      .map(
+        (column) =>
+          `<div class="masonry-column">${column.photos.map(renderPhotoCard).join('')}</div>`
+      )
+      .join('');
   }
 
   function renderPagination(currentPage, totalPages) {

@@ -11,6 +11,13 @@
 
   let categories = [];
 
+  function setStatus(text, isError) {
+    shareStatusEl.textContent = text;
+    shareStatusEl.classList.toggle('text-danger', isError);
+    shareStatusEl.classList.toggle('fw-bold', isError);
+    shareStatusEl.classList.toggle('text-muted', !isError);
+  }
+
   function renderCategories() {
     categoryListEl.innerHTML = categories
       .map(
@@ -49,7 +56,7 @@
 
   shareModalEl.addEventListener('hidden.bs.modal', () => {
     shareForm.reset();
-    shareStatusEl.textContent = '';
+    setStatus('', false);
     categories = [];
     renderCategories();
   });
@@ -60,11 +67,11 @@
     if (!url) return;
 
     if (categories.length === 0) {
-      shareStatusEl.textContent = '請至少選擇一個分類';
+      setStatus('請至少選擇一個分類', true);
       return;
     }
 
-    shareStatusEl.textContent = '分享中...';
+    setStatus('分享中...', false);
 
     try {
       const response = await fetch('/api/v1/shared-photos', {
@@ -74,9 +81,16 @@
       });
       const body = await response.json();
 
-      shareStatusEl.textContent = response.ok ? '分享成功！' : body.message || '分享失敗';
+      if (response.ok) {
+        shareInput.value = '';
+        categories = [];
+        renderCategories();
+        setStatus('分享成功！', false);
+      } else {
+        setStatus(body.message || '分享失敗', true);
+      }
     } catch (error) {
-      shareStatusEl.textContent = '連線錯誤，請確認伺服器是否啟動';
+      setStatus('連線錯誤，請確認伺服器是否啟動', true);
     }
   });
 

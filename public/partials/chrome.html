@@ -1,6 +1,6 @@
 <nav class="navbar navbar-dark bg-dark mb-4">
   <div class="container">
-    <a class="navbar-brand mb-0 h1 text-decoration-none" href="/">📸 圖個方便 | PicShare</a>
+    <a class="navbar-brand mb-0 h1 text-decoration-none" href="/">圖個方便 | PicShare</a>
     <div>
       <button
         type="button"
@@ -8,7 +8,7 @@
         data-bs-toggle="modal"
         data-bs-target="#shareModal"
       >
-        分享
+        分享照片
       </button>
       <button
         type="button"
@@ -32,13 +32,20 @@
       </div>
       <form id="nav-search-form">
         <div class="modal-body">
-          <input
-            type="text"
-            id="nav-search-input"
-            class="form-control"
-            placeholder="輸入關鍵字搜尋 Unsplash 圖片，例如 Long-tailed Tit"
-            required
-          />
+          <div class="search-box">
+            <span class="search-box-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
+              </svg>
+            </span>
+            <input
+              type="text"
+              id="nav-search-input"
+              class="form-control"
+              placeholder="輸入關鍵字搜尋 Unsplash 圖片，例如 Long-tailed Tit"
+              required
+            />
+          </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>

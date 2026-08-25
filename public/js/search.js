@@ -12,18 +12,25 @@
   const MAX_PAGES = 20;
   const CARD_TEXT_HEIGHT = 100;
 
+  function setStatus(text, isError) {
+    statusEl.textContent = text;
+    statusEl.classList.toggle('text-danger', isError);
+    statusEl.classList.toggle('fw-bold', isError);
+    statusEl.classList.toggle('text-muted', !isError);
+  }
+
   form.addEventListener('submit', async (event) => {
     event.preventDefault();
     const query = input.value.trim();
     if (!query) return;
 
-    statusEl.textContent = '搜尋中...';
+    setStatus('搜尋中...', false);
 
     try {
       await fetchAndRenderPhotos(query, 1);
-      statusEl.textContent = '';
+      setStatus('', false);
     } catch (error) {
-      statusEl.textContent = error.message || '連線錯誤，請確認伺服器是否啟動';
+      setStatus(error.message || '連線錯誤，請確認伺服器是否啟動', true);
     }
   });
 
@@ -38,7 +45,7 @@
     try {
       await fetchAndRenderPhotos(currentQuery, Number(link.dataset.page));
     } catch (error) {
-      statusEl.textContent = error.message || '連線錯誤，請確認伺服器是否啟動';
+      setStatus(error.message || '連線錯誤，請確認伺服器是否啟動', true);
     }
   });
 
@@ -51,12 +58,12 @@
   const initialQuery = new URLSearchParams(window.location.search).get('q');
   if (initialQuery) {
     input.value = initialQuery;
-    statusEl.textContent = '搜尋中...';
+    setStatus('搜尋中...', false);
     try {
       await fetchAndRenderPhotos(initialQuery, 1);
-      statusEl.textContent = '';
+      setStatus('', false);
     } catch (error) {
-      statusEl.textContent = error.message || '連線錯誤，請確認伺服器是否啟動';
+      setStatus(error.message || '連線錯誤，請確認伺服器是否啟動', true);
     }
   }
 
