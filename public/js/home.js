@@ -5,10 +5,13 @@
   const resultsEl = document.getElementById('results');
   const paginationEl = document.getElementById('pagination');
   const categoryBarEl = document.getElementById('category-bar');
+  const searchFormEl = document.getElementById('home-search-form');
+  const searchInputEl = document.getElementById('home-search-input');
 
   const LIMIT = 20;
   const CARD_TEXT_HEIGHT = 100;
   let currentCategory = undefined;
+  let currentQuery = '';
   let currentPhotos = [];
 
   function setStatus(text, isError) {
@@ -17,6 +20,18 @@
     statusEl.classList.toggle('fw-bold', isError);
     statusEl.classList.toggle('text-muted', !isError);
   }
+
+  searchFormEl.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    currentQuery = searchInputEl.value.trim();
+
+    setStatus('搜尋中...', false);
+    try {
+      await fetchAndRenderPhotos(1);
+    } catch (error) {
+      setStatus(error.message || '連線錯誤，請確認伺服器是否啟動', true);
+    }
+  });
 
   categoryBarEl.addEventListener('click', async (event) => {
     const button = event.target.closest('button[data-category]');
@@ -28,7 +43,6 @@
     setStatus('載入中...', false);
     try {
       await fetchAndRenderPhotos(1);
-      setStatus('', false);
     } catch (error) {
       setStatus(error.message || '連線錯誤，請確認伺服器是否啟動', true);
     }
@@ -45,7 +59,8 @@
       imageUrl: photo.image_url,
       photographerName: photo.photographer_name,
       photographerUrl: photo.photographer_url,
-      downloadUrl: photo.unsplash_page_url
+      downloadUrl: photo.unsplash_page_url,
+      categories: photo.categories
     });
   });
 
@@ -77,7 +92,6 @@
   try {
     await loadCategories();
     await fetchAndRenderPhotos(1);
-    setStatus('', false);
   } catch (error) {
     setStatus(error.message || '連線錯誤，請確認伺服器是否啟動', true);
   }
@@ -126,8 +140,11 @@
     const categoryParam = currentCategory
       ? `&category=${encodeURIComponent(currentCategory)}`
       : '';
+    const queryParam = currentQuery
+      ? `&q=${encodeURIComponent(currentQuery)}`
+      : '';
     const response = await fetch(
-      `/api/v1/shared-photos?page=${page}&limit=${LIMIT}${categoryParam}`
+      `/api/v1/shared-photos?page=${page}&limit=${LIMIT}${categoryParam}${queryParam}`
     );
     const body = await response.json();
 
@@ -138,7 +155,12 @@
     if (body.data.length === 0 && page === 1) {
       resultsEl.innerHTML = '';
       paginationEl.innerHTML = '';
-      setStatus('目前尚無分享照片，敬請期待！', false);
+      setStatus(
+        currentCategory || currentQuery
+          ? '找不到符合條件的照片'
+          : '目前尚無分享照片，敬請期待！',
+        false
+      );
       return;
     }
 
@@ -146,6 +168,7 @@
     renderMasonry(currentPhotos);
     const totalPages = Math.ceil(body.pagination.total / body.pagination.limit);
     renderPagination(page, totalPages);
+    setStatus('', false);
   }
 
   function withDimensions(photo) {

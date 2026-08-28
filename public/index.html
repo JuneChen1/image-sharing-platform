@@ -14,7 +14,7 @@
   <div data-include="/partials/chrome.html"></div>
 
   <main class="container">
-    <div class="d-flex gap-2 mb-4">
+    <form id="home-search-form" class="d-flex gap-2 mb-4">
       <div class="search-box">
         <span class="search-box-icon">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
@@ -23,13 +23,13 @@
         </span>
         <input
           type="text"
+          id="home-search-input"
           class="form-control"
-          placeholder="搜尋本站分享的照片（開發中）"
-          disabled
+          placeholder="搜尋本站分享的照片（攝影師或分類名稱）"
         />
       </div>
-      <button type="button" class="btn btn-outline-dark text-nowrap" disabled>搜尋</button>
-    </div>
+      <button type="submit" class="btn btn-outline-dark text-nowrap">搜尋</button>
+    </form>
     <div id="category-bar" class="d-flex flex-wrap gap-2 mb-4"></div>
     <div id="status" class="text-muted mb-3"></div>
     <div id="results" class="masonry-grid"></div>

@@ -93,6 +93,7 @@ const getSharedImages = async (req, res, next) => {
   const limitNumber =
     req.query.limit === undefined ? 20 : Number(req.query.limit);
   const category = req.query.category;
+  const q = req.query.q;
 
   if (!isPositiveInteger(pageNumber) || !isPositiveInteger(limitNumber)) {
     return next(appError(400, '頁數(page)和每頁筆數(limit)只能是正整數'));
@@ -102,30 +103,73 @@ const getSharedImages = async (req, res, next) => {
     return next(appError(400, '每頁筆數(limit)不能大於100'));
   }
 
+  const skip = (pageNumber - 1) * limitNumber;
+  const take = limitNumber;
+
   try {
     let data, total;
-    if (category === undefined) {
-      const sharePhotosRepo = dataSource.getRepository('SharedPhotos');
+    const sharePhotosRepo = dataSource.getRepository('SharedPhotos');
+    if (!category && !q) {
       [data, total] = await sharePhotosRepo.findAndCount({
         where: { canceled_at: IsNull() },
-        skip: (pageNumber - 1) * limitNumber,
-        take: limitNumber,
+        skip,
+        take,
         order: { created_at: 'DESC' }
       });
     } else {
-      const relationRepo = dataSource.getRepository('SharedPhotoCategories');
-      const [plainData, count] = await relationRepo.findAndCount({
-        relations: { categories: true, sharePhotos: true },
-        where: {
-          sharePhotos: { canceled_at: IsNull() },
-          categories: { name: category }
-        },
-        skip: (pageNumber - 1) * limitNumber,
-        take: limitNumber,
-        order: { sharePhotos: { created_at: 'DESC' } }
+      const params = [];
+      const conditions = [];
+      if (category) {
+        params.push(category);
+        conditions.push('AND c.name = $1');
+      }
+      if (q) {
+        params.push(q);
+        conditions.push(`
+          AND (c.name ILIKE '%' || $${params.length} || '%' OR sp.photographer_name ILIKE '%' || $${params.length} || '%')
+        `);
+      }
+
+      const sqlQuery = `
+        SELECT sp.* FROM shared_photos sp
+        JOIN shared_photo_categories AS spc
+          ON spc.shared_photo_id = sp.id
+        JOIN categories AS c
+          ON spc.category_id = c.id
+        WHERE canceled_at IS NULL
+          ${conditions.join(' ')}
+        ORDER BY sp.created_at DESC
+        `;
+
+      const result = await dataSource.query(sqlQuery, params);
+
+      total = result.length;
+      data = result.slice(skip, skip + take);
+    }
+
+    if (data.length > 0) {
+      const linkRepo = dataSource.getRepository('SharedPhotoCategories');
+      const links = await linkRepo.find({
+        where: { sharePhotos: { id: In(data.map((photo) => photo.id)) } },
+        relations: { categories: true, sharePhotos: true }
       });
-      data = plainData.map((item) => item.sharePhotos);
-      total = count;
+
+      const categoriesByPhotoId = {};
+      links.forEach((link) => {
+        const photoId = link.sharePhotos.id;
+        if (!categoriesByPhotoId[photoId]) {
+          categoriesByPhotoId[photoId] = [link.categories.name];
+          return;
+        }
+        categoriesByPhotoId[photoId].push(link.categories.name);
+      });
+
+      data = data.map((photo) => {
+        return {
+          ...photo,
+          categories: categoriesByPhotoId[photo.id] || []
+        };
+      });
     }
 
     res.status(200).json({
