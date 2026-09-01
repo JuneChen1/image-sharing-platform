@@ -1,5 +1,3 @@
-const { unsplashBaseUrl, headers } = require('../config/constants');
-
 function verifyUnsplashImageId(unsplashId) {
   const unsplashIdPattern = /^[\w-]{5,20}$/;
   return unsplashIdPattern.test(unsplashId);
@@ -32,10 +30,24 @@ function isValidUUID(value) {
   );
 }
 
+function isValidEmail(email) {
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+  return emailRegex.test(email);
+}
+
+function isValidPassword(password) {
+  const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d).{8,}$/;
+
+  return typeof password === 'string' && passwordRegex.test(password);
+}
+
 module.exports = {
   verifyUnsplashImageId,
   verifyCustomCategories,
   isPositiveInteger,
   isValidString,
-  isValidUUID
+  isValidUUID,
+  isValidEmail,
+  isValidPassword
 };
