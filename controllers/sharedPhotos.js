@@ -30,6 +30,7 @@ const shareImageWithUrl = async (req, res, next) => {
     next(appError(400, '網址錯誤'));
     return;
   }
+  const user = req.user;
 
   try {
     const result = await fetchUnsplashPhoto(imageId);
@@ -74,7 +75,10 @@ const shareImageWithUrl = async (req, res, next) => {
         createdCategories = await categoriesRepo.save(notExist);
       }
 
-      const savedPhoto = await sharePhotosRepo.save(shareInfo);
+      const savedPhoto = await sharePhotosRepo.save({
+        ...shareInfo,
+        user: { id: user.id }
+      });
 
       const links = [...foundCategories, ...createdCategories].map((category) =>
         joinRepo.create({ sharePhotos: savedPhoto, categories: category })
@@ -187,16 +191,18 @@ const cancelSharedPhoto = async (req, res, next) => {
   if (!isValidUUID(sharedId)) {
     return next(appError(400, 'ID格式錯誤'));
   }
+  const user = req.user;
 
   try {
     const sharePhotosRepo = dataSource.getRepository('SharedPhotos');
     const data = await sharePhotosRepo.findOneBy({
       id: sharedId,
-      canceled_at: IsNull()
+      canceled_at: IsNull(),
+      user: { id: user.id }
     });
 
     if (!data) {
-      return next(appError(404, '查無此ID'));
+      return next(appError(404, '查無此資料'));
     }
 
     await sharePhotosRepo.save({
