@@ -1,10 +1,12 @@
+const bcrypt = require('bcrypt');
 const { dataSource } = require('./data-source');
 const Categories = require('../entities/categories');
 const SharedPhotos = require('../entities/shared_photos');
 const SharedPhotoCategories = require('../entities/shared_photo_categories');
+const Users = require('../entities/users');
 
 async function clearAll() {
-  const ORDER = [SharedPhotoCategories, SharedPhotos, Categories];
+  const ORDER = [SharedPhotoCategories, SharedPhotos, Categories, Users];
   for (const name of ORDER) {
     if (dataSource.hasMetadata(name)) {
       await dataSource.createQueryBuilder().delete().from(name).execute();
@@ -34,6 +36,13 @@ async function main() {
       { name: 'Travel' }
     ]);
 
+  const usersRepo = dataSource.getRepository(Users);
+  const hashedPassword = await bcrypt.hash('test1234', 10);
+  const [alice, bob] = await usersRepo.save([
+    { name: 'Alice', email: 'alice@example.com', password: hashedPassword },
+    { name: 'Bob', email: 'bob@example.com', password: hashedPassword }
+  ]);
+
   const savedPhotos = await sharedPhotosRepo.save([
     {
       unsplash_id: 'gKXKBY-C-Dk',
@@ -42,7 +51,8 @@ async function main() {
       image_url:
         'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
       photographer_name: 'madhatterzone',
-      photographer_url: 'https://unsplash.com/@madhatterzone'
+      photographer_url: 'https://unsplash.com/@madhatterzone',
+      user: alice
     },
     {
       unsplash_id: '75715CVEJhI',
@@ -51,7 +61,8 @@ async function main() {
       image_url:
         'https://images.unsplash.com/photo-1573865526739-10659fec78a5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
       photographer_name: 'sadmax',
-      photographer_url: 'https://unsplash.com/@sadmax'
+      photographer_url: 'https://unsplash.com/@sadmax',
+      user: bob
     },
     {
       unsplash_id: 'yihlaRCCvd4',
@@ -60,7 +71,8 @@ async function main() {
       image_url:
         'https://images.unsplash.com/photo-1530281700549-e82e7bf110d6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
       photographer_name: 'o5ky',
-      photographer_url: 'https://unsplash.com/@o5ky'
+      photographer_url: 'https://unsplash.com/@o5ky',
+      user: alice
     },
     {
       unsplash_id: 'm_uSWBJWr0s',
@@ -69,7 +81,8 @@ async function main() {
       image_url:
         'https://images.unsplash.com/photo-1621847468516-1ed5d0df56fe?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
       photographer_name: 'daymnous',
-      photographer_url: 'https://unsplash.com/@daymnous'
+      photographer_url: 'https://unsplash.com/@daymnous',
+      user: bob
     },
     {
       unsplash_id: 'Joo3UBw789Q',
@@ -78,7 +91,8 @@ async function main() {
       image_url:
         'https://images.unsplash.com/photo-1617634667039-8e4cb277ab46?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
       photographer_name: 'danangele',
-      photographer_url: 'https://unsplash.com/@danangele'
+      photographer_url: 'https://unsplash.com/@danangele',
+      user: alice
     },
     {
       unsplash_id: 'kcA-c3f_3FE',
@@ -87,7 +101,8 @@ async function main() {
       image_url:
         'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
       photographer_name: 'pwign',
-      photographer_url: 'https://unsplash.com/@pwign'
+      photographer_url: 'https://unsplash.com/@pwign',
+      user: bob
     },
     {
       unsplash_id: 'MqT0asuoIcU',
@@ -96,7 +111,8 @@ async function main() {
       image_url:
         'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
       photographer_name: 'briewilly',
-      photographer_url: 'https://unsplash.com/@briewilly'
+      photographer_url: 'https://unsplash.com/@briewilly',
+      user: alice
     },
     {
       unsplash_id: 'PhYq704ffdA',
@@ -105,7 +121,8 @@ async function main() {
       image_url:
         'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
       photographer_name: 'seanpollock',
-      photographer_url: 'https://unsplash.com/@seanpollock'
+      photographer_url: 'https://unsplash.com/@seanpollock',
+      user: bob
     },
     {
       unsplash_id: 'K67sBVqLLuw',
@@ -114,7 +131,8 @@ async function main() {
       image_url:
         'https://images.unsplash.com/photo-1527576539890-dfa815648363?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
       photographer_name: 'joakimnadell',
-      photographer_url: 'https://unsplash.com/@joakimnadell'
+      photographer_url: 'https://unsplash.com/@joakimnadell',
+      user: alice
     },
     {
       unsplash_id: '72CrKMqbwkM',
@@ -123,7 +141,8 @@ async function main() {
       image_url:
         'https://images.unsplash.com/photo-1785788684002-f500e756047d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
       photographer_name: 'jonasdegener',
-      photographer_url: 'https://unsplash.com/@jonasdegener'
+      photographer_url: 'https://unsplash.com/@jonasdegener',
+      user: bob
     },
     {
       unsplash_id: 'xSiQBSq-I0M',
@@ -132,7 +151,8 @@ async function main() {
       image_url:
         'https://images.unsplash.com/photo-1649972904349-6e44c42644a7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
       photographer_name: 'surface',
-      photographer_url: 'https://unsplash.com/@surface'
+      photographer_url: 'https://unsplash.com/@surface',
+      user: alice
     },
     {
       unsplash_id: 'Q1p7bh3SHj8',
@@ -141,7 +161,8 @@ async function main() {
       image_url:
         'https://images.unsplash.com/photo-1451187580459-43490279c0fa?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
       photographer_name: 'nasa',
-      photographer_url: 'https://unsplash.com/@nasa'
+      photographer_url: 'https://unsplash.com/@nasa',
+      user: bob
     },
     {
       unsplash_id: 'xfngap_DToE',
@@ -150,7 +171,8 @@ async function main() {
       image_url:
         'https://images.unsplash.com/photo-1554629947-334ff61d85dc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
       photographer_name: 'mvds',
-      photographer_url: 'https://unsplash.com/@mvds'
+      photographer_url: 'https://unsplash.com/@mvds',
+      user: alice
     },
     {
       unsplash_id: 'eUFfY6cwjSU',
@@ -159,7 +181,8 @@ async function main() {
       image_url:
         'https://images.unsplash.com/photo-1540979388789-6cee28a1cdc9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
       photographer_name: 'borisbaldinger',
-      photographer_url: 'https://unsplash.com/@borisbaldinger'
+      photographer_url: 'https://unsplash.com/@borisbaldinger',
+      user: bob
     },
     {
       unsplash_id: 'zEdCT0qrodE',
@@ -168,7 +191,8 @@ async function main() {
       image_url:
         'https://images.unsplash.com/photo-1556742526-795a8eac090e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
       photographer_name: 'nate_dumlao',
-      photographer_url: 'https://unsplash.com/@nate_dumlao'
+      photographer_url: 'https://unsplash.com/@nate_dumlao',
+      user: alice
     },
     {
       unsplash_id: 'zUNs99PGDg0',
@@ -177,7 +201,8 @@ async function main() {
       image_url:
         'https://images.unsplash.com/photo-1509042239860-f550ce710b93?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
       photographer_name: 'nate_dumlao',
-      photographer_url: 'https://unsplash.com/@nate_dumlao'
+      photographer_url: 'https://unsplash.com/@nate_dumlao',
+      user: bob
     }
   ]);
 
