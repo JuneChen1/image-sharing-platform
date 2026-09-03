@@ -76,7 +76,10 @@
     try {
       const response = await fetch('/api/v1/shared-photos', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...window.auth.getAuthHeader()
+        },
         body: JSON.stringify({ url, customCategories: categories })
       });
       const body = await response.json();
@@ -86,6 +89,9 @@
         categories = [];
         renderCategories();
         setStatus('分享成功！', false);
+      } else if (response.status === 401) {
+        window.auth.clearSession();
+        window.location.href = '/auth.html';
       } else {
         setStatus(body.message || '分享失敗', true);
       }

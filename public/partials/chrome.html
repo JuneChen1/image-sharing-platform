@@ -1,16 +1,35 @@
 <nav class="navbar navbar-dark bg-dark mb-4">
-  <div class="container">
-    <a class="navbar-brand mb-0 h1 text-decoration-none" href="/">圖個方便 | PicShare</a>
-    <div>
+  <div class="container d-flex align-items-center flex-wrap gap-2">
+    <a class="navbar-brand mb-0 h1 text-decoration-none me-auto" href="/">圖個方便 | PicShare</a>
+    <div class="d-flex align-items-center gap-2">
       <button
         type="button"
-        class="btn btn-outline-light me-2"
+        id="share-btn"
+        class="btn btn-outline-light d-none"
         data-bs-toggle="modal"
         data-bs-target="#shareModal"
       >
         分享照片
       </button>
-      <a href="/search.html" class="btn btn-outline-light">從 Unsplash 搜尋</a>
+      <a href="/search.html" id="search-link" class="btn btn-outline-light">從 Unsplash 搜尋</a>
+      <div id="auth-guest" class="d-flex gap-2">
+        <a href="/auth.html" class="btn btn-outline-light">登入</a>
+        <a href="/auth.html?tab=register" class="btn btn-light">註冊</a>
+      </div>
+      <div id="auth-user" class="d-none dropdown">
+        <button
+          type="button"
+          id="auth-user-menu-btn"
+          class="btn btn-outline-light dropdown-toggle"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+        >
+          <span id="auth-user-name"></span>
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="auth-user-menu-btn">
+          <li><button type="button" id="logout-btn" class="dropdown-item">登出</button></li>
+        </ul>
+      </div>
     </div>
   </div>
 </nav>
