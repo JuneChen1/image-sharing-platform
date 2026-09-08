@@ -1,10 +1,10 @@
 const express = require('express');
 const apiController = require('../controllers/api');
-const limiter = require('../middlewares/limiter');
+const { shareLimiter } = require('../middlewares/limiter');
 const router = express.Router();
 
-router.get('/photos/:unsplashId', limiter, apiController.getOneImageInfo);
-router.get('/photos', limiter, apiController.getImagesWithKeyword);
+router.get('/photos/:unsplashId', shareLimiter, apiController.getOneImageInfo);
+router.get('/photos', shareLimiter, apiController.getImagesWithKeyword);
 
 router.get('/categories', apiController.getCategories);
 

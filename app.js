@@ -20,6 +20,7 @@ async function main() {
 
   const express = require('express');
   const cors = require('cors');
+  const { globalLimiter } = require('./middlewares/limiter');
   const healthRouter = require('./routes/health');
   const sharedPhotosRouter = require('./routes/sharedPhotos');
   const apiRouter = require('./routes/api');
@@ -30,6 +31,7 @@ async function main() {
   app.use(cors());
   app.use(express.json());
   app.use(express.static('public'));
+  app.use(globalLimiter);
 
   app.use('/health', healthRouter);
   app.use('/api/v1/shared-photos', sharedPhotosRouter);
