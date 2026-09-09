@@ -4,9 +4,18 @@ const Categories = require('../entities/categories');
 const SharedPhotos = require('../entities/shared_photos');
 const SharedPhotoCategories = require('../entities/shared_photo_categories');
 const Users = require('../entities/users');
+const Collections = require('../entities/collections');
+const Favorites = require('../entities/favorites');
 
 async function clearAll() {
-  const ORDER = [SharedPhotoCategories, SharedPhotos, Categories, Users];
+  const ORDER = [
+    Favorites,
+    Collections,
+    SharedPhotoCategories,
+    SharedPhotos,
+    Categories,
+    Users
+  ];
   for (const name of ORDER) {
     if (dataSource.hasMetadata(name)) {
       await dataSource.createQueryBuilder().delete().from(name).execute();
