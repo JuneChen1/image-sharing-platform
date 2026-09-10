@@ -25,6 +25,7 @@ async function main() {
   const sharedPhotosRouter = require('./routes/sharedPhotos');
   const apiRouter = require('./routes/api');
   const authRouter = require('./routes/auth');
+  const collectionsRouter = require('./routes/collections');
 
   const app = express();
 
@@ -36,6 +37,7 @@ async function main() {
   app.use('/health', healthRouter);
   app.use('/api/v1/shared-photos', sharedPhotosRouter);
   app.use('/api/v1/auth', authRouter);
+  app.use('/api/v1/users/me/collections', collectionsRouter);
   app.use('/api/v1', apiRouter);
 
   app.use((req, res) => {
