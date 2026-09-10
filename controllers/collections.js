@@ -87,6 +87,35 @@ const collectionsController = {
     } catch (error) {
       next(error);
     }
+  },
+  async getPhotosInCollection(req, res, next) {
+    const { collectionId } = req.params;
+    if (!isValidUUID(collectionId))
+      return next(appError(400, 'collection id 格式錯誤'));
+    try {
+      const collectionsRepo = dataSource.getRepository('Collections');
+      const collection = await collectionsRepo.findOneBy({
+        id: collectionId,
+        user: { id: req.user.id }
+      });
+
+      if (!collection) return next(appError(404, '查無此資料'));
+
+      const favoritesRepo = dataSource.getRepository('Favorites');
+      const photos = await favoritesRepo.find({
+        where: {
+          user: { id: req.user.id },
+          collections: { id: collectionId },
+          sharedPhotos: { canceled_at: IsNull() }
+        },
+        relations: { sharedPhotos: true }
+      });
+
+      const data = photos.map((item) => item.sharedPhotos);
+      res.status(200).json({ status: 'success', data });
+    } catch (error) {
+      next(error);
+    }
   }
 };
 

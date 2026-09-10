@@ -3,6 +3,11 @@ const collectionsController = require('../controllers/collections');
 const isAuth = require('../middlewares/isAuth');
 const router = express.Router();
 
+router.get(
+  '/:collectionId/favorites',
+  isAuth,
+  collectionsController.getPhotosInCollection
+);
 router.post(
   '/:collectionId/favorites',
   isAuth,
