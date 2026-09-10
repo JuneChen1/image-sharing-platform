@@ -33,7 +33,16 @@ const shareImageWithUrl = async (req, res, next) => {
   const user = req.user;
 
   try {
+    const sharePhotosRepo = dataSource.getRepository('SharedPhotos');
+    const existing = await sharePhotosRepo.findOneBy({
+      unsplash_id: imageId,
+      user: { id: user.id }
+    });
+
+    if (existing) return next(appError(409, '你已經分享過這張照片了'));
+
     const result = await fetchUnsplashPhoto(imageId);
+
     if (!result.success) {
       const status = result.status === 404 ? 404 : 502;
       console.error(
@@ -42,8 +51,7 @@ const shareImageWithUrl = async (req, res, next) => {
         result.unsplashMessage
       );
 
-      next(appError(status, 'Unsplash API error'));
-      return;
+      return next(appError(status, 'Unsplash API error'));
     }
 
     const uniqueNames = [
@@ -72,13 +80,29 @@ const shareImageWithUrl = async (req, res, next) => {
 
       let createdCategories = [];
       if (notExist.length > 0) {
-        createdCategories = await categoriesRepo.save(notExist);
+        createdCategories = await categoriesRepo.save(notExist).catch((err) => {
+          // 避免使用者連點兩次分享按鈕產生的 race condition
+          if (err.code === '23505') {
+            return categoriesRepo.find({
+              where: { name: In(notExist.map((n) => n.name)) }
+            });
+          }
+          throw err;
+        });
       }
 
-      const savedPhoto = await sharePhotosRepo.save({
-        ...shareInfo,
-        user: { id: user.id }
-      });
+      const savedPhoto = await sharePhotosRepo
+        .save({
+          ...shareInfo,
+          user: { id: user.id }
+        })
+        .catch((err) => {
+          // 避免使用者連點兩次分享按鈕產生的 race condition
+          if (err.code === '23505') {
+            throw appError(409, '你已經分享過這張照片了');
+          }
+          throw err;
+        });
 
       const links = [...foundCategories, ...createdCategories].map((category) =>
         joinRepo.create({ sharePhotos: savedPhoto, categories: category })
