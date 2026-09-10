@@ -8,7 +8,9 @@ function verifyCustomCategories(customCategories) {
     return false;
   }
 
-  const isValid = customCategories.every((name) => isValidString(name));
+  const isValid = customCategories.every(
+    (name) => isValidString(name) && name.length <= 100
+  );
 
   return isValid;
 }
