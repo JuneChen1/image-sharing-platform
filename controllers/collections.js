@@ -116,6 +116,29 @@ const collectionsController = {
     } catch (error) {
       next(error);
     }
+  },
+  async deletePhotoInCollection(req, res, next) {
+    const { collectionId, photoId } = req.params;
+    if (!isValidUUID(collectionId))
+      return next(appError(400, 'collection id 格式錯誤'));
+    if (!isValidUUID(photoId)) return next(appError(400, 'photo id 格式錯誤'));
+    try {
+      const favoritesRepo = dataSource.getRepository('Favorites');
+      const result = await favoritesRepo.delete({
+        collections: { id: collectionId },
+        sharedPhotos: { id: photoId },
+        user: { id: req.user.id }
+      });
+
+      if (result.affected === 0) return next(appError(404, '查無此資料'));
+
+      res.status(200).json({
+        status: 'success',
+        message: '刪除成功'
+      });
+    } catch (error) {
+      next(error);
+    }
   }
 };
 
