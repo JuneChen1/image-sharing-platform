@@ -4,6 +4,18 @@ const appError = require('../utils/appError');
 const { dataSource } = require('../db/data-source');
 
 const collectionsController = {
+  async getCollections(req, res, next) {
+    try {
+      const collectionsRepo = dataSource.getRepository('Collections');
+      const data = await collectionsRepo.find({
+        where: { user: { id: req.user.id } }
+      });
+
+      res.status(200).json({ status: 'success', data });
+    } catch (error) {
+      next(error);
+    }
+  },
   async addCollection(req, res, next) {
     const { name } = req.body;
     if (!isValidString(name) || name.length > 100)

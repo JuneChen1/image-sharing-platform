@@ -20,6 +20,7 @@ router.post(
 );
 
 router.delete('/:collectionId', isAuth, collectionsController.deleteCollection);
+router.get('/', isAuth, collectionsController.getCollections);
 router.post('/', isAuth, collectionsController.addCollection);
 
 module.exports = router;
