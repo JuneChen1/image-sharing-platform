@@ -49,5 +49,11 @@ module.exports = new EntitySchema({
       joinColumn: { name: 'user_id' },
       nullable: false
     }
-  }
+  },
+  uniques: [
+    {
+      name: 'UQ_unsplash_id_user_pair',
+      columns: ['unsplash_id', 'user']
+    }
+  ]
 });
