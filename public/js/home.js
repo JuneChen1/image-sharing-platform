@@ -49,6 +49,12 @@
   });
 
   resultsEl.addEventListener('click', (event) => {
+    const collectBtn = event.target.closest('button[data-collect-id]');
+    if (collectBtn) {
+      window.openCollectModal(collectBtn.dataset.collectId);
+      return;
+    }
+
     const img = event.target.closest('img[data-photo-id]');
     if (!img) return;
 
@@ -60,7 +66,8 @@
       photographerName: photo.photographer_name,
       photographerUrl: photo.photographer_url,
       downloadUrl: photo.unsplash_page_url,
-      categories: photo.categories
+      categories: photo.categories,
+      collectId: photo.id
     });
   });
 
@@ -260,7 +267,14 @@
             Photo by
             <a href="${photo.photographer_url}" target="_blank" rel="noopener">${photo.photographer_name}</a>
           </p>
-          <a href="${photo.unsplash_page_url}" target="_blank" rel="noopener" class="btn btn-sm btn-outline-dark w-100">下載</a>
+          <div class="d-flex gap-2">
+            ${
+              window.auth.isLoggedIn()
+                ? `<button type="button" class="btn btn-sm btn-outline-dark" data-collect-id="${photo.id}">收藏</button>`
+                : ''
+            }
+            <a href="${photo.unsplash_page_url}" target="_blank" rel="noopener" class="btn btn-sm btn-outline-dark flex-grow-1">下載</a>
+          </div>
         </div>
       </div>
     `;
