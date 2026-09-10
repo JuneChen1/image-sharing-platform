@@ -37,7 +37,7 @@ module.exports = new EntitySchema({
   },
   uniques: [
     {
-      columns: ['user', 'sharedPhotos']
+      columns: ['user', 'collections', 'sharedPhotos']
     }
   ]
 });
