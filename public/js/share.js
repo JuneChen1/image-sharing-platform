@@ -5,11 +5,13 @@
   const shareInput = document.getElementById('share-input');
   const shareStatusEl = document.getElementById('share-status');
   const shareModalEl = document.getElementById('shareModal');
+  const shareSubmitBtn = document.getElementById('share-submit-btn');
   const categoryInput = document.getElementById('category-input');
   const categoryAddBtn = document.getElementById('category-add-btn');
   const categoryListEl = document.getElementById('category-list');
 
   let categories = [];
+  let isSubmitting = false;
 
   function setStatus(text, isError) {
     shareStatusEl.textContent = text;
@@ -63,6 +65,8 @@
 
   shareForm.addEventListener('submit', async (event) => {
     event.preventDefault();
+    if (isSubmitting) return;
+
     const url = shareInput.value.trim();
     if (!url) return;
 
@@ -71,6 +75,8 @@
       return;
     }
 
+    isSubmitting = true;
+    shareSubmitBtn.disabled = true;
     setStatus('分享中...', false);
 
     try {
@@ -97,6 +103,9 @@
       }
     } catch (error) {
       setStatus('連線錯誤，請確認伺服器是否啟動', true);
+    } finally {
+      isSubmitting = false;
+      shareSubmitBtn.disabled = false;
     }
   });
 
