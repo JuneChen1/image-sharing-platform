@@ -47,7 +47,7 @@ module.exports = new EntitySchema({
       type: 'many-to-one',
       target: 'Users',
       joinColumn: { name: 'user_id' },
-      nullable: true
+      nullable: false
     }
   }
 });
