@@ -139,11 +139,17 @@ const getSharedImages = async (req, res, next) => {
     let data, total;
     const sharePhotosRepo = dataSource.getRepository('SharedPhotos');
     if (!category && !q) {
-      [data, total] = await sharePhotosRepo.findAndCount({
+      let rawData;
+      [rawData, total] = await sharePhotosRepo.findAndCount({
+        relations: { user: true },
         skip,
         take,
         order: { created_at: 'DESC' }
       });
+      data = rawData.map(({ user, ...photo }) => ({
+        ...photo,
+        user_id: user.id
+      }));
     } else {
       const params = [];
       const conditions = [];
