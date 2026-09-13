@@ -17,7 +17,7 @@ module.exports = new EntitySchema({
       joinColumn: { name: 'category_id' },
       nullable: false
     },
-    sharePhotos: {
+    sharedPhotos: {
       type: 'many-to-one',
       target: 'SharedPhotos',
       joinColumn: { name: 'shared_photo_id' },
@@ -27,7 +27,7 @@ module.exports = new EntitySchema({
   uniques: [
     {
       name: 'UQ_shared_photo_categories_pair',
-      columns: ['categories', 'sharePhotos']
+      columns: ['categories', 'sharedPhotos']
     }
   ]
 });

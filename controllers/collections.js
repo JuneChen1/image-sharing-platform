@@ -1,4 +1,3 @@
-const { IsNull } = require('typeorm');
 const { isValidString, isValidUUID } = require('../utils/validUtils');
 const appError = require('../utils/appError');
 const { dataSource } = require('../db/data-source');
@@ -75,8 +74,7 @@ const collectionsController = {
 
       const sharePhotosRepo = dataSource.getRepository('SharedPhotos');
       const photo = await sharePhotosRepo.findOneBy({
-        id: photoId,
-        canceled_at: IsNull()
+        id: photoId
       });
 
       if (!photo) return next(appError(404, '查無此資料'));
@@ -117,8 +115,7 @@ const collectionsController = {
       const photos = await favoritesRepo.find({
         where: {
           user: { id: req.user.id },
-          collections: { id: collectionId },
-          sharedPhotos: { canceled_at: IsNull() }
+          collections: { id: collectionId }
         },
         relations: { sharedPhotos: true }
       });

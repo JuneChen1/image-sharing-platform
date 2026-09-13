@@ -105,7 +105,7 @@ const shareImageWithUrl = async (req, res, next) => {
         });
 
       const links = [...foundCategories, ...createdCategories].map((category) =>
-        joinRepo.create({ sharePhotos: savedPhoto, categories: category })
+        joinRepo.create({ sharedPhotos: savedPhoto, categories: category })
       );
       await joinRepo.save(links);
     });
@@ -139,7 +139,6 @@ const getSharedImages = async (req, res, next) => {
     const sharePhotosRepo = dataSource.getRepository('SharedPhotos');
     if (!category && !q) {
       [data, total] = await sharePhotosRepo.findAndCount({
-        where: { canceled_at: IsNull() },
         skip,
         take,
         order: { created_at: 'DESC' }
@@ -164,7 +163,7 @@ const getSharedImages = async (req, res, next) => {
           ON spc.shared_photo_id = sp.id
         JOIN categories AS c
           ON spc.category_id = c.id
-        WHERE canceled_at IS NULL
+        WHERE TRUE
           ${conditions.join(' ')}
         ORDER BY sp.created_at DESC
         `;
@@ -178,13 +177,13 @@ const getSharedImages = async (req, res, next) => {
     if (data.length > 0) {
       const linkRepo = dataSource.getRepository('SharedPhotoCategories');
       const links = await linkRepo.find({
-        where: { sharePhotos: { id: In(data.map((photo) => photo.id)) } },
-        relations: { categories: true, sharePhotos: true }
+        where: { sharedPhotos: { id: In(data.map((photo) => photo.id)) } },
+        relations: { categories: true, sharedPhotos: true }
       });
 
       const categoriesByPhotoId = {};
       links.forEach((link) => {
-        const photoId = link.sharePhotos.id;
+        const photoId = link.sharedPhotos.id;
         if (!categoriesByPhotoId[photoId]) {
           categoriesByPhotoId[photoId] = [link.categories.name];
           return;
@@ -221,7 +220,6 @@ const cancelSharedPhoto = async (req, res, next) => {
     const sharePhotosRepo = dataSource.getRepository('SharedPhotos');
     const data = await sharePhotosRepo.findOneBy({
       id: sharedId,
-      canceled_at: IsNull(),
       user: { id: user.id }
     });
 
@@ -229,9 +227,16 @@ const cancelSharedPhoto = async (req, res, next) => {
       return next(appError(404, '查無此資料'));
     }
 
-    await sharePhotosRepo.save({
-      ...data,
-      canceled_at: new Date()
+    await dataSource.transaction(async (manager) => {
+      await manager
+        .getRepository('SharedPhotoCategories')
+        .delete({ sharedPhotos: { id: data.id } });
+
+      await manager
+        .getRepository('Favorites')
+        .delete({ sharedPhotos: { id: data.id } });
+
+      await manager.getRepository('SharedPhotos').delete({ id: data.id });
     });
 
     res.status(200).json({
