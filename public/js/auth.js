@@ -10,6 +10,23 @@
     return localStorage.getItem(USER_NAME_KEY);
   }
 
+  function getUserId() {
+    const token = getToken();
+    if (!token) return null;
+    try {
+      const payload = token.split('.')[1];
+      const json = decodeURIComponent(
+        atob(payload.replace(/-/g, '+').replace(/_/g, '/'))
+          .split('')
+          .map((c) => '%' + c.charCodeAt(0).toString(16).padStart(2, '0'))
+          .join('')
+      );
+      return JSON.parse(json).id;
+    } catch (error) {
+      return null;
+    }
+  }
+
   function isLoggedIn() {
     return Boolean(getToken());
   }
@@ -32,6 +49,7 @@
   window.auth = {
     getToken,
     getUserName,
+    getUserId,
     isLoggedIn,
     setSession,
     clearSession,

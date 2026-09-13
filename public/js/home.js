@@ -48,10 +48,34 @@
     }
   });
 
-  resultsEl.addEventListener('click', (event) => {
+  resultsEl.addEventListener('click', async (event) => {
     const collectBtn = event.target.closest('button[data-collect-id]');
     if (collectBtn) {
       window.openCollectModal(collectBtn.dataset.collectId);
+      return;
+    }
+
+    const cancelBtn = event.target.closest('button[data-cancel-id]');
+    if (cancelBtn) {
+      if (!window.confirm('確定要取消分享這張照片嗎？此動作無法復原。')) return;
+
+      setStatus('取消中...', false);
+      try {
+        const response = await fetch(
+          `/api/v1/shared-photos/${cancelBtn.dataset.cancelId}`,
+          { method: 'DELETE', headers: window.auth.getAuthHeader() }
+        );
+        const body = await response.json();
+
+        if (!response.ok) {
+          setStatus(body.message || '取消分享失敗', true);
+          return;
+        }
+
+        await fetchAndRenderPhotos(1);
+      } catch (error) {
+        setStatus('連線錯誤，請確認伺服器是否啟動', true);
+      }
       return;
     }
 
@@ -275,6 +299,11 @@
             }
             <a href="${photo.unsplash_page_url}" target="_blank" rel="noopener" class="btn btn-sm btn-outline-dark flex-grow-1">下載</a>
           </div>
+          ${
+            photo.user_id && photo.user_id === window.auth.getUserId()
+              ? `<button type="button" class="btn btn-sm btn-outline-danger w-100 mt-2" data-cancel-id="${photo.id}">取消分享</button>`
+              : ''
+          }
         </div>
       </div>
     `;
