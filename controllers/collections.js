@@ -1,5 +1,6 @@
 const { isValidString, isValidUUID } = require('../utils/validUtils');
 const appError = require('../utils/appError');
+const { attachCategories } = require('../utils/sharedPhotosUtils');
 const { dataSource } = require('../db/data-source');
 
 const collectionsController = {
@@ -120,7 +121,9 @@ const collectionsController = {
         relations: { sharedPhotos: true }
       });
 
-      const data = photos.map((item) => item.sharedPhotos);
+      const rawData = photos.map((item) => item.sharedPhotos);
+      const data = await attachCategories(rawData);
+
       res.status(200).json({ status: 'success', data });
     } catch (error) {
       next(error);

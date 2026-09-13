@@ -11,8 +11,9 @@ const {
   isValidUUID
 } = require('../utils/validUtils');
 const appError = require('../utils/appError');
+const { attachCategories } = require('../utils/sharedPhotosUtils');
 const { dataSource } = require('../db/data-source');
-const { In, IsNull } = require('typeorm');
+const { In } = require('typeorm');
 
 const shareImageWithUrl = async (req, res, next) => {
   const { url, customCategories } = req.body;
@@ -174,30 +175,7 @@ const getSharedImages = async (req, res, next) => {
       data = result.slice(skip, skip + take);
     }
 
-    if (data.length > 0) {
-      const linkRepo = dataSource.getRepository('SharedPhotoCategories');
-      const links = await linkRepo.find({
-        where: { sharedPhotos: { id: In(data.map((photo) => photo.id)) } },
-        relations: { categories: true, sharedPhotos: true }
-      });
-
-      const categoriesByPhotoId = {};
-      links.forEach((link) => {
-        const photoId = link.sharedPhotos.id;
-        if (!categoriesByPhotoId[photoId]) {
-          categoriesByPhotoId[photoId] = [link.categories.name];
-          return;
-        }
-        categoriesByPhotoId[photoId].push(link.categories.name);
-      });
-
-      data = data.map((photo) => {
-        return {
-          ...photo,
-          categories: categoriesByPhotoId[photo.id] || []
-        };
-      });
-    }
+    data = await attachCategories(data);
 
     res.status(200).json({
       status: 'success',
