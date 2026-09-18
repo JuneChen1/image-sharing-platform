@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>個人資料 | PicShare</title>
+  <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  <link rel="manifest" href="/site.webmanifest" />
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+  <link href="/css/style.css" rel="stylesheet" />
+</head>
+<body>
+  <div data-include="/partials/chrome.html"></div>
+
+  <main class="container" style="max-width: 480px;">
+    <div id="profile-pane">
+      <h1 class="h4 mb-4 text-center">個人資料</h1>
+      <form id="profile-form">
+        <div class="mb-3">
+          <label for="profile-email" class="form-label">Email</label>
+          <input type="email" id="profile-email" class="form-control" disabled />
+        </div>
+        <div class="mb-3">
+          <label for="profile-name" class="form-label">暱稱</label>
+          <input type="text" id="profile-name" class="form-control" required />
+        </div>
+        <div id="profile-status" class="text-muted mb-3"></div>
+        <button type="submit" class="btn btn-dark w-100 mb-3">儲存變更</button>
+        <p class="text-center mb-0">
+          <a href="/change-password.html">修改密碼</a>
+        </p>
+      </form>
+    </div>
+  </main>
+
+  <div data-include="/partials/footer.html"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/js/include.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/profilePage.js"></script>
+</body>
+</html>
