@@ -86,10 +86,12 @@ const getImagesWithKeyword = async (req, res, next) => {
 
 const getCategories = async (req, res, next) => {
   try {
-    const categoriesRepo = dataSource.getRepository('Categories');
-    const data = await categoriesRepo.find({
-      order: { name: 'ASC' }
-    });
+    const data = await dataSource.query(`
+      SELECT DISTINCT c.* 
+      FROM categories c
+      INNER JOIN shared_photo_categories spc ON spc.category_id = c.id
+      ORDER BY c.name ASC
+    `);
 
     res.status(200).json({
       status: 'success',
