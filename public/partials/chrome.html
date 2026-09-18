@@ -1,4 +1,4 @@
-<nav class="navbar navbar-dark bg-dark mb-4">
+<nav class="navbar navbar-dark bg-dark mb-4 py-3">
   <div class="container d-flex align-items-center flex-wrap gap-2">
     <a class="navbar-brand mb-0 h1 text-decoration-none me-auto" href="/">圖個方便 | PicShare</a>
     <div class="d-flex align-items-center gap-2">
@@ -11,7 +11,7 @@
       >
         分享
       </button>
-      <a href="/search.html" id="search-link" class="btn btn-outline-light">搜尋</a>
+      <a href="/search.html" id="search-link" class="btn btn-outline-light">搜尋更多</a>
       <div id="auth-guest" class="d-flex gap-2">
         <a href="/auth.html" class="btn btn-outline-light">登入</a>
         <a href="/auth.html?tab=register" class="btn btn-light">註冊</a>
@@ -91,12 +91,14 @@
         <div id="lightbox-categories" class="d-flex flex-wrap justify-content-start gap-2 mt-3"></div>
       </div>
       <div class="modal-footer d-flex align-items-center justify-content-between">
-        <p class="mb-0">
-          Photo by
-          <a id="lightbox-photographer" href="" target="_blank" rel="noopener"></a>
-          on
-          <a href="https://unsplash.com" target="_blank" rel="noopener">Unsplash</a>
-        </p>
+        <div>
+          <p class="mb-1">
+            攝影師：<a id="lightbox-photographer" href="" target="_blank" rel="noopener"></a>
+          </p>
+          <p id="lightbox-sharer" class="mb-0 d-none">
+            分享者：<a id="lightbox-sharer-link" href=""></a>
+          </p>
+        </div>
         <div class="d-flex gap-2">
           <button type="button" id="lightbox-collect" class="btn btn-outline-dark d-none">加入收藏</button>
           <button type="button" id="lightbox-share" class="btn btn-outline-dark">分享</button>

@@ -2,6 +2,10 @@ body {
   background-color: #f8f9fa;
 }
 
+.navbar-brand {
+  font-size: 1.75rem;
+}
+
 .masonry-grid {
   display: flex;
   align-items: flex-start;

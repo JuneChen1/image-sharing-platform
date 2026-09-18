@@ -8,6 +8,8 @@
   const lightboxShare = document.getElementById('lightbox-share');
   const lightboxCollect = document.getElementById('lightbox-collect');
   const lightboxCategories = document.getElementById('lightbox-categories');
+  const lightboxSharer = document.getElementById('lightbox-sharer');
+  const lightboxSharerLink = document.getElementById('lightbox-sharer-link');
 
   let currentShareUrl = '';
   let currentCollectId = null;
@@ -18,7 +20,9 @@
     photographerUrl,
     downloadUrl,
     categories,
-    collectId
+    collectId,
+    sharerId,
+    sharerName
   }) => {
     lightboxImage.src = imageUrl;
     lightboxImage.alt = `${photographerName} 的照片`;
@@ -34,6 +38,11 @@
     lightboxCategories.innerHTML = (categories || [])
       .map((name) => `<span class="badge text-bg-secondary">${name}</span>`)
       .join('');
+    lightboxSharer.classList.toggle('d-none', !sharerId || !sharerName);
+    if (sharerId && sharerName) {
+      lightboxSharerLink.textContent = sharerName;
+      lightboxSharerLink.href = `/user-shared-photos.html?userId=${sharerId}`;
+    }
     bootstrap.Modal.getOrCreateInstance(lightboxModalEl).show();
   };
 

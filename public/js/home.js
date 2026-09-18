@@ -91,7 +91,9 @@
       photographerUrl: photo.photographer_url,
       downloadUrl: photo.unsplash_page_url,
       categories: photo.categories,
-      collectId: photo.id
+      collectId: photo.id,
+      sharerId: photo.user_id,
+      sharerName: photo.user_name
     });
   });
 
@@ -288,8 +290,7 @@
         />
         <div class="card-body">
           <p class="card-text">
-            Photo by
-            <a href="${photo.photographer_url}" target="_blank" rel="noopener">${photo.photographer_name}</a>
+            攝影師：<a href="${photo.photographer_url}" target="_blank" rel="noopener">${photo.photographer_name}</a>
           </p>
           <div class="d-flex gap-2">
             ${
@@ -299,11 +300,6 @@
             }
             <a href="${photo.unsplash_page_url}" target="_blank" rel="noopener" class="btn btn-sm btn-outline-dark flex-grow-1">下載</a>
           </div>
-          ${
-            photo.user_id
-              ? `<a href="/user-shared-photos.html?userId=${photo.user_id}" class="d-block text-center small mt-2">查看分享者的更多照片</a>`
-              : ''
-          }
           ${
             photo.user_id && photo.user_id === window.auth.getUserId()
               ? `<button type="button" class="btn btn-sm btn-outline-danger w-100 mt-2" data-cancel-id="${photo.id}">取消分享</button>`

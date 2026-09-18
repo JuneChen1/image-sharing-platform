@@ -228,8 +228,7 @@
         />
         <div class="card-body">
           <p class="card-text">
-            Photo by
-            <a href="${photo.photographer_url}" target="_blank" rel="noopener">${photo.photographer_name}</a>
+            攝影師：<a href="${photo.photographer_url}" target="_blank" rel="noopener">${photo.photographer_name}</a>
           </p>
           <div class="d-flex gap-2">
             ${

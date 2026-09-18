@@ -160,8 +160,7 @@
               />
               <div class="card-body">
                 <p class="card-text">
-                  Photo by
-                  <a href="${photo.photographer_url}" target="_blank" rel="noopener">${photo.photographer_name}</a>
+                  攝影師：<a href="${photo.photographer_url}" target="_blank" rel="noopener">${photo.photographer_name}</a>
                 </p>
                 <button type="button" class="btn btn-sm btn-outline-danger w-100" data-remove-photo-id="${photo.id}">
                   從收藏庫移除

@@ -193,8 +193,7 @@
         />
         <div class="card-body">
           <p class="card-text">
-            Photo by
-            <a href="${photo.user.links.html}" target="_blank" rel="noopener">${photo.user.name}</a>
+            攝影師：<a href="${photo.user.links.html}" target="_blank" rel="noopener">${photo.user.name}</a>
           </p>
           <button type="button" class="btn btn-sm btn-dark w-100" data-share-url="${photo.links.html}">分享</button>
         </div>
