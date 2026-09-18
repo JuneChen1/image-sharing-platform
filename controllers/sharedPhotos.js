@@ -148,7 +148,8 @@ const getSharedImages = async (req, res, next) => {
       });
       data = rawData.map(({ user, ...photo }) => ({
         ...photo,
-        user_id: user.id
+        user_id: user.id,
+        user_name: user.name
       }));
     } else {
       const params = [];
@@ -165,11 +166,13 @@ const getSharedImages = async (req, res, next) => {
       }
 
       const sqlQuery = `
-        SELECT sp.* FROM shared_photos sp
+        SELECT sp.*, u.name AS user_name FROM shared_photos sp
         JOIN shared_photo_categories AS spc
           ON spc.shared_photo_id = sp.id
         JOIN categories AS c
           ON spc.category_id = c.id
+        JOIN users AS u
+          ON u.id = sp.user_id
         WHERE TRUE
           ${conditions.join(' ')}
         ORDER BY sp.created_at DESC
