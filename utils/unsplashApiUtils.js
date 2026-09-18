@@ -1,4 +1,5 @@
 const { unsplashBaseUrl, headers } = require('../config/constants');
+const appError = require('./appError');
 
 function getUnsplashImageId(url) {
   if (!url.startsWith('https://unsplash.com/photos/')) {
@@ -13,6 +14,11 @@ function getUnsplashImageId(url) {
 
 function getUnsplashImageInfo(result) {
   const { id, links, urls, user } = result.data;
+
+  if (!links?.html || !urls?.regular || !user?.username) {
+    throw appError(502, '這張照片目前的資料不完整，暫時無法分享，請稍後再試');
+  }
+
   return {
     unsplash_id: id,
     unsplash_page_url: links.html,
