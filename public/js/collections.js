@@ -46,6 +46,14 @@
     return true;
   }
 
+  function renderCollectionPreview(previewImageUrl) {
+    if (!previewImageUrl) {
+      return '<div class="collection-preview-empty">尚無照片</div>';
+    }
+
+    return `<img src="${previewImageUrl}" alt="" />`;
+  }
+
   async function loadCollections() {
     setListStatus('載入中...', false);
     try {
@@ -73,11 +81,17 @@
             <div class="col-md-4 col-6">
               <button
                 type="button"
-                class="btn btn-outline-dark w-100 h-100 py-4 text-truncate"
+                class="collection-card"
                 data-collection-id="${collection.id}"
                 data-collection-name="${collection.name}"
               >
-                ${collection.name}
+                <div class="collection-preview">
+                  ${renderCollectionPreview(collection.previewImageUrl)}
+                </div>
+                <div class="collection-info">
+                  <div class="collection-name text-truncate">${collection.name}</div>
+                  <div class="text-muted small">${collection.photoCount ?? 0} 張照片</div>
+                </div>
               </button>
             </div>
           `

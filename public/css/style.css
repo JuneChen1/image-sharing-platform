@@ -95,3 +95,44 @@ body {
   right: 0.75rem;
   z-index: 1;
 }
+
+.collection-card {
+  cursor: pointer;
+  border: none;
+  background: none;
+  padding: 0;
+  width: 100%;
+  text-align: left;
+}
+
+.collection-preview {
+  height: 200px;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  background-color: #e9ecef;
+}
+
+.collection-preview img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.collection-preview-empty {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #adb5bd;
+  font-size: 0.875rem;
+}
+
+.collection-info {
+  padding: 0.5rem 0.1rem 0;
+}
+
+.collection-name {
+  font-weight: 600;
+  color: #212529;
+}
