@@ -65,6 +65,7 @@
     const shareBtn = document.getElementById('share-btn');
     const searchLink = document.getElementById('search-link');
     const logoutBtn = document.getElementById('logout-btn');
+    const mySharedPhotosLink = document.getElementById('my-shared-photos-link');
 
     function renderAuthUI() {
       const loggedIn = isLoggedIn();
@@ -73,7 +74,10 @@
       userEl.classList.toggle('d-none', !loggedIn);
       shareBtn.classList.toggle('d-none', !loggedIn);
       searchLink.classList.toggle('d-none', onAuthPage);
-      if (loggedIn) userNameEl.textContent = getUserName();
+      if (loggedIn) {
+        userNameEl.textContent = getUserName();
+        mySharedPhotosLink.href = `/user-shared-photos.html?userId=${getUserId()}`;
+      }
     }
 
     logoutBtn.addEventListener('click', async () => {

@@ -4,15 +4,14 @@
   const statusEl = document.getElementById('status');
   const resultsEl = document.getElementById('results');
   const paginationEl = document.getElementById('pagination');
-  const categoryBarEl = document.getElementById('category-bar');
-  const searchFormEl = document.getElementById('home-search-form');
-  const searchInputEl = document.getElementById('home-search-input');
+  const titleEl = document.querySelector('main h1');
 
   const LIMIT = 20;
   const CARD_TEXT_HEIGHT = 100;
-  let currentCategory = undefined;
-  let currentQuery = '';
   let currentPhotos = [];
+
+  const userId = new URLSearchParams(window.location.search).get('userId');
+  const isOwnPage = Boolean(userId) && userId === window.auth.getUserId();
 
   function setStatus(text, isError) {
     statusEl.textContent = text;
@@ -21,32 +20,14 @@
     statusEl.classList.toggle('text-muted', !isError);
   }
 
-  searchFormEl.addEventListener('submit', async (event) => {
-    event.preventDefault();
-    currentQuery = searchInputEl.value.trim();
+  if (!userId) {
+    setStatus('缺少使用者 ID，無法載入分享紀錄', true);
+    return;
+  }
 
-    setStatus('搜尋中...', false);
-    try {
-      await fetchAndRenderPhotos(1);
-    } catch (error) {
-      setStatus(error.message || '連線錯誤，請確認伺服器是否啟動', true);
-    }
-  });
-
-  categoryBarEl.addEventListener('click', async (event) => {
-    const button = event.target.closest('button[data-category]');
-    if (!button || button.classList.contains('active')) return;
-
-    currentCategory = button.dataset.category || undefined;
-    renderCategoryBarActive();
-
-    setStatus('載入中...', false);
-    try {
-      await fetchAndRenderPhotos(1);
-    } catch (error) {
-      setStatus(error.message || '連線錯誤，請確認伺服器是否啟動', true);
-    }
-  });
+  if (isOwnPage) {
+    titleEl.textContent = '我的分享紀錄';
+  }
 
   resultsEl.addEventListener('click', async (event) => {
     const collectBtn = event.target.closest('button[data-collect-id]');
@@ -121,7 +102,6 @@
 
   setStatus('載入中...', false);
   try {
-    await loadCategories();
     await fetchAndRenderPhotos(1);
   } catch (error) {
     setStatus(error.message || '連線錯誤，請確認伺服器是否啟動', true);
@@ -135,47 +115,9 @@
     };
   }
 
-  async function loadCategories() {
-    const response = await fetch('/api/v1/categories');
-    const body = await response.json();
-
-    if (!response.ok) {
-      throw new Error(body.message);
-    }
-
-    categoryBarEl.innerHTML = [{ name: '全部' }, ...body.data]
-      .map(
-        (category) => `
-          <button
-            type="button"
-            class="btn btn-sm ${category.name === '全部' ? 'btn-dark active' : 'btn-outline-dark'}"
-            data-category="${category.name === '全部' ? '' : category.name}"
-          >
-            ${category.name}
-          </button>
-        `
-      )
-      .join('');
-  }
-
-  function renderCategoryBarActive() {
-    categoryBarEl.querySelectorAll('button[data-category]').forEach((button) => {
-      const isActive = (button.dataset.category || undefined) === currentCategory;
-      button.classList.toggle('active', isActive);
-      button.classList.toggle('btn-dark', isActive);
-      button.classList.toggle('btn-outline-dark', !isActive);
-    });
-  }
-
   async function fetchAndRenderPhotos(page) {
-    const categoryParam = currentCategory
-      ? `&category=${encodeURIComponent(currentCategory)}`
-      : '';
-    const queryParam = currentQuery
-      ? `&q=${encodeURIComponent(currentQuery)}`
-      : '';
     const response = await fetch(
-      `/api/v1/shared-photos?page=${page}&limit=${LIMIT}${categoryParam}${queryParam}`
+      `/api/v1/users/${userId}/shared-photos?page=${page}&limit=${LIMIT}`
     );
     const body = await response.json();
 
@@ -187,9 +129,7 @@
       resultsEl.innerHTML = '';
       paginationEl.innerHTML = '';
       setStatus(
-        currentCategory || currentQuery
-          ? '找不到符合條件的照片'
-          : '目前尚無分享照片，敬請期待！',
+        isOwnPage ? '你還沒有分享過任何照片' : '這位使用者還沒有分享過任何照片',
         false
       );
       return;
@@ -300,12 +240,7 @@
             <a href="${photo.unsplash_page_url}" target="_blank" rel="noopener" class="btn btn-sm btn-outline-dark flex-grow-1">下載</a>
           </div>
           ${
-            photo.user_id
-              ? `<a href="/user-shared-photos.html?userId=${photo.user_id}" class="d-block text-center small mt-2">查看分享者的更多照片</a>`
-              : ''
-          }
-          ${
-            photo.user_id && photo.user_id === window.auth.getUserId()
+            isOwnPage
               ? `<button type="button" class="btn btn-sm btn-outline-danger w-100 mt-2" data-cancel-id="${photo.id}">取消分享</button>`
               : ''
           }
