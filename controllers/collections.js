@@ -7,9 +7,30 @@ const collectionsController = {
   async getCollections(req, res, next) {
     try {
       const collectionsRepo = dataSource.getRepository('Collections');
-      const data = await collectionsRepo.find({
+      const collections = await collectionsRepo.find({
         where: { user: { id: req.user.id } }
       });
+
+      const favoritesRepo = dataSource.getRepository('Favorites');
+      const data = await Promise.all(
+        collections.map(async (collection) => {
+          const [[latestFavorite], photoCount] =
+            await favoritesRepo.findAndCount({
+              where: { collections: { id: collection.id } },
+              relations: { sharedPhotos: true },
+              order: { created_at: 'DESC' },
+              take: 1
+            });
+
+          return {
+            ...collection,
+            photoCount,
+            previewImageUrl: latestFavorite
+              ? latestFavorite.sharedPhotos.image_url
+              : null
+          };
+        })
+      );
 
       res.status(200).json({ status: 'success', data });
     } catch (error) {
