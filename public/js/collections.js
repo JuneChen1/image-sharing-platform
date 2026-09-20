@@ -39,6 +39,13 @@
     collectionPhotosStatusEl.classList.toggle('text-muted', !isError);
   }
 
+  function setNewCollectionStatus(text, isError) {
+    newCollectionStatusEl.textContent = text;
+    newCollectionStatusEl.classList.toggle('text-danger', isError);
+    newCollectionStatusEl.classList.toggle('fw-bold', isError);
+    newCollectionStatusEl.classList.toggle('text-muted', !isError);
+  }
+
   async function handleUnauthorized(response) {
     if (response.status !== 401) return false;
     window.auth.clearSession();
@@ -257,15 +264,21 @@
 
   newCollectionModalEl.addEventListener('hidden.bs.modal', () => {
     newCollectionForm.reset();
-    newCollectionStatusEl.textContent = '';
+    setNewCollectionStatus('', false);
   });
+
+  let isCreatingCollection = false;
+  const newCollectionSubmitBtn = newCollectionForm.querySelector('button[type="submit"]');
 
   newCollectionForm.addEventListener('submit', async (event) => {
     event.preventDefault();
+    if (isCreatingCollection) return;
     const name = newCollectionNameEl.value.trim();
     if (!name) return;
 
-    newCollectionStatusEl.textContent = '建立中...';
+    isCreatingCollection = true;
+    newCollectionSubmitBtn.disabled = true;
+    setNewCollectionStatus('建立中...', false);
     try {
       const response = await fetch('/api/v1/users/me/collections', {
         method: 'POST',
@@ -279,14 +292,17 @@
 
       if (await handleUnauthorized(response)) return;
       if (!response.ok) {
-        newCollectionStatusEl.textContent = body.message || '建立失敗';
+        setNewCollectionStatus(body.message || '建立失敗', true);
         return;
       }
 
       bootstrap.Modal.getOrCreateInstance(newCollectionModalEl).hide();
       await loadCollections();
     } catch (error) {
-      newCollectionStatusEl.textContent = '連線錯誤，請確認伺服器是否啟動';
+      setNewCollectionStatus('連線錯誤，請確認伺服器是否啟動', true);
+    } finally {
+      isCreatingCollection = false;
+      newCollectionSubmitBtn.disabled = false;
     }
   });
 

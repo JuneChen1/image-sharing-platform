@@ -93,10 +93,15 @@
     addPhotoToCollection(button.dataset.collectionId);
   });
 
+  let isCreatingCollection = false;
+
   collectNewBtn.addEventListener('click', async () => {
+    if (isCreatingCollection) return;
     const name = collectNewNameEl.value.trim();
     if (!name) return;
 
+    isCreatingCollection = true;
+    collectNewBtn.disabled = true;
     setStatus('建立中...', false);
     try {
       const response = await fetch('/api/v1/users/me/collections', {
@@ -124,6 +129,9 @@
       await addPhotoToCollection(body.data.id);
     } catch (error) {
       setStatus('連線錯誤，請確認伺服器是否啟動', true);
+    } finally {
+      isCreatingCollection = false;
+      collectNewBtn.disabled = false;
     }
   });
 
