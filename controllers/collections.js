@@ -44,6 +44,13 @@ const collectionsController = {
 
     try {
       const collectionsRepo = dataSource.getRepository('Collections');
+      const collectCount = await collectionsRepo.count({
+        where: { user: { id: req.user.id } }
+      });
+
+      if (collectCount >= 10)
+        return next(appError(400, '最多只能有 10 個收藏庫'));
+
       const data = await collectionsRepo.save({
         name: name.trim(),
         user: { id: req.user.id }
