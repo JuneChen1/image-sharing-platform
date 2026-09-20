@@ -38,6 +38,10 @@ module.exports = new EntitySchema({
     updated_at: {
       type: 'timestamp',
       updateDate: true
+    },
+    is_banned: {
+      type: 'boolean',
+      default: false
     }
   }
 });
