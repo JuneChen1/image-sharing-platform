@@ -68,7 +68,10 @@
           </div>
           <div id="category-list" class="d-flex flex-wrap gap-2 mb-2"></div>
 
-          <div id="share-status" class="text-muted mt-2"></div>
+          <div id="share-alert" class="alert d-none alert-dismissible d-flex align-items-center mt-2 mb-0" role="alert">
+            <svg id="share-alert-icon" width="16" height="16" fill="currentColor" class="flex-shrink-0 me-2" viewBox="0 0 16 16" role="img" aria-hidden="true"></svg>
+            <div id="share-alert-message" class="flex-grow-1"></div>
+          </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
@@ -129,7 +132,10 @@
           />
           <button type="button" id="collect-new-btn" class="btn btn-outline-dark text-nowrap">建立並加入</button>
         </div>
-        <div id="collect-status" class="text-muted mt-2"></div>
+        <div id="collect-alert" class="alert d-none alert-dismissible d-flex align-items-center mt-2 mb-0" role="alert">
+          <svg id="collect-alert-icon" width="16" height="16" fill="currentColor" class="flex-shrink-0 me-2" viewBox="0 0 16 16" role="img" aria-hidden="true"></svg>
+          <div id="collect-alert-message" class="flex-grow-1"></div>
+        </div>
       </div>
     </div>
   </div>

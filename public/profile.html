@@ -30,7 +30,10 @@
           <label for="profile-name" class="form-label">暱稱</label>
           <input type="text" id="profile-name" class="form-control" required />
         </div>
-        <div id="profile-status" class="text-muted mb-3"></div>
+        <div id="profile-alert" class="alert d-none alert-dismissible d-flex align-items-center mb-3" role="alert">
+          <svg id="profile-alert-icon" width="16" height="16" fill="currentColor" class="flex-shrink-0 me-2" viewBox="0 0 16 16" role="img" aria-hidden="true"></svg>
+          <div id="profile-alert-message" class="flex-grow-1"></div>
+        </div>
         <button type="submit" class="btn btn-dark w-100 mb-3">儲存變更</button>
         <p class="text-center mb-0">
           <a href="/change-password.html">修改密碼</a>

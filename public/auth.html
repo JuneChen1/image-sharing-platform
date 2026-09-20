@@ -30,7 +30,10 @@
           <label for="login-password" class="form-label">密碼</label>
           <input type="password" id="login-password" class="form-control" required />
         </div>
-        <div id="login-status" class="text-muted mb-3"></div>
+        <div id="login-alert" class="alert d-none alert-dismissible d-flex align-items-center mb-3" role="alert">
+          <svg id="login-alert-icon" width="16" height="16" fill="currentColor" class="flex-shrink-0 me-2" viewBox="0 0 16 16" role="img" aria-hidden="true"></svg>
+          <div id="login-alert-message" class="flex-grow-1"></div>
+        </div>
         <button type="submit" class="btn btn-dark w-100 mb-3">登入</button>
         <p class="text-center mb-1">
           還沒有帳號？<a href="#" id="show-register-link">註冊</a>
@@ -49,7 +52,10 @@
           <input type="email" id="forgot-email" class="form-control" required />
           <div class="form-text">我們會寄送重設密碼連結到此信箱</div>
         </div>
-        <div id="forgot-status" class="text-muted mb-3"></div>
+        <div id="forgot-alert" class="alert d-none alert-dismissible d-flex align-items-center mb-3" role="alert">
+          <svg id="forgot-alert-icon" width="16" height="16" fill="currentColor" class="flex-shrink-0 me-2" viewBox="0 0 16 16" role="img" aria-hidden="true"></svg>
+          <div id="forgot-alert-message" class="flex-grow-1"></div>
+        </div>
         <button type="submit" class="btn btn-dark w-100 mb-3">寄送重設密碼信</button>
         <p class="text-center mb-0">
           想起密碼了？<a href="#" id="show-login-from-forgot-link">返回登入</a>
@@ -73,7 +79,10 @@
           <input type="password" id="register-password" class="form-control" required />
           <div class="form-text">至少 8 碼，需同時包含英文字母與數字</div>
         </div>
-        <div id="register-status" class="text-muted mb-3"></div>
+        <div id="register-alert" class="alert d-none alert-dismissible d-flex align-items-center mb-3" role="alert">
+          <svg id="register-alert-icon" width="16" height="16" fill="currentColor" class="flex-shrink-0 me-2" viewBox="0 0 16 16" role="img" aria-hidden="true"></svg>
+          <div id="register-alert-message" class="flex-grow-1"></div>
+        </div>
         <button type="submit" class="btn btn-dark w-100 mb-3">註冊</button>
         <p class="text-center mb-0">
           已經有帳號了？<a href="#" id="show-login-link">登入</a>

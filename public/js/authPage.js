@@ -9,18 +9,36 @@
   const showForgotLink = document.getElementById('show-forgot-link');
   const showLoginFromForgotLink = document.getElementById('show-login-from-forgot-link');
   const loginForm = document.getElementById('login-form');
-  const loginStatusEl = document.getElementById('login-status');
   const registerForm = document.getElementById('register-form');
-  const registerStatusEl = document.getElementById('register-status');
   const forgotForm = document.getElementById('forgot-form');
-  const forgotStatusEl = document.getElementById('forgot-status');
 
-  function setFormStatus(el, text, isError) {
-    el.textContent = text;
-    el.classList.toggle('text-danger', isError);
-    el.classList.toggle('fw-bold', isError);
-    el.classList.toggle('text-muted', !isError);
+  const ALERT_ICON_PATHS = {
+    success:
+      '<path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>',
+    danger:
+      '<path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5m.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>'
+  };
+
+  function makeAlert(prefix) {
+    const el = document.getElementById(`${prefix}-alert`);
+    const iconEl = document.getElementById(`${prefix}-alert-icon`);
+    const messageEl = document.getElementById(`${prefix}-alert-message`);
+
+    return {
+      show(message, type = 'danger') {
+        iconEl.innerHTML = ALERT_ICON_PATHS[type] || '';
+        messageEl.textContent = message;
+        el.className = `alert alert-dismissible d-flex align-items-center mb-3 alert-${type}`;
+      },
+      hide() {
+        el.classList.add('d-none');
+      }
+    };
   }
+
+  const loginAlert = makeAlert('login');
+  const registerAlert = makeAlert('register');
+  const forgotAlert = makeAlert('forgot');
 
   function showTab(tab) {
     loginPane.classList.toggle('d-none', tab !== 'login');
@@ -63,15 +81,15 @@
     const password = document.getElementById('login-password').value;
 
     if (!isValidEmail(email)) {
-      setFormStatus(loginStatusEl, 'Email 格式不正確', true);
+      loginAlert.show('Email 格式不正確');
       return;
     }
     if (!password) {
-      setFormStatus(loginStatusEl, '密碼為必填', true);
+      loginAlert.show('密碼為必填');
       return;
     }
 
-    setFormStatus(loginStatusEl, '登入中...', false);
+    loginAlert.show('登入中...', 'secondary');
     try {
       const response = await fetch('/api/v1/auth/login', {
         method: 'POST',
@@ -81,14 +99,14 @@
       const body = await response.json();
 
       if (!response.ok) {
-        setFormStatus(loginStatusEl, body.message || '登入失敗', true);
+        loginAlert.show(body.message || '登入失敗');
         return;
       }
 
       window.auth.setSession(body.data.token, body.data.user.name);
       window.location.href = '/';
     } catch (error) {
-      setFormStatus(loginStatusEl, '連線錯誤，請確認伺服器是否啟動', true);
+      loginAlert.show('連線錯誤，請確認伺服器是否啟動');
     }
   });
 
@@ -99,19 +117,19 @@
     const password = document.getElementById('register-password').value;
 
     if (!name) {
-      setFormStatus(registerStatusEl, '暱稱為必填', true);
+      registerAlert.show('暱稱為必填');
       return;
     }
     if (!isValidEmail(email)) {
-      setFormStatus(registerStatusEl, 'Email 格式不正確', true);
+      registerAlert.show('Email 格式不正確');
       return;
     }
     if (!isValidPassword(password)) {
-      setFormStatus(registerStatusEl, '密碼至少 8 碼，需同時包含英文字母與數字', true);
+      registerAlert.show('密碼至少 8 碼，需同時包含英文字母與數字');
       return;
     }
 
-    setFormStatus(registerStatusEl, '註冊中...', false);
+    registerAlert.show('註冊中...', 'secondary');
     try {
       const response = await fetch('/api/v1/auth/register', {
         method: 'POST',
@@ -121,16 +139,16 @@
       const body = await response.json();
 
       if (!response.ok) {
-        setFormStatus(registerStatusEl, body.message || '註冊失敗', true);
+        registerAlert.show(body.message || '註冊失敗');
         return;
       }
 
       registerForm.reset();
-      setFormStatus(registerStatusEl, '', false);
+      registerAlert.hide();
       showTab('login');
-      setFormStatus(loginStatusEl, '註冊成功，請登入', false);
+      loginAlert.show('註冊成功，請登入', 'success');
     } catch (error) {
-      setFormStatus(registerStatusEl, '連線錯誤，請確認伺服器是否啟動', true);
+      registerAlert.show('連線錯誤，請確認伺服器是否啟動');
     }
   });
 
@@ -139,11 +157,11 @@
     const email = document.getElementById('forgot-email').value.trim();
 
     if (!isValidEmail(email)) {
-      setFormStatus(forgotStatusEl, 'Email 格式不正確', true);
+      forgotAlert.show('Email 格式不正確');
       return;
     }
 
-    setFormStatus(forgotStatusEl, '寄送中...', false);
+    forgotAlert.show('寄送中...', 'secondary');
     try {
       const response = await fetch('/api/v1/auth/forgot-password', {
         method: 'POST',
@@ -153,14 +171,14 @@
       const body = await response.json();
 
       if (!response.ok) {
-        setFormStatus(forgotStatusEl, body.message || '寄送失敗，請稍後再試', true);
+        forgotAlert.show(body.message || '寄送失敗，請稍後再試');
         return;
       }
 
       forgotForm.reset();
-      setFormStatus(forgotStatusEl, body.message, false);
+      forgotAlert.show(body.message, 'success');
     } catch (error) {
-      setFormStatus(forgotStatusEl, '連線錯誤，請確認伺服器是否啟動', true);
+      forgotAlert.show('連線錯誤，請確認伺服器是否啟動');
     }
   });
 })();
