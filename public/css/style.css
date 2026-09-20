@@ -66,6 +66,151 @@ body {
   color: #fff;
 }
 
+#results .card {
+  border: none;
+  overflow: hidden;
+}
+
+#results .photo-media {
+  position: relative;
+}
+
+#results .photo-media .card-img-top {
+  display: block;
+  width: 100%;
+}
+
+#results .photo-overlay-top {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  display: flex;
+  gap: 0.4rem;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+#results .photo-media:hover .photo-overlay-top,
+#results .photo-media:focus-within .photo-overlay-top {
+  opacity: 1;
+}
+
+#results .photo-overlay-top .btn-icon {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.9);
+  color: #212529;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+#results .photo-overlay-top .btn-icon:hover {
+  background: #fff;
+}
+
+#results .photo-overlay-bottom {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0));
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+#results .photo-media:hover .photo-overlay-bottom,
+#results .photo-media:focus-within .photo-overlay-bottom {
+  opacity: 1;
+}
+
+#results .photo-author {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #fff;
+  text-decoration: none;
+  min-width: 0;
+}
+
+#results .photo-author-avatar {
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 50%;
+  background: #495057;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+#results .photo-author-name {
+  font-size: 0.875rem;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#results .photo-author:hover .photo-author-name {
+  text-decoration: underline;
+}
+
+#results .btn-download {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  background: #fff;
+  color: #212529;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+#results .btn-download:hover {
+  background: #f1f3f5;
+  color: #212529;
+}
+
+.person-link {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.15rem 0.75rem;
+  border-radius: 999px;
+  background: #6c757d;
+  color: #fff;
+  text-decoration: none;
+  font-weight: 400;
+  vertical-align: middle;
+}
+
+.person-link:hover {
+  background: #5c636a;
+}
+
+.person-link:hover .person-name {
+  text-decoration: underline;
+}
+
+.person-name {
+  color: #fff;
+}
+
 .lightbox-trigger {
   cursor: pointer;
 }
@@ -95,8 +240,8 @@ body {
 
 .lightbox-close {
   position: absolute;
-  top: 0.75rem;
-  right: 0.75rem;
+  top: 0.5rem;
+  right: 0.5rem;
   z-index: 1;
 }
 

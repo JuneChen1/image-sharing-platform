@@ -14,6 +14,10 @@
   let currentShareUrl = '';
   let currentCollectId = null;
 
+  function personLinkHTML(name) {
+    return `<span class="person-name">${name}</span>`;
+  }
+
   window.openLightbox = ({
     imageUrl,
     photographerName,
@@ -26,7 +30,7 @@
   }) => {
     lightboxImage.src = imageUrl;
     lightboxImage.alt = `${photographerName} 的照片`;
-    lightboxPhotographer.textContent = photographerName;
+    lightboxPhotographer.innerHTML = personLinkHTML(photographerName);
     lightboxPhotographer.href = photographerUrl;
     lightboxDownload.href = downloadUrl;
     currentShareUrl = downloadUrl;
@@ -35,12 +39,13 @@
       'd-none',
       !currentCollectId || !window.auth.isLoggedIn()
     );
+    lightboxShare.classList.toggle('d-none', !window.auth.isLoggedIn());
     lightboxCategories.innerHTML = (categories || [])
       .map((name) => `<span class="badge text-bg-secondary">${name}</span>`)
       .join('');
     lightboxSharer.classList.toggle('d-none', !sharerId || !sharerName);
     if (sharerId && sharerName) {
-      lightboxSharerLink.textContent = sharerName;
+      lightboxSharerLink.innerHTML = personLinkHTML(sharerName);
       lightboxSharerLink.href = `/user-shared-photos.html?userId=${sharerId}`;
     }
     bootstrap.Modal.getOrCreateInstance(lightboxModalEl).show();
