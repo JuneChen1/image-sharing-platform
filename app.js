@@ -27,6 +27,7 @@ async function main() {
   const authRouter = require('./routes/auth');
   const collectionsRouter = require('./routes/collections');
   const userRouter = require('./routes/users');
+  const adminRouter = require('./routes/admin');
 
   const app = express();
 
@@ -40,6 +41,7 @@ async function main() {
   app.use('/api/v1/auth', authRouter);
   app.use('/api/v1/users/me/collections', collectionsRouter);
   app.use('/api/v1/users', userRouter);
+  app.use('/api/v1/admin', adminRouter);
   app.use('/api/v1', apiRouter);
 
   app.use((req, res) => {
