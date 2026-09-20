@@ -1,11 +1,11 @@
 const bcrypt = require('bcrypt');
-const { dataSource } = require('./data-source');
-const Categories = require('../entities/categories');
-const SharedPhotos = require('../entities/shared_photos');
-const SharedPhotoCategories = require('../entities/shared_photo_categories');
-const Users = require('../entities/users');
-const Collections = require('../entities/collections');
-const Favorites = require('../entities/favorites');
+const { dataSource } = require('../data-source');
+const Categories = require('../../entities/categories');
+const SharedPhotos = require('../../entities/shared_photos');
+const SharedPhotoCategories = require('../../entities/shared_photo_categories');
+const Users = require('../../entities/users');
+const Collections = require('../../entities/collections');
+const Favorites = require('../../entities/favorites');
 
 async function clearAll() {
   const ORDER = [

@@ -20,7 +20,8 @@
     "migration:generate": "typeorm migration:generate -d ./db/data-source.js -o",
     "migration:run": "typeorm migration:run -d ./db/data-source.js",
     "migration:revert": "typeorm migration:revert -d ./db/data-source.js",
-    "seed": "node db/seed.js",
+    "seed": "node db/seeds/seed.js",
+    "seed:admin": "node db/seeds/admin.seed.js",
     "dev": "nodemon app.js"
   },
   "dependencies": {
