@@ -52,18 +52,34 @@ body {
   background-color: #eef0f2;
 }
 
+.pagination {
+  gap: 0.35rem;
+}
+
+.pagination .page-item:not(:first-child) .page-link {
+  margin-left: 0;
+}
+
 .pagination .page-link {
   color: #212529;
+  border-radius: 6px;
+  border-color: #dee2e6;
 }
 
 .pagination .page-link:hover {
   color: #212529;
+  background-color: #f0f7ff;
+  border-color: #adb5bd;
 }
 
 .pagination .page-item.active .page-link {
   background-color: #212529;
   border-color: #212529;
   color: #fff;
+}
+
+.pagination .page-item.disabled .page-link {
+  border-color: #eee;
 }
 
 #results .card {
@@ -389,29 +405,3 @@ body {
   background-color: #f1f3f5;
 }
 
-.admin-pagination {
-  gap: 0.35rem;
-}
-
-.admin-pagination .page-item:not(:first-child) .page-link {
-  margin-left: 0;
-}
-
-.admin-pagination .page-item .page-link {
-  border-radius: 6px;
-  border-color: #dee2e6;
-}
-
-.admin-pagination .page-link:hover {
-  background-color: #f0f7ff;
-  border-color: #adb5bd;
-}
-
-.admin-pagination .page-item.active .page-link {
-  background-color: #212529;
-  border-color: #212529;
-}
-
-.admin-pagination .page-item.disabled .page-link {
-  border-color: #eee;
-}
