@@ -21,32 +21,12 @@
   <main class="container">
     <h1 class="h4 mb-4">管理後台</h1>
 
-    <ul class="nav nav-tabs mb-4">
-      <li class="nav-item">
-        <button type="button" class="nav-link active" id="tab-users-btn" data-tab="users">使用者管理</button>
-      </li>
-      <li class="nav-item">
-        <button type="button" class="nav-link" id="tab-photos-btn" data-tab="photos">照片管理</button>
-      </li>
-    </ul>
+    <div class="btn-group mb-2" role="group" aria-label="管理後台頁籤">
+      <button type="button" class="btn btn-dark" id="tab-users-btn" data-tab="users">使用者管理</button>
+      <button type="button" class="btn btn-outline-dark" id="tab-photos-btn" data-tab="photos">照片管理</button>
+    </div>
 
     <section id="users-pane">
-      <form id="users-search-form" class="row gy-2 gx-2 align-items-center mb-3">
-        <div class="col-auto">
-          <input type="text" id="users-keyword-input" class="form-control" placeholder="搜尋暱稱" />
-        </div>
-        <div class="col-auto">
-          <select id="users-banned-filter" class="form-select">
-            <option value="">全部狀態</option>
-            <option value="false">未停權</option>
-            <option value="true">已停權</option>
-          </select>
-        </div>
-        <div class="col-auto">
-          <button type="submit" class="btn btn-outline-dark">搜尋</button>
-        </div>
-      </form>
-
       <div id="users-alert" class="alert d-none alert-dismissible d-flex align-items-center mb-3" role="alert">
         <svg id="users-alert-icon" width="16" height="16" fill="currentColor" class="flex-shrink-0 me-2" viewBox="0 0 16 16" role="img" aria-hidden="true"></svg>
         <div id="users-alert-message" class="flex-grow-1"></div>
@@ -55,42 +35,43 @@
 
       <div id="users-status" class="text-muted mb-3"></div>
 
-      <div class="table-responsive">
-        <table class="table align-middle">
-          <thead>
-            <tr>
-              <th>暱稱</th>
-              <th>Email</th>
-              <th>角色</th>
-              <th>註冊時間</th>
-              <th>狀態</th>
-              <th>操作</th>
-            </tr>
-          </thead>
-          <tbody id="users-table-body"></tbody>
-        </table>
+      <div class="card admin-card">
+        <div class="card-body">
+          <form id="users-search-form" class="d-flex flex-wrap align-items-center gap-2 mb-0">
+            <input type="text" id="users-keyword-input" class="form-control" placeholder="搜尋暱稱" style="max-width: 220px;" />
+            <select id="users-banned-filter" class="form-select" style="max-width: 160px;">
+              <option value="">全部狀態</option>
+              <option value="false">未停權</option>
+              <option value="true">已停權</option>
+            </select>
+            <button type="submit" class="btn btn-dark">搜尋</button>
+          </form>
+        </div>
+        <div class="table-responsive">
+          <table class="table admin-table align-middle mb-0">
+            <thead>
+              <tr>
+                <th>暱稱</th>
+                <th>Email</th>
+                <th>角色</th>
+                <th>註冊時間</th>
+                <th>狀態</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="users-table-body"></tbody>
+          </table>
+        </div>
+        <div class="card-footer">
+          <div id="users-pagination-info" class="small"></div>
+          <nav aria-label="使用者分頁">
+            <ul id="users-pagination" class="pagination admin-pagination mb-0"></ul>
+          </nav>
+        </div>
       </div>
-
-      <nav aria-label="使用者分頁">
-        <ul id="users-pagination" class="pagination justify-content-center"></ul>
-      </nav>
     </section>
 
     <section id="photos-pane" class="d-none">
-      <form id="photos-search-form" class="row gy-2 gx-2 align-items-center mb-3">
-        <div class="col-auto">
-          <input type="text" id="photos-keyword-input" class="form-control" placeholder="搜尋攝影師或分類名稱" />
-        </div>
-        <div class="col-auto">
-          <select id="photos-category-filter" class="form-select">
-            <option value="">全部分類</option>
-          </select>
-        </div>
-        <div class="col-auto">
-          <button type="submit" class="btn btn-outline-dark">搜尋</button>
-        </div>
-      </form>
-
       <div id="photos-alert" class="alert d-none alert-dismissible d-flex align-items-center mb-3" role="alert">
         <svg id="photos-alert-icon" width="16" height="16" fill="currentColor" class="flex-shrink-0 me-2" viewBox="0 0 16 16" role="img" aria-hidden="true"></svg>
         <div id="photos-alert-message" class="flex-grow-1"></div>
@@ -99,25 +80,37 @@
 
       <div id="photos-status" class="text-muted mb-3"></div>
 
-      <div class="table-responsive">
-        <table class="table align-middle">
-          <thead>
-            <tr>
-              <th>照片</th>
-              <th>攝影師</th>
-              <th>分類</th>
-              <th>分享者</th>
-              <th>分享時間</th>
-              <th>操作</th>
-            </tr>
-          </thead>
-          <tbody id="photos-table-body"></tbody>
-        </table>
+      <div class="card admin-card">
+        <div class="card-body">
+          <form id="photos-search-form" class="d-flex flex-wrap align-items-center gap-2 mb-0">
+            <input type="text" id="photos-keyword-input" class="form-control" placeholder="搜尋攝影師或分類名稱" style="max-width: 240px;" />
+            <select id="photos-category-filter" class="form-select" style="max-width: 160px;">
+              <option value="">全部分類</option>
+            </select>
+            <button type="submit" class="btn btn-dark">搜尋</button>
+          </form>
+        </div>
+        <div class="table-responsive">
+          <table class="table admin-table align-middle mb-0">
+            <thead>
+              <tr>
+                <th>照片</th>
+                <th>分類</th>
+                <th>分享者</th>
+                <th>分享時間</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="photos-table-body"></tbody>
+          </table>
+        </div>
+        <div class="card-footer">
+          <div id="photos-pagination-info" class="small"></div>
+          <nav aria-label="照片分頁">
+            <ul id="photos-pagination" class="pagination admin-pagination mb-0"></ul>
+          </nav>
+        </div>
       </div>
-
-      <nav aria-label="照片分頁">
-        <ul id="photos-pagination" class="pagination justify-content-center"></ul>
-      </nav>
     </section>
   </main>
 
@@ -127,6 +120,7 @@
   <script src="/js/include.js"></script>
   <script src="/js/auth.js"></script>
   <script src="/js/share.js"></script>
+  <script src="/js/lightbox.js"></script>
   <script src="/js/adminPage.js"></script>
 </body>
 </html>

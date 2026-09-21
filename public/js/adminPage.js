@@ -82,8 +82,10 @@
   const photosPane = document.getElementById('photos-pane');
 
   function showTab(tab) {
-    tabUsersBtn.classList.toggle('active', tab === 'users');
-    tabPhotosBtn.classList.toggle('active', tab === 'photos');
+    tabUsersBtn.classList.toggle('btn-dark', tab === 'users');
+    tabUsersBtn.classList.toggle('btn-outline-dark', tab !== 'users');
+    tabPhotosBtn.classList.toggle('btn-dark', tab === 'photos');
+    tabPhotosBtn.classList.toggle('btn-outline-dark', tab !== 'photos');
     usersPane.classList.toggle('d-none', tab !== 'users');
     photosPane.classList.toggle('d-none', tab !== 'photos');
   }
@@ -98,9 +100,10 @@
   const usersStatusEl = document.getElementById('users-status');
   const usersTableBody = document.getElementById('users-table-body');
   const usersPaginationEl = document.getElementById('users-pagination');
+  const usersPaginationInfoEl = document.getElementById('users-pagination-info');
   const usersAlert = makeAlert('users');
 
-  const USERS_LIMIT = 20;
+  const USERS_LIMIT = 10;
   let currentUsersKeyword = '';
   let currentUsersBanned = '';
 
@@ -116,21 +119,24 @@
         const isSelf = user.id === selfId;
         const isAdminUser = user.role === 'ADMIN';
         const statusBadge = user.is_banned
-          ? '<span class="badge text-bg-danger">已停權</span>'
-          : '<span class="badge text-bg-success">正常</span>';
+          ? '<span class="admin-badge admin-badge-danger">已停權</span>'
+          : '<span class="admin-badge admin-badge-success">正常</span>';
+        const roleCell = isAdminUser
+          ? '<span class="admin-role-admin">ADMIN</span>'
+          : user.role;
 
-        let actionCell = '<span class="text-muted">-</span>';
+        let actionCell = '';
         if (!isAdminUser && !isSelf) {
           actionCell = user.is_banned
-            ? `<button type="button" class="btn btn-sm btn-outline-dark" data-unban-id="${user.id}">解除停權</button>`
-            : `<button type="button" class="btn btn-sm btn-outline-danger" data-ban-id="${user.id}">停權</button>`;
+            ? `<button type="button" class="admin-action-btn text-dark" data-unban-id="${user.id}">解除停權</button>`
+            : `<button type="button" class="admin-action-btn text-danger" data-ban-id="${user.id}">停權</button>`;
         }
 
         return `
           <tr>
             <td>${user.name}</td>
             <td>${user.email}</td>
-            <td>${user.role}</td>
+            <td>${roleCell}</td>
             <td>${formatDate(user.created_at)}</td>
             <td>${statusBadge}</td>
             <td>${actionCell}</td>
@@ -163,12 +169,16 @@
       if (body.data.users.length === 0) {
         usersTableBody.innerHTML = '';
         usersPaginationEl.innerHTML = '';
+        usersPaginationInfoEl.textContent = '顯示 0 - 0 筆，共 0 筆';
         setUsersStatus('找不到符合條件的使用者');
         return;
       }
 
       setUsersStatus('');
       renderUsersTable(body.data.users);
+      const usersStart = (page - 1) * USERS_LIMIT + 1;
+      const usersEnd = usersStart + body.data.users.length - 1;
+      usersPaginationInfoEl.textContent = `顯示 ${usersStart} - ${usersEnd} 筆，共 ${body.data.pagination.total} 筆`;
       usersPaginationEl.innerHTML = buildPaginationHtml(page, body.data.pagination.total_pages);
     } catch (error) {
       setUsersStatus('');
@@ -230,11 +240,13 @@
   const photosStatusEl = document.getElementById('photos-status');
   const photosTableBody = document.getElementById('photos-table-body');
   const photosPaginationEl = document.getElementById('photos-pagination');
+  const photosPaginationInfoEl = document.getElementById('photos-pagination-info');
   const photosAlert = makeAlert('photos');
 
-  const PHOTOS_LIMIT = 20;
+  const PHOTOS_LIMIT = 10;
   let currentPhotosKeyword = '';
   let currentPhotosCategory = '';
+  let currentPhotos = [];
 
   function setPhotosStatus(text) {
     photosStatusEl.textContent = text;
@@ -259,9 +271,14 @@
       .map(
         (photo) => `
           <tr>
-            <td><img src="${photo.image_url}" alt="" style="width: 64px; height: 64px; object-fit: cover; border-radius: 4px;" /></td>
             <td>
-              <a href="${photo.photographer_url}" target="_blank" rel="noopener">${photo.photographer_name}</a>
+              <img
+                src="${photo.image_url}"
+                alt="${photo.photographer_name} 的照片"
+                data-photo-id="${photo.id}"
+                class="lightbox-trigger"
+                style="width: 64px; height: 64px; object-fit: cover; border-radius: 4px;"
+              />
             </td>
             <td>${(photo.categories || []).join('、')}</td>
             <td>
@@ -269,7 +286,7 @@
             </td>
             <td>${formatDate(photo.created_at)}</td>
             <td>
-              <button type="button" class="btn btn-sm btn-outline-danger" data-force-delete-id="${photo.id}">強制刪除</button>
+              <button type="button" class="admin-action-btn text-danger" data-force-delete-id="${photo.id}">強制刪除</button>
             </td>
           </tr>
         `
@@ -298,12 +315,17 @@
       if (body.data.length === 0) {
         photosTableBody.innerHTML = '';
         photosPaginationEl.innerHTML = '';
+        photosPaginationInfoEl.textContent = '顯示 0 - 0 筆，共 0 筆';
         setPhotosStatus('找不到符合條件的照片');
         return;
       }
 
       setPhotosStatus('');
+      currentPhotos = body.data;
       renderPhotosTable(body.data);
+      const photosStart = (page - 1) * PHOTOS_LIMIT + 1;
+      const photosEnd = photosStart + body.data.length - 1;
+      photosPaginationInfoEl.textContent = `顯示 ${photosStart} - ${photosEnd} 筆，共 ${body.pagination.total} 筆`;
       const totalPages = Math.ceil(body.pagination.total / body.pagination.limit);
       photosPaginationEl.innerHTML = buildPaginationHtml(page, totalPages);
     } catch (error) {
@@ -320,6 +342,23 @@
   });
 
   photosTableBody.addEventListener('click', async (event) => {
+    const img = event.target.closest('img[data-photo-id]');
+    if (img) {
+      const photo = currentPhotos.find((p) => p.id === img.dataset.photoId);
+      if (!photo) return;
+
+      window.openLightbox({
+        imageUrl: photo.image_url,
+        photographerName: photo.photographer_name,
+        photographerUrl: photo.photographer_url,
+        downloadUrl: photo.unsplash_page_url,
+        categories: photo.categories,
+        sharerId: photo.user_id,
+        sharerName: photo.user_name
+      });
+      return;
+    }
+
     const deleteBtn = event.target.closest('button[data-force-delete-id]');
     if (!deleteBtn) return;
 

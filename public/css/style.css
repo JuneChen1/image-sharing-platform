@@ -285,3 +285,133 @@ body {
   font-weight: 600;
   color: #212529;
 }
+
+.admin-card {
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
+.admin-card .card-body {
+  padding: 12px 24px;
+  border-bottom: 1px solid #eee;
+}
+
+.admin-card .card-body .form-control,
+.admin-card .card-body .form-select {
+  border-radius: 6px;
+}
+
+.admin-table th,
+.admin-table td {
+  padding: 16px 24px;
+  text-align: left;
+}
+
+#photos-table-body td {
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+
+.admin-table thead th {
+  background-color: #f8f9fa;
+  font-weight: 700;
+  color: #374151;
+  border-bottom-width: 1px;
+}
+
+.admin-table tbody tr:nth-child(even) {
+  background-color: #fafafa;
+}
+
+.admin-table tbody tr:hover {
+  background-color: #f0f7ff;
+}
+
+.admin-card .card-footer {
+  background-color: #fff;
+  border-top: 1px solid #e5e7eb;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 12px 24px;
+}
+
+.admin-card .card-footer nav {
+  grid-column: 2;
+  justify-self: center;
+}
+
+.admin-card .card-footer > div {
+  color: #6c757d;
+}
+
+.admin-badge {
+  display: inline-block;
+  padding: 0.3em 0.7em;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.admin-badge-success {
+  background-color: #e6f4ea;
+  color: #137333;
+}
+
+.admin-badge-danger {
+  background-color: #fce8e6;
+  color: #c5221f;
+}
+
+.admin-role-admin {
+  color: #1967d2;
+  font-weight: 600;
+}
+
+.admin-action-btn {
+  border: none;
+  background: none;
+  padding: 4px 10px;
+  margin-left: -10px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+.admin-action-btn.text-danger:hover {
+  background-color: #fce8e6;
+}
+
+.admin-action-btn.text-dark:hover {
+  background-color: #f1f3f5;
+}
+
+.admin-pagination {
+  gap: 0.35rem;
+}
+
+.admin-pagination .page-item:not(:first-child) .page-link {
+  margin-left: 0;
+}
+
+.admin-pagination .page-item .page-link {
+  border-radius: 6px;
+  border-color: #dee2e6;
+}
+
+.admin-pagination .page-link:hover {
+  background-color: #f0f7ff;
+  border-color: #adb5bd;
+}
+
+.admin-pagination .page-item.active .page-link {
+  background-color: #212529;
+  border-color: #212529;
+}
+
+.admin-pagination .page-item.disabled .page-link {
+  border-color: #eee;
+}
