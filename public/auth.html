@@ -18,76 +18,97 @@
 <body>
   <div data-include="/partials/chrome.html"></div>
 
-  <main class="container" style="max-width: 480px;">
-    <div id="login-pane">
-      <h1 class="h4 mb-4 text-center">登入</h1>
-      <form id="login-form">
-        <div class="mb-3">
-          <label for="login-email" class="form-label">Email</label>
-          <input type="email" id="login-email" class="form-control" required />
-        </div>
-        <div class="mb-3">
-          <label for="login-password" class="form-label">密碼</label>
-          <input type="password" id="login-password" class="form-control" required />
-        </div>
-        <div id="login-alert" class="alert d-none alert-dismissible d-flex align-items-center mb-3" role="alert">
-          <svg id="login-alert-icon" width="16" height="16" fill="currentColor" class="flex-shrink-0 me-2" viewBox="0 0 16 16" role="img" aria-hidden="true"></svg>
-          <div id="login-alert-message" class="flex-grow-1"></div>
-        </div>
-        <button type="submit" class="btn btn-dark w-100 mb-3">登入</button>
-        <p class="text-center mb-1">
-          還沒有帳號？<a href="#" id="show-register-link">註冊</a>
-        </p>
-        <p class="text-center mb-0">
-          <a href="#" id="show-forgot-link">忘記密碼？</a>
-        </p>
-      </form>
-    </div>
+  <main class="container py-4">
+    <div class="row justify-content-center">
+      <div class="col-md-6 col-lg-4">
 
-    <div id="forgot-pane" class="d-none">
-      <h1 class="h4 mb-4 text-center">忘記密碼</h1>
-      <form id="forgot-form">
-        <div class="mb-3">
-          <label for="forgot-email" class="form-label">Email</label>
-          <input type="email" id="forgot-email" class="form-control" required />
-          <div class="form-text">我們會寄送重設密碼連結到此信箱</div>
+        <div id="login-pane">
+          <div class="card mx-auto" style="max-width: 400px;">
+            <div class="card-body" style="padding: 32px;">
+              <div id="login-alert" class="alert d-none alert-dismissible d-flex align-items-center mb-3" role="alert">
+                <svg id="login-alert-icon" width="16" height="16" fill="currentColor" class="flex-shrink-0 me-2" viewBox="0 0 16 16" role="img" aria-hidden="true"></svg>
+                <div id="login-alert-message" class="flex-grow-1"></div>
+                <button type="button" class="btn-close" aria-label="Close"></button>
+              </div>
+              <h5 class="card-title mb-3 text-center">登入</h5>
+              <form id="login-form">
+                <div class="mb-3">
+                  <label for="login-email" class="form-label">Email</label>
+                  <input type="email" id="login-email" class="form-control" required />
+                </div>
+                <div class="mb-3">
+                  <label for="login-password" class="form-label">密碼</label>
+                  <input type="password" id="login-password" class="form-control" required />
+                </div>
+                <button type="submit" class="btn btn-dark w-100" style="margin-top: 20px;">登入</button>
+              </form>
+              <p class="text-center small mt-3 mb-0">
+                還沒有帳號？<a href="#" id="show-register-link">註冊</a>
+              </p>
+              <p class="text-center small mt-1 mb-0">
+                <a href="#" id="show-forgot-link">忘記密碼？</a>
+              </p>
+            </div>
+          </div>
         </div>
-        <div id="forgot-alert" class="alert d-none alert-dismissible d-flex align-items-center mb-3" role="alert">
-          <svg id="forgot-alert-icon" width="16" height="16" fill="currentColor" class="flex-shrink-0 me-2" viewBox="0 0 16 16" role="img" aria-hidden="true"></svg>
-          <div id="forgot-alert-message" class="flex-grow-1"></div>
-        </div>
-        <button type="submit" class="btn btn-dark w-100 mb-3">寄送重設密碼信</button>
-        <p class="text-center mb-0">
-          想起密碼了？<a href="#" id="show-login-from-forgot-link">返回登入</a>
-        </p>
-      </form>
-    </div>
 
-    <div id="register-pane" class="d-none">
-      <h1 class="h4 mb-4 text-center">註冊</h1>
-      <form id="register-form">
-        <div class="mb-3">
-          <label for="register-name" class="form-label">暱稱</label>
-          <input type="text" id="register-name" class="form-control" required />
+        <div id="forgot-pane" class="d-none">
+          <div class="card mx-auto" style="max-width: 400px;">
+            <div class="card-body" style="padding: 32px;">
+              <div id="forgot-alert" class="alert d-none alert-dismissible d-flex align-items-center mb-3" role="alert">
+                <svg id="forgot-alert-icon" width="16" height="16" fill="currentColor" class="flex-shrink-0 me-2" viewBox="0 0 16 16" role="img" aria-hidden="true"></svg>
+                <div id="forgot-alert-message" class="flex-grow-1"></div>
+                <button type="button" class="btn-close" aria-label="Close"></button>
+              </div>
+              <h5 class="card-title mb-3 text-center">忘記密碼</h5>
+              <form id="forgot-form">
+                <div class="mb-3">
+                  <label for="forgot-email" class="form-label">Email</label>
+                  <input type="email" id="forgot-email" class="form-control" required />
+                  <div class="form-text">我們會寄送重設密碼連結到此信箱</div>
+                </div>
+                <button type="submit" class="btn btn-dark w-100" style="margin-top: 20px;">寄送重設密碼信</button>
+              </form>
+              <p class="text-center small mt-3 mb-0">
+                想起密碼了？<a href="#" id="show-login-from-forgot-link">返回登入</a>
+              </p>
+            </div>
+          </div>
         </div>
-        <div class="mb-3">
-          <label for="register-email" class="form-label">Email</label>
-          <input type="email" id="register-email" class="form-control" required />
+
+        <div id="register-pane" class="d-none">
+          <div class="card mx-auto" style="max-width: 400px;">
+            <div class="card-body" style="padding: 32px;">
+              <div id="register-alert" class="alert d-none alert-dismissible d-flex align-items-center mb-3" role="alert">
+                <svg id="register-alert-icon" width="16" height="16" fill="currentColor" class="flex-shrink-0 me-2" viewBox="0 0 16 16" role="img" aria-hidden="true"></svg>
+                <div id="register-alert-message" class="flex-grow-1"></div>
+                <button type="button" class="btn-close" aria-label="Close"></button>
+              </div>
+              <h5 class="card-title mb-3 text-center">註冊</h5>
+              <form id="register-form">
+                <div class="mb-3">
+                  <label for="register-name" class="form-label">暱稱</label>
+                  <input type="text" id="register-name" class="form-control" required />
+                </div>
+                <div class="mb-3">
+                  <label for="register-email" class="form-label">Email</label>
+                  <input type="email" id="register-email" class="form-control" required />
+                </div>
+                <div class="mb-3">
+                  <label for="register-password" class="form-label">密碼</label>
+                  <input type="password" id="register-password" class="form-control" required />
+                  <div class="form-text">至少 8 碼，需同時包含英文字母與數字</div>
+                </div>
+                <button type="submit" class="btn btn-dark w-100" style="margin-top: 20px;">註冊</button>
+              </form>
+              <p class="text-center small mt-3 mb-0">
+                已經有帳號了？<a href="#" id="show-login-link">登入</a>
+              </p>
+            </div>
+          </div>
         </div>
-        <div class="mb-3">
-          <label for="register-password" class="form-label">密碼</label>
-          <input type="password" id="register-password" class="form-control" required />
-          <div class="form-text">至少 8 碼，需同時包含英文字母與數字</div>
-        </div>
-        <div id="register-alert" class="alert d-none alert-dismissible d-flex align-items-center mb-3" role="alert">
-          <svg id="register-alert-icon" width="16" height="16" fill="currentColor" class="flex-shrink-0 me-2" viewBox="0 0 16 16" role="img" aria-hidden="true"></svg>
-          <div id="register-alert-message" class="flex-grow-1"></div>
-        </div>
-        <button type="submit" class="btn btn-dark w-100 mb-3">註冊</button>
-        <p class="text-center mb-0">
-          已經有帳號了？<a href="#" id="show-login-link">登入</a>
-        </p>
-      </form>
+
+      </div>
     </div>
   </main>
 

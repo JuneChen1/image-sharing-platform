@@ -28,6 +28,8 @@
     alertEl.classList.add('d-none');
   }
 
+  alertEl.querySelector('.btn-close').addEventListener('click', hideAlert);
+
   async function loadCollections() {
     collectListEl.innerHTML = '<div class="text-muted small">載入中...</div>';
     const response = await fetch('/api/v1/users/me/collections', {

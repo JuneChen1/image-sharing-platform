@@ -22,6 +22,12 @@
     alertEl.className = `alert alert-dismissible d-flex align-items-center mb-3 alert-${type}`;
   }
 
+  function hideAlert() {
+    alertEl.classList.add('d-none');
+  }
+
+  alertEl.querySelector('.btn-close').addEventListener('click', hideAlert);
+
   function isValidPassword(password) {
     return /^(?=.*[A-Za-z])(?=.*\d).{8,}$/.test(password);
   }

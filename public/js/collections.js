@@ -58,6 +58,8 @@
     newCollectionAlertEl.classList.add('d-none');
   }
 
+  newCollectionAlertEl.querySelector('.btn-close').addEventListener('click', hideNewCollectionAlert);
+
   async function handleUnauthorized(response) {
     if (response.status !== 401) return false;
     window.auth.clearSession();

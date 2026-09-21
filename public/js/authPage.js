@@ -24,15 +24,19 @@
     const iconEl = document.getElementById(`${prefix}-alert-icon`);
     const messageEl = document.getElementById(`${prefix}-alert-message`);
 
+    function hide() {
+      el.classList.add('d-none');
+    }
+
+    el.querySelector('.btn-close').addEventListener('click', hide);
+
     return {
       show(message, type = 'danger') {
         iconEl.innerHTML = ALERT_ICON_PATHS[type] || '';
         messageEl.textContent = message;
         el.className = `alert alert-dismissible d-flex align-items-center mb-3 alert-${type}`;
       },
-      hide() {
-        el.classList.add('d-none');
-      }
+      hide
     };
   }
 
@@ -146,7 +150,7 @@
       registerForm.reset();
       registerAlert.hide();
       showTab('login');
-      loginAlert.show('註冊成功，請登入', 'success');
+      loginAlert.show('註冊成功', 'success');
     } catch (error) {
       registerAlert.show('連線錯誤，請確認伺服器是否啟動');
     }

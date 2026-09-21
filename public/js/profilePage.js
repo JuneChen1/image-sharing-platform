@@ -26,6 +26,12 @@
     alertEl.className = `alert alert-dismissible d-flex align-items-center mb-3 alert-${type}`;
   }
 
+  function hideAlert() {
+    alertEl.classList.add('d-none');
+  }
+
+  alertEl.querySelector('.btn-close').addEventListener('click', hideAlert);
+
   async function loadProfile() {
     try {
       const response = await fetch('/api/v1/users/me', {

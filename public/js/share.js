@@ -32,6 +32,8 @@
     alertEl.classList.add('d-none');
   }
 
+  alertEl.querySelector('.btn-close').addEventListener('click', hideAlert);
+
   function renderCategories() {
     categoryListEl.innerHTML = categories
       .map(

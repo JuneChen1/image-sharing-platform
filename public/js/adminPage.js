@@ -21,15 +21,20 @@
     const el = document.getElementById(`${prefix}-alert`);
     const iconEl = document.getElementById(`${prefix}-alert-icon`);
     const messageEl = document.getElementById(`${prefix}-alert-message`);
+
+    function hide() {
+      el.classList.add('d-none');
+    }
+
+    el.querySelector('.btn-close').addEventListener('click', hide);
+
     return {
       show(message, type = 'danger') {
         iconEl.innerHTML = ALERT_ICON_PATHS[type] || '';
         messageEl.textContent = message;
         el.className = `alert alert-dismissible d-flex align-items-center mb-3 alert-${type}`;
       },
-      hide() {
-        el.classList.add('d-none');
-      }
+      hide
     };
   }
 
