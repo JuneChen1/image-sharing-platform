@@ -41,7 +41,7 @@
     );
     lightboxShare.classList.toggle('d-none', !window.auth.isLoggedIn());
     lightboxCategories.innerHTML = (categories || [])
-      .map((name) => `<span class="badge text-bg-secondary">${name}</span>`)
+      .map((name) => `<span class="tag-pill">${name}</span>`)
       .join('');
     lightboxSharer.classList.toggle('d-none', !sharerId || !sharerName);
     if (sharerId && sharerName) {
