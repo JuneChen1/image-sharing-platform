@@ -10,7 +10,7 @@
     return localStorage.getItem(USER_NAME_KEY);
   }
 
-  function getUserId() {
+  function decodeTokenPayload() {
     const token = getToken();
     if (!token) return null;
     try {
@@ -21,10 +21,22 @@
           .map((c) => '%' + c.charCodeAt(0).toString(16).padStart(2, '0'))
           .join('')
       );
-      return JSON.parse(json).id;
+      return JSON.parse(json);
     } catch (error) {
       return null;
     }
+  }
+
+  function getUserId() {
+    return decodeTokenPayload()?.id ?? null;
+  }
+
+  function getUserRole() {
+    return decodeTokenPayload()?.role ?? null;
+  }
+
+  function isAdmin() {
+    return getUserRole() === 'ADMIN';
   }
 
   function isLoggedIn() {
@@ -50,6 +62,8 @@
     getToken,
     getUserName,
     getUserId,
+    getUserRole,
+    isAdmin,
     isLoggedIn,
     setSession,
     clearSession,
@@ -66,6 +80,7 @@
     const searchLink = document.getElementById('search-link');
     const logoutBtn = document.getElementById('logout-btn');
     const mySharedPhotosLink = document.getElementById('my-shared-photos-link');
+    const adminPanelLink = document.getElementById('admin-panel-link');
 
     function renderAuthUI() {
       const loggedIn = isLoggedIn();
@@ -74,6 +89,7 @@
       userEl.classList.toggle('d-none', !loggedIn);
       shareBtn.classList.toggle('d-none', !loggedIn);
       searchLink.classList.toggle('d-none', onAuthPage);
+      adminPanelLink.classList.toggle('d-none', !loggedIn || !isAdmin());
       if (loggedIn) {
         userNameEl.textContent = getUserName();
         mySharedPhotosLink.href = `/user-shared-photos.html?userId=${getUserId()}`;
