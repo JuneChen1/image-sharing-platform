@@ -6,6 +6,10 @@ body {
   font-size: 1.75rem;
 }
 
+#category-bar .btn {
+  border-radius: 999px;
+}
+
 .masonry-grid {
   display: flex;
   align-items: flex-start;
