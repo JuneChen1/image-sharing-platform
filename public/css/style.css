@@ -10,6 +10,20 @@ body {
   border-radius: 999px;
 }
 
+#profile-save-btn {
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+#profile-save-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.danger-zone {
+  background-color: #fff5f5;
+  border: 1px solid #dc3545;
+}
+
 .masonry-grid {
   display: flex;
   align-items: flex-start;

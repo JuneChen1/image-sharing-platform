@@ -24,31 +24,46 @@
       <form id="profile-form">
         <div class="mb-3">
           <label for="profile-email" class="form-label">Email</label>
-          <input type="email" id="profile-email" class="form-control" disabled />
+          <div class="position-relative">
+            <input type="email" id="profile-email" class="form-control pe-5" disabled />
+            <svg
+              width="14"
+              height="14"
+              fill="currentColor"
+              class="position-absolute top-50 end-0 translate-middle-y me-3 text-muted"
+              viewBox="0 0 16 16"
+              role="img"
+              aria-label="Email 為唯讀欄位"
+            >
+              <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2m3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2"/>
+            </svg>
+          </div>
         </div>
         <div class="mb-3">
           <label for="profile-name" class="form-label">暱稱</label>
-          <input type="text" id="profile-name" class="form-control" required />
+          <input type="text" id="profile-name" class="form-control" maxlength="50" required />
+          <div class="d-flex justify-content-between mt-1">
+            <span id="profile-name-error" class="text-danger small d-none">暱稱不可為空</span>
+            <span id="profile-name-count" class="text-muted small ms-auto">0/50</span>
+          </div>
         </div>
         <div id="profile-alert" class="alert d-none alert-dismissible d-flex align-items-center mb-3" role="alert">
           <svg id="profile-alert-icon" width="16" height="16" fill="currentColor" class="flex-shrink-0 me-2" viewBox="0 0 16 16" role="img" aria-hidden="true"></svg>
           <div id="profile-alert-message" class="flex-grow-1"></div>
           <button type="button" class="btn-close" aria-label="Close"></button>
         </div>
-        <button type="submit" class="btn btn-dark w-100 mb-3">儲存變更</button>
-        <p class="text-center mb-0">
-          <a href="/change-password.html">修改密碼</a>
-        </p>
+        <button type="submit" id="profile-save-btn" class="btn btn-dark w-100 mb-3">儲存變更</button>
+        <a href="/change-password.html" class="btn btn-outline-dark w-100">修改密碼</a>
       </form>
 
       <hr class="my-4" />
 
-      <div class="border border-danger rounded p-3">
+      <div class="danger-zone rounded p-3">
         <h2 class="h6 text-danger mb-2">危險區域</h2>
         <p class="text-muted small mb-3">
           刪除帳號後，你的所有分享、收藏庫、收藏紀錄將被永久刪除，此動作無法復原。
         </p>
-        <button type="button" class="btn btn-outline-danger w-100" data-bs-toggle="modal" data-bs-target="#deleteAccountModal">刪除帳號</button>
+        <button type="button" class="btn btn-danger w-100" data-bs-toggle="modal" data-bs-target="#deleteAccountModal">刪除帳號</button>
       </div>
     </div>
   </main>

@@ -9,6 +9,8 @@
   const profileForm = document.getElementById('profile-form');
   const emailInput = document.getElementById('profile-email');
   const nameInput = document.getElementById('profile-name');
+  const nameCountEl = document.getElementById('profile-name-count');
+  const nameErrorEl = document.getElementById('profile-name-error');
   const alertEl = document.getElementById('profile-alert');
   const alertIconEl = document.getElementById('profile-alert-icon');
   const alertMessageEl = document.getElementById('profile-alert-message');
@@ -32,6 +34,14 @@
 
   alertEl.querySelector('.btn-close').addEventListener('click', hideAlert);
 
+  function updateNameValidation() {
+    const value = nameInput.value;
+    nameCountEl.textContent = `${value.length}/50`;
+    nameErrorEl.classList.toggle('d-none', value.trim().length > 0);
+  }
+
+  nameInput.addEventListener('input', updateNameValidation);
+
   async function loadProfile() {
     try {
       const response = await fetch('/api/v1/users/me', {
@@ -46,6 +56,7 @@
 
       emailInput.value = body.data.user.email;
       nameInput.value = body.data.user.name;
+      updateNameValidation();
     } catch (error) {
       showAlert('連線錯誤，請確認伺服器是否啟動');
     }
