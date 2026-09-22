@@ -362,12 +362,30 @@
     const deleteBtn = event.target.closest('button[data-force-delete-id]');
     if (!deleteBtn) return;
 
+    forceDeleteTargetId = deleteBtn.dataset.forceDeleteId;
+    forceDeleteReasonInput.value = '';
+    bootstrap.Modal.getOrCreateInstance(forceDeleteReasonModalEl).show();
+  });
+
+  const forceDeleteReasonModalEl = document.getElementById('forceDeleteReasonModal');
+  const forceDeleteReasonForm = document.getElementById('force-delete-reason-form');
+  const forceDeleteReasonInput = document.getElementById('force-delete-reason-input');
+  let forceDeleteTargetId = null;
+
+  forceDeleteReasonForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    if (!forceDeleteTargetId) return;
+
     if (!window.confirm('確定要強制刪除這張照片嗎？此動作無法復原，將一併移除相關的分類與收藏紀錄。')) return;
 
     try {
-      const response = await fetch(`/api/v1/admin/shared-photos/${deleteBtn.dataset.forceDeleteId}`, {
+      const response = await fetch(`/api/v1/admin/shared-photos/${forceDeleteTargetId}`, {
         method: 'DELETE',
-        headers: window.auth.getAuthHeader()
+        headers: {
+          'Content-Type': 'application/json',
+          ...window.auth.getAuthHeader()
+        },
+        body: JSON.stringify({ reason: forceDeleteReasonInput.value.trim() })
       });
       const body = await response.json();
 
@@ -376,11 +394,17 @@
         return;
       }
 
+      bootstrap.Modal.getOrCreateInstance(forceDeleteReasonModalEl).hide();
       photosAlert.show('已強制刪除該照片', 'success');
       await fetchAndRenderPhotos(1, true);
     } catch (error) {
       photosAlert.show('連線錯誤，請確認伺服器是否啟動');
     }
+  });
+
+  forceDeleteReasonModalEl.addEventListener('hidden.bs.modal', () => {
+    forceDeleteReasonForm.reset();
+    forceDeleteTargetId = null;
   });
 
   photosPaginationEl.addEventListener('click', (event) => {
