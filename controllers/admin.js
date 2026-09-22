@@ -118,8 +118,19 @@ const adminController = {
       const { id } = req.params;
       if (!isValidUUID(id)) return next(appError(400, '欄位未填寫正確'));
 
+      const reason = isValidString(req.body.reason)
+        ? req.body.reason.trim()
+        : null;
+
       let deleted = false;
       await dataSource.transaction(async (manager) => {
+        const photo = await manager.getRepository('SharedPhotos').findOne({
+          where: { id },
+          relations: { user: true }
+        });
+
+        if (!photo) return;
+
         await manager
           .getRepository('SharedPhotoCategories')
           .delete({ sharedPhotos: { id } });
@@ -130,6 +141,19 @@ const adminController = {
           .getRepository('SharedPhotos')
           .delete({ id });
         deleted = result.affected > 0;
+
+        if (deleted) {
+          await manager.getRepository('DeletedSharedPhotos').save({
+            unsplash_id: photo.unsplash_id,
+            unsplash_page_url: photo.unsplash_page_url,
+            photographer_name: photo.photographer_name,
+            original_sharer_id: photo.user.id,
+            original_sharer_name: photo.user.name,
+            deleted_by_admin_id: req.user.id,
+            deleted_by_admin_name: req.user.name,
+            reason
+          });
+        }
       });
 
       if (!deleted) return next(appError(404, '查無資料'));
