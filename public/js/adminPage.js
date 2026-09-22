@@ -241,6 +241,7 @@
   const photosTableBody = document.getElementById('photos-table-body');
   const photosPaginationEl = document.getElementById('photos-pagination');
   const photosPaginationInfoEl = document.getElementById('photos-pagination-info');
+  const exportDeletedPhotosBtn = document.getElementById('export-deleted-photos-btn');
   const photosAlert = makeAlert('photos');
 
   const PHOTOS_LIMIT = 10;
@@ -339,6 +340,33 @@
     currentPhotosKeyword = photosKeywordInput.value.trim();
     currentPhotosCategory = photosCategoryFilter.value;
     fetchAndRenderPhotos(1);
+  });
+
+  exportDeletedPhotosBtn.addEventListener('click', async () => {
+    exportDeletedPhotosBtn.disabled = true;
+    try {
+      const response = await fetch('/api/v1/admin/deleted-shared-photos/export', {
+        headers: window.auth.getAuthHeader()
+      });
+
+      if (!response.ok) {
+        const body = await response.json();
+        photosAlert.show(body.message || '匯出失敗');
+        return;
+      }
+
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'deleted-shared-photos.csv';
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      photosAlert.show('連線錯誤，請確認伺服器是否啟動');
+    } finally {
+      exportDeletedPhotosBtn.disabled = false;
+    }
   });
 
   photosTableBody.addEventListener('click', async (event) => {
