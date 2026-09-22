@@ -88,6 +88,9 @@ const userController = {
   },
   async deleteMe(req, res, next) {
     try {
+      if (req.user.role === 'ADMIN')
+        return next(appError(403, '不可刪除管理者帳號'));
+
       const { password } = req.body;
 
       if (!isValidPassword(password))
