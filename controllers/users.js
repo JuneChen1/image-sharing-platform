@@ -1,4 +1,5 @@
 const bcrypt = require('bcrypt');
+const { In } = require('typeorm');
 const {
   isValidString,
   isValidPassword,
@@ -85,6 +86,57 @@ const userController = {
       next(error);
     }
   },
+  async deleteMe(req, res, next) {
+    try {
+      const { password } = req.body;
+
+      if (!isValidPassword(password))
+        return next(appError(400, '欄位未填寫正確'));
+
+      const isMatch = await bcrypt.compare(password, req.user.password);
+      if (!isMatch) return next(appError(400, '密碼錯誤'));
+
+      const userId = req.user.id;
+
+      await dataSource.transaction(async (manager) => {
+        const ownPhotos = await manager.getRepository('SharedPhotos').find({
+          where: { user: { id: userId } },
+          select: { id: true }
+        });
+
+        if (ownPhotos.length > 0) {
+          const ownPhotoIds = ownPhotos.map((photo) => photo.id);
+          await manager
+            .getRepository('SharedPhotoCategories')
+            .delete({ sharedPhotos: { id: In(ownPhotoIds) } });
+
+          // 刪除"其他使用者"收藏此作者分享的照片的紀錄
+          await manager
+            .getRepository('Favorites')
+            .delete({ sharedPhotos: { id: In(ownPhotoIds) } });
+        }
+
+        await manager
+          .getRepository('Favorites')
+          .delete({ user: { id: userId } });
+        await manager
+          .getRepository('Collections')
+          .delete({ user: { id: userId } });
+        await manager
+          .getRepository('SharedPhotos')
+          .delete({ user: { id: userId } });
+        await manager.getRepository('Users').delete({ id: userId });
+      });
+
+      res.status(200).json({
+        status: 'success',
+        message: '帳號已刪除'
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+
   async getPhotos(req, res, next) {
     try {
       const { userId } = req.params;
