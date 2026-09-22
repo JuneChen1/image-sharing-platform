@@ -1,6 +1,24 @@
 const { unsplashBaseUrl, headers } = require('../config/constants');
 const appError = require('./appError');
 
+let lastRateLimit = { limit: null, remaining: null, checkedAt: null };
+
+function updateRateLimit(response) {
+  const limit = response.headers.get('X-Ratelimit-Limit');
+  const remaining = response.headers.get('X-Ratelimit-Remaining');
+  if (limit === null || remaining === null) return;
+
+  lastRateLimit = {
+    limit: Number(limit),
+    remaining: Number(remaining),
+    checkedAt: new Date().toISOString()
+  };
+}
+
+function getRateLimit() {
+  return lastRateLimit;
+}
+
 function getUnsplashImageId(url) {
   if (!url.startsWith('https://unsplash.com/photos/')) {
     return {
@@ -33,6 +51,8 @@ async function fetchUnsplashPhoto(unsplashId) {
     headers
   });
 
+  updateRateLimit(response);
+
   const data = await response.json();
 
   if (!response.ok)
@@ -53,6 +73,8 @@ async function fetchImagesWithKeyword(page, q) {
     }
   );
 
+  updateRateLimit(response);
+
   const data = await response.json();
 
   if (!response.ok)
@@ -69,5 +91,6 @@ module.exports = {
   getUnsplashImageId,
   getUnsplashImageInfo,
   fetchUnsplashPhoto,
-  fetchImagesWithKeyword
+  fetchImagesWithKeyword,
+  getRateLimit
 };
