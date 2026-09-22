@@ -163,7 +163,7 @@
       }
 
       window.auth.clearSession();
-      showDeleteAccountAlert('帳號已刪除，即將導向首頁...', 'success');
+      showDeleteAccountAlert('帳號已刪除，即將跳轉至首頁...', 'success');
       setTimeout(() => {
         window.location.href = '/';
       }, 2000);

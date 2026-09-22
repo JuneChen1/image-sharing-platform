@@ -76,7 +76,7 @@
 
       resetForm.reset();
       resetSubmitBtn.disabled = true;
-      showAlert(`${body.message}，即將導向登入頁...`, 'success');
+      showAlert(`${body.message}，即將跳轉至登入頁...`, 'success');
       setTimeout(() => {
         window.location.href = '/auth.html';
       }, 2000);
