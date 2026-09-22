@@ -85,4 +85,81 @@
       showAlert('連線錯誤，請確認伺服器是否啟動');
     }
   });
+
+  const deleteAccountModalEl = document.getElementById('deleteAccountModal');
+  const deleteAccountForm = document.getElementById('delete-account-form');
+  const deleteAccountPasswordInput = document.getElementById('delete-account-password');
+  const deleteAccountAlertEl = document.getElementById('delete-account-alert');
+  const deleteAccountAlertIconEl = document.getElementById('delete-account-alert-icon');
+  const deleteAccountAlertMessageEl = document.getElementById('delete-account-alert-message');
+  const deleteAccountSubmitBtn = deleteAccountForm.querySelector('button[type="submit"]');
+
+  function showDeleteAccountAlert(message, type = 'danger') {
+    deleteAccountAlertIconEl.innerHTML = ALERT_ICON_PATHS[type] || '';
+    deleteAccountAlertMessageEl.textContent = message;
+    deleteAccountAlertEl.className = `alert alert-dismissible d-flex align-items-center mb-3 alert-${type}`;
+  }
+
+  function hideDeleteAccountAlert() {
+    deleteAccountAlertEl.classList.add('d-none');
+  }
+
+  deleteAccountAlertEl.querySelector('.btn-close').addEventListener('click', hideDeleteAccountAlert);
+
+  deleteAccountModalEl.addEventListener('hidden.bs.modal', () => {
+    deleteAccountForm.reset();
+    hideDeleteAccountAlert();
+  });
+
+  let isDeletingAccount = false;
+
+  deleteAccountForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    if (isDeletingAccount) return;
+
+    const password = deleteAccountPasswordInput.value;
+    if (!password) {
+      showDeleteAccountAlert('請輸入密碼');
+      return;
+    }
+
+    if (
+      !window.confirm(
+        '確定要刪除帳號嗎？此動作無法復原，所有分享、收藏庫、收藏紀錄都會被永久刪除。'
+      )
+    )
+      return;
+
+    isDeletingAccount = true;
+    deleteAccountSubmitBtn.disabled = true;
+    hideDeleteAccountAlert();
+    try {
+      const response = await fetch('/api/v1/users/me', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          ...window.auth.getAuthHeader()
+        },
+        body: JSON.stringify({ password })
+      });
+      const body = await response.json();
+
+      if (!response.ok) {
+        showDeleteAccountAlert(body.message || '刪除失敗，請稍後再試');
+        isDeletingAccount = false;
+        deleteAccountSubmitBtn.disabled = false;
+        return;
+      }
+
+      window.auth.clearSession();
+      showDeleteAccountAlert('帳號已刪除，即將導向首頁...', 'success');
+      setTimeout(() => {
+        window.location.href = '/';
+      }, 2000);
+    } catch (error) {
+      showDeleteAccountAlert('連線錯誤，請確認伺服器是否啟動');
+      isDeletingAccount = false;
+      deleteAccountSubmitBtn.disabled = false;
+    }
+  });
 })();
