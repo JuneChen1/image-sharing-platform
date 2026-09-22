@@ -6,6 +6,7 @@ const SharePhotosCategories = require('../entities/shared_photo_categories');
 const Users = require('../entities/users');
 const Collections = require('../entities/collections');
 const Favorites = require('../entities/favorites');
+const DeletedSharedPhotos = require('../entities/deleted_shared_photos');
 
 const dataSource = new DataSource({
   type: 'postgres',
@@ -18,7 +19,8 @@ const dataSource = new DataSource({
     SharePhotosCategories,
     Users,
     Collections,
-    Favorites
+    Favorites,
+    DeletedSharedPhotos
   ],
   migrations: ['db/migrations/*.js']
 });
