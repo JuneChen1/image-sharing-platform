@@ -162,6 +162,51 @@ const adminController = {
     } catch (error) {
       next(error);
     }
+  },
+
+  async exportDeletedSharedPhotos(req, res, next) {
+    try {
+      const rows = await dataSource
+        .getRepository('DeletedSharedPhotos')
+        .find({ order: { deleted_at: 'DESC' } });
+
+      const columns = [
+        'unsplash_id',
+        'unsplash_page_url',
+        'photographer_name',
+        'original_sharer_id',
+        'original_sharer_name',
+        'deleted_by_admin_id',
+        'deleted_by_admin_name',
+        'reason',
+        'deleted_at'
+      ];
+
+      const csvEscape = (value) => {
+        const raw = value instanceof Date ? value.toISOString() : value;
+        const str = raw === null || raw === undefined ? '' : String(raw);
+        if (/[",\n]/.test(str)) {
+          return `"${str.replace(/"/g, '""')}"`;
+        }
+        return str;
+      };
+
+      const lines = [columns.join(',')];
+      rows.forEach((row) => {
+        lines.push(columns.map((key) => csvEscape(row[key])).join(','));
+      });
+
+      const csv = '﻿' + lines.join('\n');
+
+      res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+      res.setHeader(
+        'Content-Disposition',
+        'attachment; filename="deleted-shared-photos.csv"'
+      );
+      res.status(200).send(csv);
+    } catch (error) {
+      next(error);
+    }
   }
 };
 

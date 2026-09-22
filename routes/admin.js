@@ -9,5 +9,9 @@ router.get('/users', adminController.getUsers);
 router.patch('/users/:id/ban', adminController.banUser);
 router.patch('/users/:id/unban', adminController.unbanUser);
 router.delete('/shared-photos/:id', adminController.forceDeleteSharedPhoto);
+router.get(
+  '/deleted-shared-photos/export',
+  adminController.exportDeletedSharedPhotos
+);
 
 module.exports = router;
