@@ -198,7 +198,7 @@ body {
   min-width: 0;
 }
 
-#results .photo-author-avatar {
+.photo-author-avatar {
   width: 1.75rem;
   height: 1.75rem;
   border-radius: 50%;
@@ -212,7 +212,7 @@ body {
   flex-shrink: 0;
 }
 
-#results .photo-author-name {
+.photo-author-name {
   font-size: 0.875rem;
   font-weight: 600;
   white-space: nowrap;
@@ -221,6 +221,19 @@ body {
 }
 
 #results .photo-author:hover .photo-author-name {
+  text-decoration: underline;
+}
+
+.person-avatar-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #212529;
+  text-decoration: none;
+  min-width: 0;
+}
+
+.person-avatar-link:hover .photo-author-name {
   text-decoration: underline;
 }
 
@@ -291,6 +304,7 @@ body {
 
 .lightbox-image-wrap {
   position: relative;
+  margin-top: 1.75rem;
 }
 
 #lightbox-image {
@@ -302,22 +316,20 @@ body {
 
 .lightbox-photographer-badge {
   position: absolute;
-  top: 0.5rem;
+  top: 0.75rem;
   left: 0.75rem;
   z-index: 1;
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.25rem 0.85rem 0.25rem 0.25rem;
-  border-radius: 999px;
-  background-color: rgba(255, 255, 255, 0.85);
   text-decoration: none;
   font-size: 0.875rem;
   font-weight: 600;
+  color: #212529;
 }
 
-.lightbox-photographer-badge:hover {
-  background-color: #fff;
+.lightbox-photographer-badge:hover .person-name {
+  text-decoration: underline;
 }
 
 .lightbox-photographer-badge .person-name {
@@ -510,6 +522,26 @@ body {
 
 .admin-action-btn.text-dark:hover {
   background-color: #f1f3f5;
+}
+
+.collection-detail-header {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.collection-detail-header > *:first-child {
+  justify-self: start;
+}
+
+.collection-detail-header > *:last-child {
+  justify-self: end;
+}
+
+.collection-detail-header h1 {
+  justify-self: center;
+  text-align: center;
 }
 
 #collect-list {

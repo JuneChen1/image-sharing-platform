@@ -168,8 +168,9 @@
 
   function renderPhotosGrid() {
     collectionPhotosGridEl.innerHTML = currentPhotos
-      .map(
-        (photo) => `
+      .map((photo) => {
+        const initial = (photo.photographer_name || '?').trim().charAt(0).toUpperCase();
+        return `
           <div class="col-md-3 col-6">
             <div class="card h-100">
               <img
@@ -181,7 +182,10 @@
               />
               <div class="card-body">
                 <p class="card-text">
-                  攝影師：<a href="${photo.photographer_url}" target="_blank" rel="noopener">${photo.photographer_name}</a>
+                  <a href="${photo.photographer_url}" target="_blank" rel="noopener" class="person-avatar-link">
+                    <span class="photo-author-avatar">${initial}</span>
+                    <span class="photo-author-name">${photo.photographer_name}</span>
+                  </a>
                 </p>
                 <button type="button" class="btn btn-sm btn-outline-danger w-100" data-remove-photo-id="${photo.id}">
                   從收藏庫移除
@@ -189,8 +193,8 @@
               </div>
             </div>
           </div>
-        `
-      )
+        `;
+      })
       .join('');
   }
 
