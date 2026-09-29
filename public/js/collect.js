@@ -32,9 +32,10 @@
 
   async function loadCollections() {
     collectListEl.innerHTML = '<div class="text-muted small">載入中...</div>';
-    const response = await fetch('/api/v1/users/me/collections', {
-      headers: { ...window.auth.getAuthHeader() }
-    });
+    const response = await fetch(
+      `/api/v1/users/me/collections?photoId=${encodeURIComponent(currentPhotoId)}`,
+      { headers: { ...window.auth.getAuthHeader() } }
+    );
     const body = await response.json();
 
     if (response.status === 401) {
@@ -54,16 +55,29 @@
     }
 
     collectListEl.innerHTML = body.data
-      .map(
-        (collection) => `
-          <button
-            type="button"
-            class="list-group-item list-group-item-action"
-            data-collection-id="${collection.id}"
-          >
-            ${collection.name}
-          </button>
-        `
+      .map((collection) =>
+        collection.hasPhoto
+          ? `
+            <button
+              type="button"
+              class="list-group-item list-group-item-added d-flex align-items-center gap-2"
+              disabled
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="text-success flex-shrink-0" viewBox="0 0 16 16">
+                <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0"/>
+              </svg>
+              ${collection.name}
+            </button>
+          `
+          : `
+            <button
+              type="button"
+              class="list-group-item list-group-item-action"
+              data-collection-id="${collection.id}"
+            >
+              ${collection.name}
+            </button>
+          `
       )
       .join('');
   }
@@ -109,6 +123,16 @@
 
   let isCreatingCollection = false;
 
+  collectNewNameEl.addEventListener('input', () => {
+    collectNewBtn.disabled = collectNewNameEl.value.trim() === '';
+  });
+
+  collectNewNameEl.addEventListener('keydown', (event) => {
+    if (event.key !== 'Enter') return;
+    event.preventDefault();
+    if (!collectNewBtn.disabled) collectNewBtn.click();
+  });
+
   collectNewBtn.addEventListener('click', async () => {
     if (isCreatingCollection) return;
     const name = collectNewNameEl.value.trim();
@@ -145,13 +169,14 @@
       showAlert('連線錯誤，請確認伺服器是否啟動');
     } finally {
       isCreatingCollection = false;
-      collectNewBtn.disabled = false;
+      collectNewBtn.disabled = collectNewNameEl.value.trim() === '';
     }
   });
 
   collectModalEl.addEventListener('hidden.bs.modal', () => {
     hideAlert();
     collectNewNameEl.value = '';
+    collectNewBtn.disabled = true;
     currentPhotoId = null;
   });
 

@@ -470,3 +470,19 @@ body {
   background-color: #f1f3f5;
 }
 
+#collect-list {
+  max-height: 240px;
+  overflow-y: auto;
+}
+
+#collect-list .list-group-item-added {
+  background-color: #fff;
+  color: #212529;
+  opacity: 1;
+  cursor: default;
+}
+
+#collectModal .modal-dialog {
+  max-width: 380px;
+}
+
