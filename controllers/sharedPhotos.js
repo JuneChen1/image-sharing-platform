@@ -126,6 +126,9 @@ const getSharedImages = async (req, res, next) => {
     req.query.limit === undefined ? 20 : Number(req.query.limit);
   const category = req.query.category;
   const q = req.query.q;
+  const sort = req.query.sort === undefined ? 'latest' : req.query.sort;
+
+  const ALLOWED_SORTS = ['latest', 'popular'];
 
   if (!isPositiveInteger(pageNumber) || !isPositiveInteger(limitNumber)) {
     return next(appError(400, '頁數(page)和每頁筆數(limit)只能是正整數'));
@@ -135,40 +138,49 @@ const getSharedImages = async (req, res, next) => {
     return next(appError(400, '每頁筆數(limit)不能大於100'));
   }
 
+  if (!ALLOWED_SORTS.includes(sort)) {
+    return next(appError(400, '排序只能是 latest 或 popular'));
+  }
+
   const skip = (pageNumber - 1) * limitNumber;
   const take = limitNumber;
 
+  let data, total;
   try {
-    let data, total;
     const sharePhotosRepo = dataSource.getRepository('SharedPhotos');
-    if (!category && !q) {
-      let rawData;
-      [rawData, total] = await sharePhotosRepo.findAndCount({
-        relations: { user: true },
-        skip,
-        take,
-        order: { created_at: 'DESC' }
-      });
-      data = rawData.map(({ user, ...photo }) => ({
-        ...photo,
-        user_id: user.id,
-        user_name: user.name
-      }));
-    } else {
-      const params = [];
-      const conditions = [];
-      if (category) {
-        params.push(category);
-        conditions.push('AND c.name = $1');
-      }
-      if (q) {
-        params.push(q);
-        conditions.push(`
+    if (sort === 'latest') {
+      // 創建時間排序
+      if (!category && !q) {
+        let rawData;
+        [rawData, total] = await sharePhotosRepo.findAndCount({
+          relations: { user: true },
+          skip,
+          take,
+          order: { created_at: 'DESC' }
+        });
+        data = rawData.map(({ user, ...photo }) => ({
+          ...photo,
+          user_id: user.id,
+          user_name: user.name
+        }));
+
+        data = await attachFavoritesCount(data);
+      } else {
+        // 有帶 category 或 q 參數
+        const params = [];
+        const conditions = [];
+        if (category) {
+          params.push(category);
+          conditions.push('AND c.name = $1');
+        }
+        if (q) {
+          params.push(q);
+          conditions.push(`
           AND (c.name ILIKE '%' || $${params.length} || '%' OR sp.photographer_name ILIKE '%' || $${params.length} || '%')
         `);
-      }
+        }
 
-      const sqlQuery = `
+        const sqlQuery = `
         SELECT sp.*, u.name AS user_name FROM shared_photos sp
         JOIN shared_photo_categories AS spc
           ON spc.shared_photo_id = sp.id
@@ -181,14 +193,83 @@ const getSharedImages = async (req, res, next) => {
         ORDER BY sp.created_at DESC
         `;
 
-      const result = await dataSource.query(sqlQuery, params);
+        const result = await dataSource.query(sqlQuery, params);
 
-      total = result.length;
-      data = result.slice(skip, skip + take);
+        total = result.length;
+        data = result.slice(skip, skip + take);
+
+        data = await attachFavoritesCount(data);
+      }
+    } else if (sort === 'popular') {
+      // 收藏數排序
+      if (!category && !q) {
+        const countResult = await sharePhotosRepo.count();
+        total = countResult;
+
+        data = await dataSource.query(
+          `
+          SELECT sp.*, u.name AS user_name, COUNT(f.id)::int AS favorites_count
+          FROM shared_photos sp
+          JOIN users AS u ON u.id = sp.user_id
+          LEFT JOIN favorites AS f ON f.shared_photo_id = sp.id
+          GROUP BY sp.id, u.name
+          ORDER BY favorites_count DESC, sp.created_at DESC
+          LIMIT $1 OFFSET $2
+          `,
+          [take, skip]
+        );
+      } else {
+        // 有帶 category 或 q 參數
+        const params = [];
+        const conditions = [];
+        if (category) {
+          params.push(category);
+          conditions.push(`
+            AND EXISTS (
+              SELECT 1 FROM shared_photo_categories spc
+              JOIN categories c ON c.id = spc.category_id
+              WHERE spc.shared_photo_id = sp.id AND c.name = $${params.length}
+            )
+          `);
+        }
+        if (q) {
+          params.push(q);
+          conditions.push(`
+            AND (
+              sp.photographer_name ILIKE '%' || $${params.length} || '%'
+              OR EXISTS (
+                SELECT 1 FROM shared_photo_categories spc
+                JOIN categories c ON c.id = spc.category_id
+                WHERE spc.shared_photo_id = sp.id AND c.name ILIKE '%' || $${params.length} || '%'
+              )
+            )
+          `);
+        }
+
+        const whereClause = `WHERE TRUE ${conditions.join(' ')}`;
+        const countResult = await dataSource.query(
+          `SELECT COUNT(*) FROM shared_photos sp ${whereClause}`,
+          params
+        );
+        total = Number(countResult[0].count);
+
+        data = await dataSource.query(
+          `
+          SELECT sp.*, u.name AS user_name, COUNT(f.id)::int AS favorites_count
+          FROM shared_photos sp
+          JOIN users AS u ON u.id = sp.user_id
+          LEFT JOIN favorites AS f ON f.shared_photo_id = sp.id
+          ${whereClause}
+          GROUP BY sp.id, u.name
+          ORDER BY favorites_count DESC, sp.created_at DESC
+          LIMIT $${params.length + 1} OFFSET $${params.length + 2}
+          `,
+          [...params, take, skip]
+        );
+      }
     }
 
     data = await attachCategories(data);
-    data = await attachFavoritesCount(data);
 
     res.status(200).json({
       status: 'success',
