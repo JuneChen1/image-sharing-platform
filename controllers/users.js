@@ -148,6 +148,10 @@ const userController = {
       const { userId } = req.params;
       if (!isValidUUID(userId)) return next(appError(400, '欄位未填寫正確'));
 
+      const usersRepo = dataSource.getRepository('Users');
+      const user = await usersRepo.findOneBy({ id: userId });
+      if (!user) return next(appError(404, '查無此使用者'));
+
       const pageNumber =
         req.query.page === undefined ? 1 : Number(req.query.page);
       const limitNumber =
@@ -178,7 +182,8 @@ const userController = {
       res.status(200).json({
         status: 'success',
         data,
-        pagination: { page: pageNumber, limit: limitNumber, total }
+        pagination: { page: pageNumber, limit: limitNumber, total },
+        user: { id: user.id, name: user.name }
       });
     } catch (error) {
       next(error);
