@@ -119,6 +119,7 @@ body {
   top: 0.5rem;
   right: 0.5rem;
   display: flex;
+  align-items: center;
   gap: 0.4rem;
   opacity: 0;
   transition: opacity 0.15s ease;
@@ -143,6 +144,28 @@ body {
 }
 
 #results .photo-overlay-top .btn-icon:hover {
+  background: #fff;
+}
+
+#results .photo-collect-badge {
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.15rem;
+  padding: 0 0.65rem;
+  border-radius: 999px;
+  border: none;
+  background: rgba(255, 255, 255, 0.9);
+  color: #212529;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+#results button.photo-collect-badge {
+  cursor: pointer;
+}
+
+#results button.photo-collect-badge:hover {
   background: #fff;
 }
 

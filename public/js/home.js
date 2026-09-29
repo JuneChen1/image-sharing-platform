@@ -288,6 +288,7 @@
 
   function renderPhotoCard(photo) {
     const initial = (photo.photographer_name || '?').trim().charAt(0).toUpperCase();
+    const favoritesCount = photo.favorites_count || 0;
     return `
       <div class="card">
         <div class="photo-media">
@@ -305,12 +306,18 @@
                       <path d="M11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.5 2.5 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5"/>
                     </svg>
                   </button>
-                  <button type="button" class="btn-icon" data-collect-id="${photo.id}" title="收藏" aria-label="收藏">
+                  <button type="button" class="photo-collect-badge" data-collect-id="${photo.id}" title="${favoritesCount} 人收藏，點擊收藏">
                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
                       <path d="M2 2v13.5a.5.5 0 0 0 .74.439L8 13.069l5.26 2.87A.5.5 0 0 0 14 15.5V2a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2z"/>
                     </svg>
+                    <span>${favoritesCount}</span>
                   </button>`
-                : ''
+                : `<div class="photo-collect-badge" title="${favoritesCount} 人收藏">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+                      <path d="M2 2v13.5a.5.5 0 0 0 .74.439L8 13.069l5.26 2.87A.5.5 0 0 0 14 15.5V2a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2z"/>
+                    </svg>
+                    <span>${favoritesCount}</span>
+                  </div>`
             }
           </div>
           <div class="photo-overlay-bottom">
