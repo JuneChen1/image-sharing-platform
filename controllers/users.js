@@ -7,7 +7,10 @@ const {
   isPositiveInteger
 } = require('../utils/validUtils');
 const appError = require('../utils/appError');
-const { attachCategories } = require('../utils/sharedPhotosUtils');
+const {
+  attachCategories,
+  attachFavoritesCount
+} = require('../utils/sharedPhotosUtils');
 const { dataSource } = require('../db/data-source');
 
 const userController = {
@@ -169,7 +172,8 @@ const userController = {
         order: { created_at: 'DESC' }
       });
 
-      const data = await attachCategories(rawData);
+      const dataWithCategories = await attachCategories(rawData);
+      const data = await attachFavoritesCount(dataWithCategories);
 
       res.status(200).json({
         status: 'success',
