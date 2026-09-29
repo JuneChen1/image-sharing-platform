@@ -5,6 +5,7 @@
   const resultsEl = document.getElementById('results');
   const paginationEl = document.getElementById('pagination');
   const categoryBarEl = document.getElementById('category-bar');
+  const sortBarEl = document.getElementById('sort-bar');
   const searchFormEl = document.getElementById('home-search-form');
   const searchInputEl = document.getElementById('home-search-input');
 
@@ -12,6 +13,7 @@
   const CARD_TEXT_HEIGHT = 16;
   let currentCategory = undefined;
   let currentQuery = '';
+  let currentSort = 'latest';
   let currentPhotos = [];
 
   function setStatus(text, isError) {
@@ -39,6 +41,21 @@
 
     currentCategory = button.dataset.category || undefined;
     renderCategoryBarActive();
+
+    setStatus('載入中...', false);
+    try {
+      await fetchAndRenderPhotos(1);
+    } catch (error) {
+      setStatus(error.message || '連線錯誤，請確認伺服器是否啟動', true);
+    }
+  });
+
+  sortBarEl.addEventListener('click', async (event) => {
+    const button = event.target.closest('button[data-sort]');
+    if (!button || button.classList.contains('active')) return;
+
+    currentSort = button.dataset.sort;
+    renderSortBarActive();
 
     setStatus('載入中...', false);
     try {
@@ -125,6 +142,7 @@
       if (currentPhotos.length > 0) {
         renderMasonry(currentPhotos);
       }
+      updateCategoryBarScrollState();
     }, 200)
   );
 
@@ -157,7 +175,7 @@
         (category) => `
           <button
             type="button"
-            class="btn btn-sm ${category.name === '全部' ? 'btn-dark active' : 'btn-outline-dark'}"
+            class="btn btn-sm text-nowrap ${category.name === '全部' ? 'btn-dark active' : 'btn-outline-dark'}"
             data-category="${category.name === '全部' ? '' : category.name}"
           >
             ${category.name}
@@ -165,6 +183,13 @@
         `
       )
       .join('');
+
+    updateCategoryBarScrollState();
+  }
+
+  function updateCategoryBarScrollState() {
+    const isScrollable = categoryBarEl.scrollWidth > categoryBarEl.clientWidth + 1;
+    categoryBarEl.classList.toggle('is-scrollable', isScrollable);
   }
 
   function renderCategoryBarActive() {
@@ -176,6 +201,12 @@
     });
   }
 
+  function renderSortBarActive() {
+    sortBarEl.querySelectorAll('button[data-sort]').forEach((button) => {
+      button.classList.toggle('active', button.dataset.sort === currentSort);
+    });
+  }
+
   async function fetchAndRenderPhotos(page) {
     const categoryParam = currentCategory
       ? `&category=${encodeURIComponent(currentCategory)}`
@@ -184,7 +215,7 @@
       ? `&q=${encodeURIComponent(currentQuery)}`
       : '';
     const response = await fetch(
-      `/api/v1/shared-photos?page=${page}&limit=${LIMIT}${categoryParam}${queryParam}`
+      `/api/v1/shared-photos?page=${page}&limit=${LIMIT}&sort=${currentSort}${categoryParam}${queryParam}`
     );
     const body = await response.json();
 
