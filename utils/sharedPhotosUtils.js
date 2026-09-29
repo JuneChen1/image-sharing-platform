@@ -26,4 +26,25 @@ async function attachCategories(photos) {
   }));
 }
 
-module.exports = { attachCategories };
+async function attachFavoritesCount(photos) {
+  if (photos.length === 0) return photos;
+
+  const result = await dataSource.query(
+    `SELECT shared_photo_id, COUNT(*)::int AS count
+     FROM favorites
+     WHERE shared_photo_id = ANY($1)
+     GROUP BY shared_photo_id`,
+    [photos.map((photo) => photo.id)]
+  );
+
+  const countMap = Object.fromEntries(
+    result.map((r) => [r.shared_photo_id, r.count])
+  );
+
+  return photos.map((photo) => ({
+    ...photo,
+    favorites_count: countMap[photo.id] || 0
+  }));
+}
+
+module.exports = { attachCategories, attachFavoritesCount };

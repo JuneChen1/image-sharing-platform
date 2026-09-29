@@ -11,7 +11,10 @@ const {
   isValidUUID
 } = require('../utils/validUtils');
 const appError = require('../utils/appError');
-const { attachCategories } = require('../utils/sharedPhotosUtils');
+const {
+  attachCategories,
+  attachFavoritesCount
+} = require('../utils/sharedPhotosUtils');
 const { dataSource } = require('../db/data-source');
 const { In } = require('typeorm');
 
@@ -185,6 +188,7 @@ const getSharedImages = async (req, res, next) => {
     }
 
     data = await attachCategories(data);
+    data = await attachFavoritesCount(data);
 
     res.status(200).json({
       status: 'success',
