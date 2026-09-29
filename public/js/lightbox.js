@@ -18,6 +18,14 @@
     return `<span class="person-name">${name}</span>`;
   }
 
+  function avatarLinkHTML(name) {
+    const initial = (name || '?').trim().charAt(0).toUpperCase();
+    return `
+      <span class="lightbox-photographer-avatar">${initial}</span>
+      <span class="person-name">${name}</span>
+    `;
+  }
+
   window.openLightbox = ({
     imageUrl,
     photographerName,
@@ -30,7 +38,7 @@
   }) => {
     lightboxImage.src = imageUrl;
     lightboxImage.alt = `${photographerName} 的照片`;
-    lightboxPhotographer.innerHTML = personLinkHTML(photographerName);
+    lightboxPhotographer.innerHTML = avatarLinkHTML(photographerName);
     lightboxPhotographer.href = photographerUrl;
     lightboxDownload.href = downloadUrl;
     currentShareUrl = downloadUrl;

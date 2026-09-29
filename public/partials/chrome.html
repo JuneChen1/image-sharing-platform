@@ -88,6 +88,7 @@
   <div class="modal-dialog modal-dialog-centered modal-lg">
     <div class="modal-content">
       <h5 class="modal-title visually-hidden" id="lightboxModalLabel">照片預覽</h5>
+      <a id="lightbox-photographer" href="" target="_blank" rel="noopener" class="lightbox-photographer-badge"></a>
       <button type="button" class="btn-close lightbox-close" data-bs-dismiss="modal" aria-label="Close"></button>
       <div class="modal-body text-center">
         <div class="lightbox-image-wrap">
@@ -97,17 +98,28 @@
       </div>
       <div class="modal-footer d-flex align-items-center justify-content-between">
         <div>
-          <p class="mb-1">
-            攝影師：<a id="lightbox-photographer" href="" target="_blank" rel="noopener" class="person-link"></a>
-          </p>
-          <p id="lightbox-sharer" class="mb-0 d-none">
-            分享者：<a id="lightbox-sharer-link" href="" class="person-link"></a>
-          </p>
+          <span id="lightbox-sharer" class="d-none">分享者：<a id="lightbox-sharer-link" href="" class="person-link"></a></span>
         </div>
         <div class="d-flex gap-2">
-          <button type="button" id="lightbox-collect" class="btn btn-outline-dark d-none">加入收藏</button>
-          <button type="button" id="lightbox-share" class="btn btn-outline-dark">分享</button>
-          <a id="lightbox-download" href="" target="_blank" rel="noopener" class="btn btn-dark">下載</a>
+          <button type="button" id="lightbox-collect" class="btn btn-outline-dark rounded-pill d-none d-inline-flex align-items-center gap-1">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+              <path d="M2 2v13.5a.5.5 0 0 0 .74.439L8 13.069l5.26 2.87A.5.5 0 0 0 14 15.5V2a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2z"/>
+            </svg>
+            收藏
+          </button>
+          <button type="button" id="lightbox-share" class="btn btn-outline-dark rounded-pill d-inline-flex align-items-center gap-1">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+              <path d="M11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.5 2.5 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5"/>
+            </svg>
+            分享
+          </button>
+          <a id="lightbox-download" href="" target="_blank" rel="noopener" class="btn btn-dark rounded-pill d-inline-flex align-items-center gap-1">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+              <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"/>
+              <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z"/>
+            </svg>
+            下載
+          </a>
         </div>
       </div>
     </div>

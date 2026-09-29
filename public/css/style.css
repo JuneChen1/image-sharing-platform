@@ -276,6 +276,11 @@ body {
   padding: 20px;
 }
 
+#lightboxModal .modal-footer {
+  padding-top: 0.6rem;
+  padding-bottom: 0.6rem;
+}
+
 #lightboxModal .modal-dialog {
   max-height: 90vh;
 }
@@ -293,6 +298,43 @@ body {
   width: auto;
   max-width: 100%;
   object-fit: contain;
+}
+
+.lightbox-photographer-badge {
+  position: absolute;
+  top: 0.5rem;
+  left: 0.75rem;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.25rem 0.85rem 0.25rem 0.25rem;
+  border-radius: 999px;
+  background-color: rgba(255, 255, 255, 0.85);
+  text-decoration: none;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.lightbox-photographer-badge:hover {
+  background-color: #fff;
+}
+
+.lightbox-photographer-badge .person-name {
+  color: #212529;
+}
+
+.lightbox-photographer-avatar {
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 50%;
+  background: #495057;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  flex-shrink: 0;
 }
 
 .lightbox-close {
