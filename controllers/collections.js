@@ -5,6 +5,11 @@ const { dataSource } = require('../db/data-source');
 
 const collectionsController = {
   async getCollections(req, res, next) {
+    const { photoId } = req.query;
+    if (photoId !== undefined && !isValidUUID(photoId)) {
+      return next(appError(400, 'photo id 格式錯誤'));
+    }
+
     try {
       const collectionsRepo = dataSource.getRepository('Collections');
       const collections = await collectionsRepo.find({
@@ -22,12 +27,24 @@ const collectionsController = {
               take: 1
             });
 
+          let hasPhoto;
+          if (photoId) {
+            const count = await favoritesRepo.count({
+              where: {
+                collections: { id: collection.id },
+                sharedPhotos: { id: photoId }
+              }
+            });
+            hasPhoto = count > 0;
+          }
+
           return {
             ...collection,
             photoCount,
             previewImageUrl: latestFavorite
               ? latestFavorite.sharedPhotos.image_url
-              : null
+              : null,
+            ...(photoId !== undefined ? { hasPhoto } : {})
           };
         })
       );
