@@ -187,7 +187,7 @@
                     <span class="photo-author-name">${photo.photographer_name}</span>
                   </a>
                 </p>
-                <button type="button" class="btn btn-sm btn-outline-danger w-100" data-remove-photo-id="${photo.id}">
+                <button type="button" class="btn btn-sm btn-outline-danger rounded-pill w-100" data-remove-photo-id="${photo.id}">
                   從收藏庫移除
                 </button>
               </div>
@@ -272,7 +272,8 @@
       photographerUrl: photo.photographer_url,
       downloadUrl: photo.unsplash_page_url,
       categories: photo.categories,
-      collectId: photo.id
+      collectId: photo.id,
+      onRemoveFromCollection: () => removePhotoFromCollection(photo.id)
     });
   });
 

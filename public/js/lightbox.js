@@ -10,9 +10,11 @@
   const lightboxCategories = document.getElementById('lightbox-categories');
   const lightboxSharer = document.getElementById('lightbox-sharer');
   const lightboxSharerLink = document.getElementById('lightbox-sharer-link');
+  const lightboxRemoveFromCollection = document.getElementById('lightbox-remove-from-collection');
 
   let currentShareUrl = '';
   let currentCollectId = null;
+  let currentOnRemoveFromCollection = null;
 
   function personLinkHTML(name) {
     return `<span class="person-name">${name}</span>`;
@@ -34,7 +36,8 @@
     categories,
     collectId,
     sharerId,
-    sharerName
+    sharerName,
+    onRemoveFromCollection
   }) => {
     lightboxImage.src = imageUrl;
     lightboxImage.alt = `${photographerName} 的照片`;
@@ -56,8 +59,19 @@
       lightboxSharerLink.innerHTML = personLinkHTML(sharerName);
       lightboxSharerLink.href = `/user-shared-photos.html?userId=${sharerId}`;
     }
+    currentOnRemoveFromCollection = onRemoveFromCollection || null;
+    lightboxRemoveFromCollection.classList.toggle(
+      'd-none',
+      !currentOnRemoveFromCollection
+    );
     bootstrap.Modal.getOrCreateInstance(lightboxModalEl).show();
   };
+
+  lightboxRemoveFromCollection.addEventListener('click', () => {
+    if (!currentOnRemoveFromCollection) return;
+    bootstrap.Modal.getOrCreateInstance(lightboxModalEl).hide();
+    currentOnRemoveFromCollection();
+  });
 
   lightboxShare.addEventListener('click', () => {
     bootstrap.Modal.getOrCreateInstance(lightboxModalEl).hide();
