@@ -40,6 +40,9 @@
   renderTitle();
 
   resultsEl.addEventListener('click', async (event) => {
+    // 滑鼠點擊卡片上的按鈕或連結後把焦點移開，避免圖示一直停在卡片上；鍵盤操作（detail 為 0）保留焦點
+    if (event.detail > 0) event.target.closest('.photo-overlay-top button, .photo-overlay-bottom a')?.blur();
+
     const collectBtn = event.target.closest('button[data-collect-id]');
     if (collectBtn) {
       window.openCollectModal(collectBtn.dataset.collectId);

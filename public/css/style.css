@@ -273,8 +273,12 @@ body > main {
   transition: opacity 0.15s ease;
 }
 
-#results .photo-media:hover .photo-overlay-top,
-#results .photo-media:focus-within .photo-overlay-top {
+#results .photo-media:hover .photo-overlay-top {
+  opacity: 1;
+}
+
+/* 只有鍵盤聚焦才顯示；滑鼠點擊留下的焦點不算，否則點完連結移開滑鼠後圖示會一直停著。:has 要和 :hover 分開寫，舊瀏覽器不支援 :has 時才不會連帶讓 hover 規則失效 */
+#results .photo-media:has(:focus-visible) .photo-overlay-top {
   opacity: 1;
 }
 
@@ -332,8 +336,11 @@ body > main {
   transition: opacity 0.15s ease;
 }
 
-#results .photo-media:hover .photo-overlay-bottom,
-#results .photo-media:focus-within .photo-overlay-bottom {
+#results .photo-media:hover .photo-overlay-bottom {
+  opacity: 1;
+}
+
+#results .photo-media:has(:focus-visible) .photo-overlay-bottom {
   opacity: 1;
 }
 
