@@ -7,6 +7,7 @@ const {
   isValidEmail,
   isValidPassword
 } = require('../utils/validUtils');
+const { nameMaxLength } = require('../config/constants');
 const appError = require('../utils/appError');
 const { dataSource } = require('../db/data-source');
 const { sendResetPasswordEmail } = require('../utils/mailer');
@@ -25,7 +26,7 @@ const register = async (req, res, next) => {
   try {
     const { name, email, password } = req.body;
     if (
-      !isSafeText(name, 50) ||
+      !isSafeText(name, nameMaxLength) ||
       !isValidEmail(email) ||
       !isValidPassword(password)
     )

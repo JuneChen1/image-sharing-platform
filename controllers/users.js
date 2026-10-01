@@ -6,6 +6,7 @@ const {
   isValidUUID,
   isPositiveInteger
 } = require('../utils/validUtils');
+const { nameMaxLength } = require('../config/constants');
 const appError = require('../utils/appError');
 const {
   attachCategories,
@@ -37,7 +38,8 @@ const userController = {
 
       if (name === undefined) return next(appError(400, '沒有可更新的欄位'));
 
-      if (!isSafeText(name, 50)) return next(appError(400, '欄位未填寫正確'));
+      if (!isSafeText(name, nameMaxLength))
+        return next(appError(400, '欄位未填寫正確'));
 
       const userRepo = dataSource.getRepository('Users');
       const updateUser = await userRepo.save({
