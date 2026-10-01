@@ -50,7 +50,7 @@
       const body = await response.json();
 
       if (!response.ok) {
-        showAlert(body.message || i18n.t('profile.loadFailed'));
+        showAlert(i18n.apiMessage(body, 'profile.loadFailed'));
         return;
       }
 
@@ -86,7 +86,7 @@
       const body = await response.json();
 
       if (!response.ok) {
-        showAlert(body.message || i18n.t('profile.saveFailed'));
+        showAlert(i18n.apiMessage(body, 'profile.saveFailed'));
         return;
       }
 
@@ -151,7 +151,7 @@
       const body = await response.json();
 
       if (!response.ok) {
-        showDeleteAccountAlert(body.message || i18n.t('profile.deleteFailed'));
+        showDeleteAccountAlert(i18n.apiMessage(body, 'profile.deleteFailed'));
         isDeletingAccount = false;
         deleteAccountSubmitBtn.disabled = false;
         return;

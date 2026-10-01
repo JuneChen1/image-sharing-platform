@@ -160,7 +160,7 @@
 
       if (!response.ok) {
         setUsersStatus('');
-        usersAlert.show(body.message || i18n.t('admin.loadUsersFailed'));
+        usersAlert.show(i18n.apiMessage(body, 'admin.loadUsersFailed'));
         return;
       }
 
@@ -211,7 +211,7 @@
       const body = await response.json();
 
       if (!response.ok) {
-        usersAlert.show(body.message || i18n.t(isBanAction ? 'admin.banFailed' : 'admin.unbanFailed'));
+        usersAlert.show(i18n.apiMessage(body, isBanAction ? 'admin.banFailed' : 'admin.unbanFailed'));
         return;
       }
 
@@ -310,7 +310,7 @@
 
       if (!response.ok) {
         setPhotosStatus('');
-        photosAlert.show(body.message || i18n.t('admin.loadPhotosFailed'));
+        photosAlert.show(i18n.apiMessage(body, 'admin.loadPhotosFailed'));
         return;
       }
 
@@ -354,7 +354,7 @@
 
       if (!response.ok) {
         const body = await response.json();
-        photosAlert.show(body.message || i18n.t('admin.exportFailed'));
+        photosAlert.show(i18n.apiMessage(body, 'admin.exportFailed'));
         return;
       }
 
@@ -421,7 +421,7 @@
       const body = await response.json();
 
       if (!response.ok) {
-        photosAlert.show(body.message || i18n.t('admin.forceDeleteFailed'));
+        photosAlert.show(i18n.apiMessage(body, 'admin.forceDeleteFailed'));
         return;
       }
 

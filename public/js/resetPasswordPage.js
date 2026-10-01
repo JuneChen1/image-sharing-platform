@@ -70,7 +70,7 @@
       const body = await response.json();
 
       if (!response.ok) {
-        showAlert(body.message || i18n.t('resetPassword.resetFailed'));
+        showAlert(i18n.apiMessage(body, 'resetPassword.resetFailed'));
         return;
       }
 

@@ -73,7 +73,7 @@
       const body = await response.json();
 
       if (!response.ok) {
-        showAlert(body.message || i18n.t('changePassword.updateFailed'));
+        showAlert(i18n.apiMessage(body, 'changePassword.updateFailed'));
         return;
       }
 

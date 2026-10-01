@@ -112,7 +112,7 @@
     const body = await response.json();
 
     if (!response.ok) {
-      throw new Error(body.message);
+      throw new Error(i18n.apiMessage(body, 'common.networkError'));
     }
 
     currentQuery = query;

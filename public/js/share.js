@@ -113,7 +113,7 @@
         window.auth.clearSession();
         window.location.href = '/auth.html';
       } else {
-        showAlert(body.message || i18n.t('share.failed'));
+        showAlert(i18n.apiMessage(body, 'share.failed'));
       }
     } catch (error) {
       showAlert(i18n.t('common.networkError'));

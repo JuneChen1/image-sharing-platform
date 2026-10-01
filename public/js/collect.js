@@ -45,7 +45,7 @@
     }
     if (!response.ok) {
       collectListEl.innerHTML = '';
-      showAlert(body.message || i18n.t('collections.loadFailed'));
+      showAlert(i18n.apiMessage(body, 'collections.loadFailed'));
       return;
     }
 
@@ -108,7 +108,7 @@
       } else if (response.status === 409) {
         showAlert(i18n.t('collect.duplicate'));
       } else {
-        showAlert(body.message || i18n.t('collect.addFailed'));
+        showAlert(i18n.apiMessage(body, 'collect.addFailed'));
       }
     } catch (error) {
       showAlert(i18n.t('common.networkError'));
@@ -158,7 +158,7 @@
         return;
       }
       if (!response.ok) {
-        showAlert(body.message || i18n.t('common.createFailed'));
+        showAlert(i18n.apiMessage(body, 'common.createFailed'));
         return;
       }
 

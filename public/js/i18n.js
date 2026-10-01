@@ -217,7 +217,51 @@ const i18n = (function () {
       'admin.forceDeleteReasonPlaceholder': '例如：版權檢舉、垃圾內容...',
       'admin.forceDeleteConfirm': '確定要強制刪除這張照片嗎？此動作無法復原，將一併移除相關的分類與收藏紀錄。',
       'admin.forceDeleteFailed': '強制刪除失敗',
-      'admin.forceDeleted': '已強制刪除該照片'
+      'admin.forceDeleted': '已強制刪除該照片',
+
+      // 後端錯誤碼（對應 appError 的第三個參數）
+      'error.INVALID_FIELDS': '欄位未填寫正確',
+      'error.INVALID_NAME': '名稱格式錯誤',
+      'error.INVALID_CATEGORIES': '分類格式錯誤',
+      'error.INVALID_URL': '網址錯誤',
+      'error.URL_REQUIRED': '網址為必填',
+      'error.INVALID_ID': 'ID 格式錯誤',
+      'error.INVALID_PHOTO_ID': 'photo id 格式錯誤',
+      'error.INVALID_COLLECTION_ID': 'collection id 格式錯誤',
+      'error.INVALID_UNSPLASH_ID': '無效的 unsplashId 格式',
+      'error.INVALID_PAGE': '頁數只能是正整數',
+      'error.INVALID_PAGINATION': '頁數(page)和每頁筆數(limit)只能是正整數',
+      'error.LIMIT_TOO_LARGE': '每頁筆數(limit)不能大於100',
+      'error.INVALID_SORT': '排序只能是 latest 或 popular',
+      'error.SEARCH_KEYWORD_REQUIRED': '搜尋關鍵字為必填',
+      'error.NOTHING_TO_UPDATE': '沒有可更新的欄位',
+      'error.EMAIL_IMMUTABLE': 'Email 不可修改',
+      'error.EMAIL_TAKEN': 'Email 已被使用',
+      'error.INVALID_CREDENTIALS': '使用者不存在或密碼輸入錯誤',
+      'error.PASSWORD_MISMATCH': '兩次輸入的新密碼不一致',
+      'error.OLD_PASSWORD_WRONG': '舊密碼錯誤',
+      'error.PASSWORD_WRONG': '密碼錯誤',
+      'error.RESET_LINK_INVALID': '重設連結無效或已過期',
+      'error.UNAUTHORIZED': '請先登入',
+      'error.TOKEN_INVALID': '登入狀態無效，請重新登入',
+      'error.TOKEN_EXPIRED': '登入已過期，請重新登入',
+      'error.ACCOUNT_BANNED': '您的帳號已被停權，如有疑問請聯絡管理者',
+      'error.FORBIDDEN': '您沒有權限執行此操作',
+      'error.CANNOT_BAN_SELF': '無法停權自己的帳號',
+      'error.CANNOT_BAN_ADMIN': '無法停權管理者帳號',
+      'error.CANNOT_DELETE_ADMIN': '不可刪除管理者帳號',
+      'error.USER_NOT_FOUND': '查無此使用者',
+      'error.NOT_FOUND': '查無此資料',
+      'error.ROUTE_NOT_FOUND': '查無此頁面',
+      'error.COLLECTION_LIMIT_REACHED': '最多只能有 10 個收藏庫',
+      'error.ALREADY_IN_COLLECTION': '不可重複加入',
+      'error.ALREADY_SHARED': '你已經分享過這張照片了',
+      'error.PHOTO_DATA_INCOMPLETE': '這張照片目前的資料不完整，暫時無法分享，請稍後再試',
+      'error.UNSPLASH_BUSY': '圖片服務目前較忙碌，請稍後再試',
+      'error.UNSPLASH_API_ERROR': '圖片服務發生錯誤，請稍後再試',
+      'error.TOO_MANY_REQUESTS': '請求過於頻繁，請稍後再試',
+      'error.TOO_MANY_ATTEMPTS': '嘗試次數過多，請稍後再試',
+      'error.SERVER_ERROR': '伺服器發生錯誤，請稍後再試'
     },
     en: {
       'title.auth': 'Log in / Sign up | PicShare',
@@ -435,7 +479,51 @@ const i18n = (function () {
       'admin.forceDeleteReasonPlaceholder': 'e.g. copyright infringement, spam...',
       'admin.forceDeleteConfirm': "Are you sure you want to force delete this photo? This can't be undone. Related categories and saved records will also be removed.",
       'admin.forceDeleteFailed': 'Failed to force delete',
-      'admin.forceDeleted': 'Photo force-deleted'
+      'admin.forceDeleted': 'Photo force-deleted',
+
+      // Backend error codes (the third argument of appError)
+      'error.INVALID_FIELDS': 'Some fields are missing or invalid',
+      'error.INVALID_NAME': 'Invalid name',
+      'error.INVALID_CATEGORIES': 'Invalid categories',
+      'error.INVALID_URL': 'Invalid URL',
+      'error.URL_REQUIRED': 'URL is required',
+      'error.INVALID_ID': 'Invalid ID',
+      'error.INVALID_PHOTO_ID': 'Invalid photo ID',
+      'error.INVALID_COLLECTION_ID': 'Invalid collection ID',
+      'error.INVALID_UNSPLASH_ID': 'Invalid Unsplash ID',
+      'error.INVALID_PAGE': 'Page must be a positive integer',
+      'error.INVALID_PAGINATION': 'Page and limit must be positive integers',
+      'error.LIMIT_TOO_LARGE': 'Limit cannot be greater than 100',
+      'error.INVALID_SORT': 'Sort must be either latest or popular',
+      'error.SEARCH_KEYWORD_REQUIRED': 'Please enter a search keyword',
+      'error.NOTHING_TO_UPDATE': 'Nothing to update',
+      'error.EMAIL_IMMUTABLE': "Email can't be changed",
+      'error.EMAIL_TAKEN': 'This email is already in use',
+      'error.INVALID_CREDENTIALS': 'Incorrect email or password',
+      'error.PASSWORD_MISMATCH': "The new passwords don't match",
+      'error.OLD_PASSWORD_WRONG': 'Current password is incorrect',
+      'error.PASSWORD_WRONG': 'Incorrect password',
+      'error.RESET_LINK_INVALID': 'This reset link is invalid or has expired',
+      'error.UNAUTHORIZED': 'Please log in first',
+      'error.TOKEN_INVALID': 'Your session is invalid. Please log in again.',
+      'error.TOKEN_EXPIRED': 'Your session has expired. Please log in again.',
+      'error.ACCOUNT_BANNED': 'Your account has been suspended. Please contact an administrator if you have questions.',
+      'error.FORBIDDEN': "You don't have permission to do this",
+      'error.CANNOT_BAN_SELF': "You can't suspend your own account",
+      'error.CANNOT_BAN_ADMIN': "You can't suspend an administrator account",
+      'error.CANNOT_DELETE_ADMIN': "Administrator accounts can't be deleted",
+      'error.USER_NOT_FOUND': 'User not found',
+      'error.NOT_FOUND': 'Not found',
+      'error.ROUTE_NOT_FOUND': 'Page not found',
+      'error.COLLECTION_LIMIT_REACHED': 'You can have up to 10 collections',
+      'error.ALREADY_IN_COLLECTION': 'Already in this collection',
+      'error.ALREADY_SHARED': "You've already shared this photo",
+      'error.PHOTO_DATA_INCOMPLETE': "This photo's data is incomplete and can't be shared right now. Please try again later.",
+      'error.UNSPLASH_BUSY': 'The image service is busy. Please try again later.',
+      'error.UNSPLASH_API_ERROR': 'The image service ran into an error. Please try again later.',
+      'error.TOO_MANY_REQUESTS': 'Too many requests. Please try again later.',
+      'error.TOO_MANY_ATTEMPTS': 'Too many attempts. Please try again later.',
+      'error.SERVER_ERROR': 'Something went wrong on our end. Please try again later.'
     }
   };
 
@@ -490,6 +578,16 @@ const i18n = (function () {
     }
 
     return str;
+  }
+
+  // 後端錯誤回應 { code, message } → 依目前語言翻譯；沒有對應的 code 時退回後端 message，再退回 fallbackKey
+  function apiMessage(body, fallbackKey) {
+    const key = body && body.code ? `error.${body.code}` : null;
+    if (key && (STRINGS[getLang()][key] || STRINGS[DEFAULT_LANG][key])) {
+      return t(key);
+    }
+
+    return (body && body.message) || t(fallbackKey);
   }
 
   function formatDate(isoString) {
@@ -577,5 +675,5 @@ const i18n = (function () {
     });
   });
 
-  return { getLang, setLang, t, formatDate, applyI18n, renderLangControls };
+  return { getLang, setLang, t, apiMessage, formatDate, applyI18n, renderLangControls };
 })();

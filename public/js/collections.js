@@ -104,7 +104,7 @@
 
       if (await handleUnauthorized(response)) return;
       if (!response.ok) {
-        setListStatus(body.message || i18n.t('collections.loadFailed'), true);
+        setListStatus(i18n.apiMessage(body, 'collections.loadFailed'), true);
         return;
       }
 
@@ -170,7 +170,7 @@
 
       if (await handleUnauthorized(response)) return;
       if (!response.ok) {
-        setPhotosStatus(body.message || i18n.t('collections.loadPhotosFailed'), true);
+        setPhotosStatus(i18n.apiMessage(body, 'collections.loadPhotosFailed'), true);
         return;
       }
 
@@ -243,7 +243,7 @@
 
       if (await handleUnauthorized(response)) return;
       if (!response.ok) {
-        setPhotosStatus(body.message || i18n.t('common.removeFailed'), true);
+        setPhotosStatus(i18n.apiMessage(body, 'common.removeFailed'), true);
         return;
       }
 
@@ -275,7 +275,7 @@
 
       if (await handleUnauthorized(response)) return;
       if (!response.ok) {
-        showDeleteCollectionAlert(body.message || i18n.t('common.deleteFailed'));
+        showDeleteCollectionAlert(i18n.apiMessage(body, 'common.deleteFailed'));
         return;
       }
 
@@ -364,7 +364,7 @@
 
       if (await handleUnauthorized(response)) return;
       if (!response.ok) {
-        showNewCollectionAlert(body.message || i18n.t('common.createFailed'));
+        showNewCollectionAlert(i18n.apiMessage(body, 'common.createFailed'));
         return;
       }
 

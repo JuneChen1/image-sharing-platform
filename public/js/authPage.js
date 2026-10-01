@@ -103,7 +103,7 @@
       const body = await response.json();
 
       if (!response.ok) {
-        loginAlert.show(body.message || i18n.t('auth.loginFailed'));
+        loginAlert.show(i18n.apiMessage(body, 'auth.loginFailed'));
         return;
       }
 
@@ -143,7 +143,7 @@
       const body = await response.json();
 
       if (!response.ok) {
-        registerAlert.show(body.message || i18n.t('auth.registerFailed'));
+        registerAlert.show(i18n.apiMessage(body, 'auth.registerFailed'));
         return;
       }
 
@@ -175,7 +175,7 @@
       const body = await response.json();
 
       if (!response.ok) {
-        forgotAlert.show(body.message || i18n.t('auth.sendFailed'));
+        forgotAlert.show(i18n.apiMessage(body, 'auth.sendFailed'));
         return;
       }
 

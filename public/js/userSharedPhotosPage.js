@@ -72,7 +72,7 @@
         const body = await response.json();
 
         if (!response.ok) {
-          setStatus(body.message || i18n.t('home.unshareFailed'), true);
+          setStatus(i18n.apiMessage(body, 'home.unshareFailed'), true);
           return;
         }
 
@@ -154,7 +154,7 @@
     const body = await response.json();
 
     if (!response.ok) {
-      throw new Error(body.message);
+      throw new Error(i18n.apiMessage(body, 'common.networkError'));
     }
 
     currentPage = page;
