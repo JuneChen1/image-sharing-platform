@@ -120,7 +120,7 @@
           ? `<span class="admin-badge admin-badge-danger">${i18n.t('admin.badgeBanned')}</span>`
           : `<span class="admin-badge admin-badge-success">${i18n.t('admin.badgeActive')}</span>`;
         const roleCell = isAdminUser
-          ? '<span class="admin-role-admin">ADMIN</span>'
+          ? '<span class="admin-badge admin-badge-admin">ADMIN</span>'
           : user.role;
 
         let actionCell = '';

@@ -650,19 +650,21 @@ body > main {
   color: #c5221f;
 }
 
-.admin-role-admin {
+.admin-badge-admin {
+  background-color: #e8f0fe;
   color: #1967d2;
-  font-weight: 600;
+  /* 往左懸出去等於內距（0.7em），讓徽章裡的文字和同欄的 USER 對齊 */
+  margin-left: -0.7em;
 }
 
 .admin-action-btn {
-  border: none;
+  border: 1px solid currentColor;
   background: none;
-  padding: 4px 10px;
-  margin-left: -10px;
+  padding: 4px 12px;
   border-radius: 6px;
   font-weight: 600;
   font-size: 0.875rem;
+  white-space: nowrap;
 }
 
 .admin-action-btn.text-danger:hover {
