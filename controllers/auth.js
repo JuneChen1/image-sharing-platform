@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const {
   isValidString,
+  isSafeText,
   isValidEmail,
   isValidPassword
 } = require('../utils/validUtils');
@@ -24,7 +25,7 @@ const register = async (req, res, next) => {
   try {
     const { name, email, password } = req.body;
     if (
-      !isValidString(name) ||
+      !isSafeText(name, 50) ||
       !isValidEmail(email) ||
       !isValidPassword(password)
     )

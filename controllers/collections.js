@@ -1,4 +1,4 @@
-const { isValidString, isValidUUID } = require('../utils/validUtils');
+const { isSafeText, isValidUUID } = require('../utils/validUtils');
 const appError = require('../utils/appError');
 const { attachCategories } = require('../utils/sharedPhotosUtils');
 const { dataSource } = require('../db/data-source');
@@ -56,8 +56,7 @@ const collectionsController = {
   },
   async addCollection(req, res, next) {
     const { name } = req.body;
-    if (!isValidString(name) || name.length > 100)
-      return next(appError(400, '名稱格式錯誤'));
+    if (!isSafeText(name, 100)) return next(appError(400, '名稱格式錯誤'));
 
     try {
       const collectionsRepo = dataSource.getRepository('Collections');

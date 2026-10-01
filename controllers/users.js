@@ -1,7 +1,7 @@
 const bcrypt = require('bcrypt');
 const { In } = require('typeorm');
 const {
-  isValidString,
+  isSafeText,
   isValidPassword,
   isValidUUID,
   isPositiveInteger
@@ -37,7 +37,7 @@ const userController = {
 
       if (name === undefined) return next(appError(400, '沒有可更新的欄位'));
 
-      if (!isValidString(name)) return next(appError(400, '欄位未填寫正確'));
+      if (!isSafeText(name, 50)) return next(appError(400, '欄位未填寫正確'));
 
       const userRepo = dataSource.getRepository('Users');
       const updateUser = await userRepo.save({

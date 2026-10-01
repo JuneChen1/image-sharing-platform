@@ -8,9 +8,7 @@ function verifyCustomCategories(customCategories) {
     return false;
   }
 
-  const isValid = customCategories.every(
-    (name) => isValidString(name) && name.length <= 100
-  );
+  const isValid = customCategories.every((name) => isSafeText(name, 100));
 
   return isValid;
 }
@@ -21,6 +19,15 @@ function isPositiveInteger(number) {
 
 function isValidString(value) {
   return typeof value === 'string' && value.trim() !== '';
+}
+
+// 使用者可自訂、會顯示在畫面上的文字（名稱、分類等）：非空、長度限制，且不可含 < >
+function isSafeText(value, maxLength) {
+  return (
+    isValidString(value) &&
+    value.trim().length <= maxLength &&
+    !/[<>]/.test(value)
+  );
 }
 
 function isValidUUID(value) {
@@ -49,6 +56,7 @@ module.exports = {
   verifyCustomCategories,
   isPositiveInteger,
   isValidString,
+  isSafeText,
   isValidUUID,
   isValidEmail,
   isValidPassword
