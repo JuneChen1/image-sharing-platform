@@ -54,6 +54,7 @@
 
     categories.push(name);
     renderCategories();
+    hideAlert();
   }
 
   categoryAddBtn.addEventListener('click', addCategory);
@@ -124,6 +125,10 @@
   });
 
   window.openShareModal = (url) => {
+    if (!window.auth.isLoggedIn()) {
+      window.location.href = '/auth.html';
+      return;
+    }
     shareInput.value = url;
     bootstrap.Modal.getOrCreateInstance(shareModalEl).show();
   };
