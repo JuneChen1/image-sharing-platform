@@ -43,35 +43,28 @@ body > main {
   font-size: 1.75rem;
 }
 
-/* 導覽列上的語言切換（樣式比照 .sort-tabs，配色改為深色底） */
-.lang-switch {
-  display: inline-flex;
-  background-color: rgba(255, 255, 255, 0.14);
-  border-radius: 999px;
-  padding: 0.2rem;
-  gap: 0.2rem;
+/* 導覽列的地球圖示語言選單：無邊框，hover / 鍵盤聚焦 / 展開時才顯示底色；高度對齊旁邊一般大小的 .btn（2.375rem） */
+.lang-globe-btn {
+  --bs-btn-color: #fff;
+  --bs-btn-border-color: transparent;
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: rgba(255, 255, 255, 0.15);
+  --bs-btn-hover-border-color: transparent;
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: rgba(255, 255, 255, 0.25);
+  --bs-btn-active-border-color: transparent;
+  --bs-btn-focus-shadow-rgb: 255, 255, 255;
+  min-width: 2.375rem;
+  min-height: 2.375rem;
+  padding: 0;
 }
 
-.lang-switch-btn {
-  background: none;
-  border: none;
-  border-radius: 999px;
-  padding: 0.25rem 0.6rem;
-  font-size: 0.8125rem;
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.75);
-  line-height: 1.2;
-  white-space: nowrap;
-  transition: background-color 0.15s ease, color 0.15s ease;
+.lang-globe-btn.show {
+  background-color: var(--bs-btn-active-bg);
 }
 
-.lang-switch-btn:hover {
-  color: #fff;
-}
-
-.lang-switch-btn.active {
-  background-color: #fff;
-  color: #212529;
+.lang-globe-menu {
+  min-width: 8rem;
 }
 
 /* 使用者選單內的「切換語言」列：點擊後往左展開語言清單，小螢幕改成在該列下方展開 */

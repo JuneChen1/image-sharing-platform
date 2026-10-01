@@ -444,8 +444,8 @@ const i18n = (function () {
   };
 
   const LANGUAGES = [
-    { code: 'zh', label: '繁體中文', short: '繁中' },
-    { code: 'en', label: 'English', short: 'EN' }
+    { code: 'zh', label: '繁體中文' },
+    { code: 'en', label: 'English' }
   ];
 
   const HTML_LANG_MAP = { zh: 'zh-Hant', en: 'en' };
@@ -511,6 +511,9 @@ const i18n = (function () {
     root.querySelectorAll('[data-i18n-aria-label]').forEach((el) => {
       el.setAttribute('aria-label', t(el.getAttribute('data-i18n-aria-label')));
     });
+    root.querySelectorAll('[data-i18n-title]').forEach((el) => {
+      el.setAttribute('title', t(el.getAttribute('data-i18n-title')));
+    });
   }
 
   const CHECK_ICON =
@@ -519,26 +522,7 @@ const i18n = (function () {
   function renderLangControls() {
     const lang = getLang();
 
-    document.querySelectorAll('[data-lang-switch]').forEach((container) => {
-      container.innerHTML = '';
-      LANGUAGES.forEach((item) => {
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.className = 'lang-switch-btn';
-        btn.classList.toggle('active', item.code === lang);
-        btn.setAttribute('aria-pressed', String(item.code === lang));
-        btn.setAttribute('data-lang-option', item.code);
-        btn.lang = htmlLangFor(item.code);
-        btn.title = item.label;
-        btn.textContent = item.short;
-        btn.addEventListener('click', () => {
-          if (item.code !== getLang()) setLang(item.code);
-        });
-        container.appendChild(btn);
-      });
-    });
-
-    document.querySelectorAll('[data-lang-submenu]').forEach((menu) => {
+    document.querySelectorAll('[data-lang-list]').forEach((menu) => {
       menu.innerHTML = '';
       LANGUAGES.forEach((item) => {
         const isCurrent = item.code === lang;
@@ -570,7 +554,7 @@ const i18n = (function () {
       toggle.addEventListener('click', (event) => {
         // 擋掉冒泡，避免 Bootstrap 把整個使用者選單一起關掉
         event.stopPropagation();
-        const submenu = toggle.parentElement.querySelector('[data-lang-submenu]');
+        const submenu = toggle.parentElement.querySelector('.lang-submenu');
         toggle.setAttribute('aria-expanded', String(submenu.classList.toggle('show')));
       });
     });
@@ -591,7 +575,7 @@ const i18n = (function () {
 
   // 使用者選單關閉時，一併收起語言子選單
   document.addEventListener('hide.bs.dropdown', () => {
-    document.querySelectorAll('[data-lang-submenu].show').forEach((menu) => {
+    document.querySelectorAll('.lang-submenu.show').forEach((menu) => {
       menu.classList.remove('show');
       menu.parentElement.querySelector('[data-lang-submenu-toggle]').setAttribute('aria-expanded', 'false');
     });
