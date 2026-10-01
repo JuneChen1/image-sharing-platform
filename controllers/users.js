@@ -34,12 +34,14 @@ const userController = {
     try {
       const { name, email } = req.body;
 
-      if (email !== undefined) return next(appError(400, 'Email 不可修改'));
+      if (email !== undefined)
+        return next(appError(400, 'Email 不可修改', 'EMAIL_IMMUTABLE'));
 
-      if (name === undefined) return next(appError(400, '沒有可更新的欄位'));
+      if (name === undefined)
+        return next(appError(400, '沒有可更新的欄位', 'NOTHING_TO_UPDATE'));
 
       if (!isSafeText(name, nameMaxLength))
-        return next(appError(400, '欄位未填寫正確'));
+        return next(appError(400, '欄位未填寫正確', 'INVALID_FIELDS'));
 
       const userRepo = dataSource.getRepository('Users');
       const updateUser = await userRepo.save({
@@ -71,13 +73,16 @@ const userController = {
         !isValidPassword(new_password) ||
         !isValidPassword(confirm_password)
       )
-        return next(appError(400, '欄位未填寫正確'));
+        return next(appError(400, '欄位未填寫正確', 'INVALID_FIELDS'));
 
       if (new_password !== confirm_password)
-        return next(appError(400, '兩次輸入的新密碼不一致'));
+        return next(
+          appError(400, '兩次輸入的新密碼不一致', 'PASSWORD_MISMATCH')
+        );
 
       const isMatch = await bcrypt.compare(old_password, req.user.password);
-      if (!isMatch) return next(appError(400, '舊密碼錯誤'));
+      if (!isMatch)
+        return next(appError(400, '舊密碼錯誤', 'OLD_PASSWORD_WRONG'));
 
       const hashedPassword = await bcrypt.hash(new_password, 10);
       const userRepo = dataSource.getRepository('Users');
@@ -94,15 +99,15 @@ const userController = {
   async deleteMe(req, res, next) {
     try {
       if (req.user.role === 'ADMIN')
-        return next(appError(403, '不可刪除管理者帳號'));
+        return next(appError(403, '不可刪除管理者帳號', 'CANNOT_DELETE_ADMIN'));
 
       const { password } = req.body;
 
       if (!isValidPassword(password))
-        return next(appError(400, '欄位未填寫正確'));
+        return next(appError(400, '欄位未填寫正確', 'INVALID_FIELDS'));
 
       const isMatch = await bcrypt.compare(password, req.user.password);
-      if (!isMatch) return next(appError(400, '密碼錯誤'));
+      if (!isMatch) return next(appError(400, '密碼錯誤', 'PASSWORD_WRONG'));
 
       const userId = req.user.id;
 
@@ -148,11 +153,12 @@ const userController = {
   async getPhotos(req, res, next) {
     try {
       const { userId } = req.params;
-      if (!isValidUUID(userId)) return next(appError(400, '欄位未填寫正確'));
+      if (!isValidUUID(userId))
+        return next(appError(400, '欄位未填寫正確', 'INVALID_FIELDS'));
 
       const usersRepo = dataSource.getRepository('Users');
       const user = await usersRepo.findOneBy({ id: userId });
-      if (!user) return next(appError(404, '查無此使用者'));
+      if (!user) return next(appError(404, '查無此使用者', 'USER_NOT_FOUND'));
 
       const pageNumber =
         req.query.page === undefined ? 1 : Number(req.query.page);
@@ -160,11 +166,19 @@ const userController = {
         req.query.limit === undefined ? 20 : Number(req.query.limit);
 
       if (!isPositiveInteger(pageNumber) || !isPositiveInteger(limitNumber)) {
-        return next(appError(400, '頁數(page)和每頁筆數(limit)只能是正整數'));
+        return next(
+          appError(
+            400,
+            '頁數(page)和每頁筆數(limit)只能是正整數',
+            'INVALID_PAGINATION'
+          )
+        );
       }
 
       if (limitNumber > 100) {
-        return next(appError(400, '每頁筆數(limit)不能大於100'));
+        return next(
+          appError(400, '每頁筆數(limit)不能大於100', 'LIMIT_TOO_LARGE')
+        );
       }
 
       const skip = (pageNumber - 1) * limitNumber;

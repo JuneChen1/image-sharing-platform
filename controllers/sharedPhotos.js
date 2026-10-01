@@ -21,17 +21,17 @@ const { In } = require('typeorm');
 const shareImageWithUrl = async (req, res, next) => {
   const { url, customCategories } = req.body;
   if (!isValidString(url)) {
-    next(appError(400, '網址為必填'));
+    next(appError(400, '網址為必填', 'URL_REQUIRED'));
     return;
   }
   if (!verifyCustomCategories(customCategories)) {
-    next(appError(400, '分類格式錯誤'));
+    next(appError(400, '分類格式錯誤', 'INVALID_CATEGORIES'));
     return;
   }
 
   const { success, imageId } = getUnsplashImageId(url);
   if (!success || !verifyUnsplashImageId(imageId)) {
-    next(appError(400, '網址錯誤'));
+    next(appError(400, '網址錯誤', 'INVALID_URL'));
     return;
   }
   const user = req.user;
@@ -43,7 +43,8 @@ const shareImageWithUrl = async (req, res, next) => {
       user: { id: user.id }
     });
 
-    if (existing) return next(appError(409, '你已經分享過這張照片了'));
+    if (existing)
+      return next(appError(409, '你已經分享過這張照片了', 'ALREADY_SHARED'));
 
     const result = await fetchUnsplashPhoto(imageId);
 
@@ -55,7 +56,7 @@ const shareImageWithUrl = async (req, res, next) => {
         result.unsplashMessage
       );
 
-      return next(appError(status, 'Unsplash API error'));
+      return next(appError(status, 'Unsplash API error', 'UNSPLASH_API_ERROR'));
     }
 
     const uniqueNames = [
@@ -103,7 +104,7 @@ const shareImageWithUrl = async (req, res, next) => {
         .catch((err) => {
           // 避免使用者連點兩次分享按鈕產生的 race condition
           if (err.code === '23505') {
-            throw appError(409, '你已經分享過這張照片了');
+            throw appError(409, '你已經分享過這張照片了', 'ALREADY_SHARED');
           }
           throw err;
         });
@@ -131,15 +132,21 @@ const getSharedImages = async (req, res, next) => {
   const ALLOWED_SORTS = ['latest', 'popular'];
 
   if (!isPositiveInteger(pageNumber) || !isPositiveInteger(limitNumber)) {
-    return next(appError(400, '頁數(page)和每頁筆數(limit)只能是正整數'));
+    return next(
+      appError(
+        400,
+        '頁數(page)和每頁筆數(limit)只能是正整數',
+        'INVALID_PAGINATION'
+      )
+    );
   }
 
   if (limitNumber > 100) {
-    return next(appError(400, '每頁筆數(limit)不能大於100'));
+    return next(appError(400, '每頁筆數(limit)不能大於100', 'LIMIT_TOO_LARGE'));
   }
 
   if (!ALLOWED_SORTS.includes(sort)) {
-    return next(appError(400, '排序只能是 latest 或 popular'));
+    return next(appError(400, '排序只能是 latest 或 popular', 'INVALID_SORT'));
   }
 
   const skip = (pageNumber - 1) * limitNumber;
@@ -284,7 +291,7 @@ const getSharedImages = async (req, res, next) => {
 const cancelSharedPhoto = async (req, res, next) => {
   const { sharedId } = req.params;
   if (!isValidUUID(sharedId)) {
-    return next(appError(400, 'ID格式錯誤'));
+    return next(appError(400, 'ID格式錯誤', 'INVALID_ID'));
   }
   const user = req.user;
 
@@ -296,7 +303,7 @@ const cancelSharedPhoto = async (req, res, next) => {
     });
 
     if (!data) {
-      return next(appError(404, '查無此資料'));
+      return next(appError(404, '查無此資料', 'NOT_FOUND'));
     }
 
     await dataSource.transaction(async (manager) => {

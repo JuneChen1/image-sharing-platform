@@ -45,13 +45,18 @@ async function main() {
   app.use('/api/v1', apiRouter);
 
   app.use((req, res) => {
-    res.status(404).json({ status: 'error', message: 'Page Not Found' });
+    res.status(404).json({
+      status: 'error',
+      code: 'ROUTE_NOT_FOUND',
+      message: 'Page Not Found'
+    });
   });
 
   app.use((err, req, res, next) => {
     if (err.isOperational) {
       return res.status(err.statusCode).json({
         status: 'error',
+        code: err.errorCode,
         message: err.message
       });
     }
@@ -59,6 +64,7 @@ async function main() {
     console.error(err);
     res.status(500).json({
       status: 'failed',
+      code: 'SERVER_ERROR',
       message: '伺服器發生錯誤，請稍後再試'
     });
   });

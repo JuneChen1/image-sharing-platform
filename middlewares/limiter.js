@@ -6,7 +6,11 @@ const globalLimiter = rateLimit({
   standardHeaders: 'draft-8',
   legacyHeaders: false,
   ipv6Subnet: 56,
-  message: { status: 'error', message: '請求過於頻繁，請稍後再試' }
+  message: {
+    status: 'error',
+    code: 'TOO_MANY_REQUESTS',
+    message: '請求過於頻繁，請稍後再試'
+  }
 });
 
 const shareLimiter = rateLimit({
@@ -15,7 +19,11 @@ const shareLimiter = rateLimit({
   standardHeaders: 'draft-8',
   legacyHeaders: false,
   ipv6Subnet: 56,
-  message: { status: 'error', message: '請求過於頻繁，請稍後再試' }
+  message: {
+    status: 'error',
+    code: 'TOO_MANY_REQUESTS',
+    message: '請求過於頻繁，請稍後再試'
+  }
 });
 
 const authLimiter = rateLimit({
@@ -24,7 +32,11 @@ const authLimiter = rateLimit({
   standardHeaders: 'draft-8',
   legacyHeaders: false,
   ipv6Subnet: 56,
-  message: { status: 'error', message: '嘗試次數過多，請稍後再試' }
+  message: {
+    status: 'error',
+    code: 'TOO_MANY_ATTEMPTS',
+    message: '嘗試次數過多，請稍後再試'
+  }
 });
 
 module.exports = { globalLimiter, shareLimiter, authLimiter };

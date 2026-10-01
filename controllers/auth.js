@@ -30,13 +30,13 @@ const register = async (req, res, next) => {
       !isValidEmail(email) ||
       !isValidPassword(password)
     )
-      return next(appError(400, '欄位未填寫正確'));
+      return next(appError(400, '欄位未填寫正確', 'INVALID_FIELDS'));
 
     const userRepo = dataSource.getRepository('Users');
     const existing = await userRepo.findOneBy({
       email: email.trim().toLowerCase()
     });
-    if (existing) return next(appError(409, 'Email 已被使用'));
+    if (existing) return next(appError(409, 'Email 已被使用', 'EMAIL_TAKEN'));
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = await userRepo.save({
@@ -64,16 +64,22 @@ const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
     if (!isValidEmail(email) || !isValidString(password))
-      return next(appError(400, '欄位未填寫正確'));
+      return next(appError(400, '欄位未填寫正確', 'INVALID_FIELDS'));
 
     const userRepo = dataSource.getRepository('Users');
     const user = await userRepo.findOneBy({
       email: email.trim().toLowerCase()
     });
-    if (!user) return next(appError(400, '使用者不存在或密碼輸入錯誤'));
+    if (!user)
+      return next(
+        appError(400, '使用者不存在或密碼輸入錯誤', 'INVALID_CREDENTIALS')
+      );
 
     const isMach = await bcrypt.compare(password, user.password);
-    if (!isMach) return next(appError(400, '使用者不存在或密碼輸入錯誤'));
+    if (!isMach)
+      return next(
+        appError(400, '使用者不存在或密碼輸入錯誤', 'INVALID_CREDENTIALS')
+      );
 
     const token = jwt.sign(
       { id: user.id, role: user.role },
@@ -104,7 +110,8 @@ const logout = (req, res) => {
 
 const forgotPassword = async (req, res, next) => {
   const { email } = req.body;
-  if (!isValidEmail(email)) return next(appError(400, '欄位未填寫正確'));
+  if (!isValidEmail(email))
+    return next(appError(400, '欄位未填寫正確', 'INVALID_FIELDS'));
   try {
     const userRepo = dataSource.getRepository('Users');
     const user = await userRepo.findOneBy({
@@ -142,31 +149,32 @@ const resetPassword = async (req, res, next) => {
     !isValidPassword(new_password) ||
     !isValidPassword(confirm_password)
   )
-    return next(appError(400, '欄位未填寫正確'));
+    return next(appError(400, '欄位未填寫正確', 'INVALID_FIELDS'));
 
   if (new_password !== confirm_password)
-    return next(appError(400, '兩次輸入的新密碼不一致'));
+    return next(appError(400, '兩次輸入的新密碼不一致', 'PASSWORD_MISMATCH'));
 
   let decoded;
   try {
     decoded = jwt.verify(token, getResetPasswordSecret());
   } catch (error) {
-    return next(appError(400, '重設連結無效或已過期'));
+    return next(appError(400, '重設連結無效或已過期', 'RESET_LINK_INVALID'));
   }
 
   try {
     if (decoded.purpose !== 'reset-password')
-      return next(appError(400, '重設連結無效或已過期'));
+      return next(appError(400, '重設連結無效或已過期', 'RESET_LINK_INVALID'));
 
     const userRepo = dataSource.getRepository('Users');
     const user = await userRepo.findOneBy({ id: decoded.id });
-    if (!user) return next(appError(400, '重設連結無效或已過期'));
+    if (!user)
+      return next(appError(400, '重設連結無效或已過期', 'RESET_LINK_INVALID'));
 
     const updatedAtSeconds = Math.floor(
       new Date(user.updated_at).getTime() / 1000
     );
     if (decoded.iat <= updatedAtSeconds)
-      return next(appError(400, '重設連結無效或已過期'));
+      return next(appError(400, '重設連結無效或已過期', 'RESET_LINK_INVALID'));
 
     const hashedPassword = await bcrypt.hash(new_password, 10);
     await userRepo.save({ ...user, password: hashedPassword });
