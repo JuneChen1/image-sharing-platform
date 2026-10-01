@@ -71,6 +71,19 @@
   const initialTab = params.get('tab');
   showTab(initialTab === 'register' || initialTab === 'forgot' ? initialTab : 'login');
 
+  // 登入後要回去的頁面：只接受站內路徑，避免被導去外部網站（open redirect）
+  function getRedirectTarget() {
+    const target = params.get('redirect');
+    const isInternalPath =
+      target &&
+      target.startsWith('/') &&
+      !target.startsWith('//') &&
+      !target.startsWith('/\\');
+
+    if (!isInternalPath || target.startsWith('/auth.html')) return '/';
+    return target;
+  }
+
   function isValidEmail(email) {
     return /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email);
   }
@@ -108,7 +121,7 @@
       }
 
       window.auth.setSession(body.data.token, body.data.user.name);
-      window.location.href = '/';
+      window.location.href = getRedirectTarget();
     } catch (error) {
       loginAlert.show(i18n.t('common.networkError'));
     }

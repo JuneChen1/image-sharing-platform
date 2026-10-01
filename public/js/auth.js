@@ -58,6 +58,12 @@
     return token ? { Authorization: `Bearer ${token}` } : {};
   }
 
+  // 導向登入頁，並記下目前的位置，登入成功後再回來
+  function redirectToLogin() {
+    const back = window.location.pathname + window.location.search;
+    window.location.href = `/auth.html?redirect=${encodeURIComponent(back)}`;
+  }
+
   window.auth = {
     getToken,
     getUserName,
@@ -67,6 +73,7 @@
     isLoggedIn,
     setSession,
     clearSession,
+    redirectToLogin,
     getAuthHeader
   };
 

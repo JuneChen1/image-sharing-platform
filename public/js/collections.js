@@ -2,7 +2,7 @@
   await window.partialsReady;
 
   if (!window.auth.isLoggedIn()) {
-    window.location.href = '/auth.html';
+    window.auth.redirectToLogin();
     return;
   }
 
@@ -82,7 +82,7 @@
   async function handleUnauthorized(response) {
     if (response.status !== 401) return false;
     window.auth.clearSession();
-    window.location.href = '/auth.html';
+    window.auth.redirectToLogin();
     return true;
   }
 

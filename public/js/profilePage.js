@@ -2,7 +2,7 @@
   await window.partialsReady;
 
   if (!window.auth.isLoggedIn()) {
-    window.location.href = '/auth.html';
+    window.auth.redirectToLogin();
     return;
   }
 

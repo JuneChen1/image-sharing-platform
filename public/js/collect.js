@@ -40,7 +40,7 @@
 
     if (response.status === 401) {
       window.auth.clearSession();
-      window.location.href = '/auth.html';
+      window.auth.redirectToLogin();
       return;
     }
     if (!response.ok) {
@@ -102,7 +102,7 @@
 
       if (response.status === 401) {
         window.auth.clearSession();
-        window.location.href = '/auth.html';
+        window.auth.redirectToLogin();
         return;
       }
       if (response.ok) {
@@ -156,7 +156,7 @@
 
       if (response.status === 401) {
         window.auth.clearSession();
-        window.location.href = '/auth.html';
+        window.auth.redirectToLogin();
         return;
       }
       if (!response.ok) {
@@ -184,7 +184,7 @@
 
   window.openCollectModal = async (photoId) => {
     if (!window.auth.isLoggedIn()) {
-      window.location.href = '/auth.html';
+      window.auth.redirectToLogin();
       return;
     }
     currentPhotoId = photoId;

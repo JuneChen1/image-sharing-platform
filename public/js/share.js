@@ -115,7 +115,7 @@
         showAlert(i18n.t('share.success'), 'success');
       } else if (response.status === 401) {
         window.auth.clearSession();
-        window.location.href = '/auth.html';
+        window.auth.redirectToLogin();
       } else {
         showAlert(i18n.apiMessage(body, 'share.failed'));
       }
@@ -129,7 +129,7 @@
 
   window.openShareModal = (url) => {
     if (!window.auth.isLoggedIn()) {
-      window.location.href = '/auth.html';
+      window.auth.redirectToLogin();
       return;
     }
     shareInput.value = url;
