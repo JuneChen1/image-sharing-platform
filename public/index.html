@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>圖個方便 | PicShare</title>
+  <title data-i18n="title.home">圖個方便 | PicShare</title>
   <link rel="icon" type="image/x-icon" href="/favicon.ico" />
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
@@ -31,8 +31,9 @@
           id="home-search-input"
           class="form-control"
           placeholder="搜尋本站分享的照片（攝影師或分類名稱）"
+          data-i18n-placeholder="home.searchPlaceholder"
         />
-        <button type="submit" class="search-box-submit" aria-label="搜尋">
+        <button type="submit" class="search-box-submit" aria-label="搜尋" data-i18n-aria-label="common.search">
           <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" viewBox="0 0 16 16">
             <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
           </svg>
@@ -41,9 +42,9 @@
     </form>
     <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
       <div id="category-bar" class="d-flex gap-2"></div>
-      <div id="sort-bar" class="sort-tabs flex-shrink-0" role="tablist" aria-label="排序方式">
-        <button type="button" class="sort-tab active" data-sort="latest">最新</button>
-        <button type="button" class="sort-tab" data-sort="popular">熱門</button>
+      <div id="sort-bar" class="sort-tabs flex-shrink-0" role="tablist" aria-label="排序方式" data-i18n-aria-label="home.sortAria">
+        <button type="button" class="sort-tab active" data-sort="latest" data-i18n="home.sortLatest">最新</button>
+        <button type="button" class="sort-tab" data-sort="popular" data-i18n="home.sortPopular">熱門</button>
       </div>
     </div>
     <div id="status" class="text-muted mb-3"></div>
@@ -56,6 +57,7 @@
   <div data-include="/partials/footer.html"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/js/i18n.js"></script>
   <script src="/js/include.js"></script>
   <script src="/js/auth.js"></script>
   <script src="/js/share.js"></script>

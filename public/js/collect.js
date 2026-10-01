@@ -31,7 +31,7 @@
   alertEl.querySelector('.btn-close').addEventListener('click', hideAlert);
 
   async function loadCollections() {
-    collectListEl.innerHTML = '<div class="text-muted small">載入中...</div>';
+    collectListEl.innerHTML = `<div class="text-muted small">${i18n.t('common.loading')}</div>`;
     const response = await fetch(
       `/api/v1/users/me/collections?photoId=${encodeURIComponent(currentPhotoId)}`,
       { headers: { ...window.auth.getAuthHeader() } }
@@ -45,12 +45,12 @@
     }
     if (!response.ok) {
       collectListEl.innerHTML = '';
-      showAlert(body.message || '載入收藏庫失敗');
+      showAlert(body.message || i18n.t('collections.loadFailed'));
       return;
     }
 
     if (body.data.length === 0) {
-      collectListEl.innerHTML = '<div class="text-muted small">尚未建立任何收藏庫</div>';
+      collectListEl.innerHTML = `<div class="text-muted small">${i18n.t('collect.empty')}</div>`;
       return;
     }
 
@@ -83,7 +83,7 @@
   }
 
   async function addPhotoToCollection(collectionId) {
-    showAlert('加入中...', 'secondary');
+    showAlert(i18n.t('collect.adding'), 'secondary');
     try {
       const response = await fetch(
         `/api/v1/users/me/collections/${collectionId}/favorites`,
@@ -104,14 +104,14 @@
         return;
       }
       if (response.ok) {
-        showAlert('已加入收藏庫！', 'success');
+        showAlert(i18n.t('collect.added'), 'success');
       } else if (response.status === 409) {
-        showAlert('這張照片已經在這個收藏庫了');
+        showAlert(i18n.t('collect.duplicate'));
       } else {
-        showAlert(body.message || '加入失敗');
+        showAlert(body.message || i18n.t('collect.addFailed'));
       }
     } catch (error) {
-      showAlert('連線錯誤，請確認伺服器是否啟動');
+      showAlert(i18n.t('common.networkError'));
     }
   }
 
@@ -140,7 +140,7 @@
 
     isCreatingCollection = true;
     collectNewBtn.disabled = true;
-    showAlert('建立中...', 'secondary');
+    showAlert(i18n.t('collect.creating'), 'secondary');
     try {
       const response = await fetch('/api/v1/users/me/collections', {
         method: 'POST',
@@ -158,7 +158,7 @@
         return;
       }
       if (!response.ok) {
-        showAlert(body.message || '建立失敗');
+        showAlert(body.message || i18n.t('common.createFailed'));
         return;
       }
 
@@ -166,7 +166,7 @@
       await loadCollections();
       await addPhotoToCollection(body.data.id);
     } catch (error) {
-      showAlert('連線錯誤，請確認伺服器是否啟動');
+      showAlert(i18n.t('common.networkError'));
     } finally {
       isCreatingCollection = false;
       collectNewBtn.disabled = collectNewNameEl.value.trim() === '';

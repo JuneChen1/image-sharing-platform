@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>管理後台 | PicShare</title>
+  <title data-i18n="title.admin">管理後台 | PicShare</title>
   <link rel="icon" type="image/x-icon" href="/favicon.ico" />
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
@@ -19,11 +19,11 @@
   <div data-include="/partials/chrome.html"></div>
 
   <main class="container">
-    <h1 class="h4 mb-4">管理後台</h1>
+    <h1 class="h4 mb-4" data-i18n="admin.heading">管理後台</h1>
 
-    <div class="btn-group mb-2" role="group" aria-label="管理後台頁籤">
-      <button type="button" class="btn btn-dark" id="tab-users-btn" data-tab="users">使用者管理</button>
-      <button type="button" class="btn btn-outline-dark" id="tab-photos-btn" data-tab="photos">照片管理</button>
+    <div class="btn-group mb-2" role="group" aria-label="管理後台頁籤" data-i18n-aria-label="admin.tabsAria">
+      <button type="button" class="btn btn-dark" id="tab-users-btn" data-tab="users" data-i18n="admin.tabUsers">使用者管理</button>
+      <button type="button" class="btn btn-outline-dark" id="tab-photos-btn" data-tab="photos" data-i18n="admin.tabPhotos">照片管理</button>
     </div>
 
     <section id="users-pane">
@@ -38,25 +38,25 @@
       <div class="card admin-card">
         <div class="card-body">
           <form id="users-search-form" class="d-flex flex-wrap align-items-center gap-2 mb-0">
-            <input type="text" id="users-keyword-input" class="form-control" placeholder="搜尋暱稱" style="max-width: 220px;" />
+            <input type="text" id="users-keyword-input" class="form-control" placeholder="搜尋暱稱" data-i18n-placeholder="admin.usersKeyword" style="max-width: 220px;" />
             <select id="users-banned-filter" class="form-select" style="max-width: 160px;">
-              <option value="">全部狀態</option>
-              <option value="false">未停權</option>
-              <option value="true">已停權</option>
+              <option value="" data-i18n="admin.statusAll">全部狀態</option>
+              <option value="false" data-i18n="admin.statusActive">未停權</option>
+              <option value="true" data-i18n="admin.statusBanned">已停權</option>
             </select>
-            <button type="submit" class="btn btn-dark">搜尋</button>
+            <button type="submit" class="btn btn-dark" data-i18n="common.search">搜尋</button>
           </form>
         </div>
         <div class="table-responsive">
           <table class="table admin-table align-middle mb-0">
             <thead>
               <tr>
-                <th>暱稱</th>
+                <th data-i18n="user.nickname">暱稱</th>
                 <th>Email</th>
-                <th>角色</th>
-                <th>註冊時間</th>
-                <th>狀態</th>
-                <th>操作</th>
+                <th data-i18n="admin.colRole">角色</th>
+                <th data-i18n="admin.colRegistered">註冊時間</th>
+                <th data-i18n="admin.colStatus">狀態</th>
+                <th data-i18n="common.actions">操作</th>
               </tr>
             </thead>
             <tbody id="users-table-body"></tbody>
@@ -64,7 +64,7 @@
         </div>
         <div class="card-footer">
           <div id="users-pagination-info" class="small"></div>
-          <nav aria-label="使用者分頁">
+          <nav aria-label="使用者分頁" data-i18n-aria-label="admin.usersPaginationAria">
             <ul id="users-pagination" class="pagination mb-0"></ul>
           </nav>
         </div>
@@ -83,23 +83,23 @@
       <div class="card admin-card">
         <div class="card-body">
           <form id="photos-search-form" class="d-flex flex-wrap align-items-center gap-2 mb-0">
-            <input type="text" id="photos-keyword-input" class="form-control" placeholder="搜尋攝影師或分類名稱" style="max-width: 240px;" />
+            <input type="text" id="photos-keyword-input" class="form-control" placeholder="搜尋攝影師或分類名稱" data-i18n-placeholder="admin.photosKeyword" style="max-width: 240px;" />
             <select id="photos-category-filter" class="form-select" style="max-width: 160px;">
-              <option value="">全部分類</option>
+              <option value="" data-i18n="admin.allCategories">全部分類</option>
             </select>
-            <button type="submit" class="btn btn-dark">搜尋</button>
-            <button type="button" id="export-deleted-photos-btn" class="btn btn-outline-dark ms-auto">匯出刪除紀錄 CSV</button>
+            <button type="submit" class="btn btn-dark" data-i18n="common.search">搜尋</button>
+            <button type="button" id="export-deleted-photos-btn" class="btn btn-outline-dark ms-auto" data-i18n="admin.exportCsv">匯出刪除紀錄 CSV</button>
           </form>
         </div>
         <div class="table-responsive">
           <table class="table admin-table align-middle mb-0">
             <thead>
               <tr>
-                <th>照片</th>
-                <th>分類</th>
-                <th>分享者</th>
-                <th>分享時間</th>
-                <th>操作</th>
+                <th data-i18n="admin.colPhoto">照片</th>
+                <th data-i18n="admin.colCategories">分類</th>
+                <th data-i18n="admin.colSharer">分享者</th>
+                <th data-i18n="admin.colSharedAt">分享時間</th>
+                <th data-i18n="common.actions">操作</th>
               </tr>
             </thead>
             <tbody id="photos-table-body"></tbody>
@@ -107,7 +107,7 @@
         </div>
         <div class="card-footer">
           <div id="photos-pagination-info" class="small"></div>
-          <nav aria-label="照片分頁">
+          <nav aria-label="照片分頁" data-i18n-aria-label="admin.photosPaginationAria">
             <ul id="photos-pagination" class="pagination mb-0"></ul>
           </nav>
         </div>
@@ -121,18 +121,18 @@
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="forceDeleteReasonModalLabel">強制刪除照片</h5>
+          <h5 class="modal-title" id="forceDeleteReasonModalLabel" data-i18n="admin.forceDeleteTitle">強制刪除照片</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <form id="force-delete-reason-form">
           <div class="modal-body">
-            <p class="text-muted small">此動作無法復原，將一併移除相關的分類與收藏紀錄。</p>
-            <label for="force-delete-reason-input" class="form-label">刪除原因（選填）</label>
-            <textarea id="force-delete-reason-input" class="form-control" rows="3" maxlength="500" placeholder="例如：版權檢舉、垃圾內容..."></textarea>
+            <p class="text-muted small" data-i18n="admin.forceDeleteWarning">此動作無法復原，將一併移除相關的分類與收藏紀錄。</p>
+            <label for="force-delete-reason-input" class="form-label" data-i18n="admin.forceDeleteReason">刪除原因（選填）</label>
+            <textarea id="force-delete-reason-input" class="form-control" rows="3" maxlength="500" placeholder="例如：版權檢舉、垃圾內容..." data-i18n-placeholder="admin.forceDeleteReasonPlaceholder"></textarea>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-            <button type="submit" class="btn btn-danger">確認刪除</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-i18n="common.cancel">取消</button>
+            <button type="submit" class="btn btn-danger" data-i18n="common.confirmDelete">確認刪除</button>
           </div>
         </form>
       </div>
@@ -140,6 +140,7 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/js/i18n.js"></script>
   <script src="/js/include.js"></script>
   <script src="/js/auth.js"></script>
   <script src="/js/share.js"></script>

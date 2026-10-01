@@ -85,15 +85,15 @@
     const password = document.getElementById('login-password').value;
 
     if (!isValidEmail(email)) {
-      loginAlert.show('Email 格式不正確');
+      loginAlert.show(i18n.t('auth.invalidEmail'));
       return;
     }
     if (!password) {
-      loginAlert.show('密碼為必填');
+      loginAlert.show(i18n.t('auth.passwordRequired'));
       return;
     }
 
-    loginAlert.show('登入中...', 'secondary');
+    loginAlert.show(i18n.t('auth.loggingIn'), 'secondary');
     try {
       const response = await fetch('/api/v1/auth/login', {
         method: 'POST',
@@ -103,14 +103,14 @@
       const body = await response.json();
 
       if (!response.ok) {
-        loginAlert.show(body.message || '登入失敗');
+        loginAlert.show(body.message || i18n.t('auth.loginFailed'));
         return;
       }
 
       window.auth.setSession(body.data.token, body.data.user.name);
       window.location.href = '/';
     } catch (error) {
-      loginAlert.show('連線錯誤，請確認伺服器是否啟動');
+      loginAlert.show(i18n.t('common.networkError'));
     }
   });
 
@@ -121,19 +121,19 @@
     const password = document.getElementById('register-password').value;
 
     if (!name) {
-      registerAlert.show('暱稱為必填');
+      registerAlert.show(i18n.t('auth.nameRequired'));
       return;
     }
     if (!isValidEmail(email)) {
-      registerAlert.show('Email 格式不正確');
+      registerAlert.show(i18n.t('auth.invalidEmail'));
       return;
     }
     if (!isValidPassword(password)) {
-      registerAlert.show('密碼至少 8 碼，需同時包含英文字母與數字');
+      registerAlert.show(i18n.t('password.rule'));
       return;
     }
 
-    registerAlert.show('註冊中...', 'secondary');
+    registerAlert.show(i18n.t('auth.registering'), 'secondary');
     try {
       const response = await fetch('/api/v1/auth/register', {
         method: 'POST',
@@ -143,16 +143,16 @@
       const body = await response.json();
 
       if (!response.ok) {
-        registerAlert.show(body.message || '註冊失敗');
+        registerAlert.show(body.message || i18n.t('auth.registerFailed'));
         return;
       }
 
       registerForm.reset();
       registerAlert.hide();
       showTab('login');
-      loginAlert.show('註冊成功', 'success');
+      loginAlert.show(i18n.t('auth.registerSuccess'), 'success');
     } catch (error) {
-      registerAlert.show('連線錯誤，請確認伺服器是否啟動');
+      registerAlert.show(i18n.t('common.networkError'));
     }
   });
 
@@ -161,11 +161,11 @@
     const email = document.getElementById('forgot-email').value.trim();
 
     if (!isValidEmail(email)) {
-      forgotAlert.show('Email 格式不正確');
+      forgotAlert.show(i18n.t('auth.invalidEmail'));
       return;
     }
 
-    forgotAlert.show('寄送中...', 'secondary');
+    forgotAlert.show(i18n.t('auth.sending'), 'secondary');
     try {
       const response = await fetch('/api/v1/auth/forgot-password', {
         method: 'POST',
@@ -175,14 +175,14 @@
       const body = await response.json();
 
       if (!response.ok) {
-        forgotAlert.show(body.message || '寄送失敗，請稍後再試');
+        forgotAlert.show(body.message || i18n.t('auth.sendFailed'));
         return;
       }
 
       forgotForm.reset();
-      forgotAlert.show(body.message, 'success');
+      forgotAlert.show(i18n.t('auth.resetEmailSent'), 'success');
     } catch (error) {
-      forgotAlert.show('連線錯誤，請確認伺服器是否啟動');
+      forgotAlert.show(i18n.t('common.networkError'));
     }
   });
 })();

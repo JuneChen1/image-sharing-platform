@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>我的收藏 | PicShare</title>
+  <title data-i18n="title.collections">我的收藏 | PicShare</title>
   <link rel="icon" type="image/x-icon" href="/favicon.ico" />
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
@@ -21,8 +21,8 @@
   <main class="container">
     <div id="collections-list-view">
       <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h4 mb-0">我的收藏庫</h1>
-        <button type="button" id="new-collection-btn" class="btn btn-dark">新增收藏庫</button>
+        <h1 class="h4 mb-0" data-i18n="collections.heading">我的收藏庫</h1>
+        <button type="button" id="new-collection-btn" class="btn btn-dark" data-i18n="collections.new">新增收藏庫</button>
       </div>
       <div id="collections-status" class="text-muted mb-3"></div>
       <div id="collections-grid" class="row g-3"></div>
@@ -30,9 +30,9 @@
 
     <div id="collection-detail-view" class="d-none">
       <div class="collection-detail-header mb-4">
-        <button type="button" id="back-to-collections-btn" class="btn btn-dark btn-sm">← 返回</button>
+        <button type="button" id="back-to-collections-btn" class="btn btn-dark btn-sm" data-i18n="collections.back">← 返回</button>
         <h1 id="collection-detail-title" class="h4 mb-0"></h1>
-        <button type="button" id="delete-collection-btn" class="btn btn-outline-danger btn-sm">刪除此收藏庫</button>
+        <button type="button" id="delete-collection-btn" class="btn btn-outline-danger btn-sm" data-i18n="collections.delete">刪除此收藏庫</button>
       </div>
       <div id="collection-photos-status" class="text-muted mb-3"></div>
       <div id="collection-photos-grid" class="row g-3"></div>
@@ -45,7 +45,7 @@
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="newCollectionModalLabel">新增收藏庫</h5>
+          <h5 class="modal-title" id="newCollectionModalLabel" data-i18n="collections.new">新增收藏庫</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <form id="new-collection-form">
@@ -55,6 +55,7 @@
               id="new-collection-name"
               class="form-control"
               placeholder="輸入收藏庫名稱"
+              data-i18n-placeholder="collect.newPlaceholder"
               maxlength="100"
               required
             />
@@ -65,8 +66,8 @@
             </div>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-            <button type="submit" class="btn btn-dark">建立</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-i18n="common.cancel">取消</button>
+            <button type="submit" class="btn btn-dark" data-i18n="collections.create">建立</button>
           </div>
         </form>
       </div>
@@ -74,6 +75,7 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/js/i18n.js"></script>
   <script src="/js/include.js"></script>
   <script src="/js/auth.js"></script>
   <script src="/js/share.js"></script>

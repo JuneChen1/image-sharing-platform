@@ -40,7 +40,7 @@
         (name) => `
           <span class="badge text-bg-secondary d-flex align-items-center gap-1">
             ${name}
-            <button type="button" class="btn-close btn-close-white" style="font-size: 0.6rem" data-category="${name}" aria-label="移除分類"></button>
+            <button type="button" class="btn-close btn-close-white" style="font-size: 0.6rem" data-category="${name}" aria-label="${i18n.t('share.removeCategory')}"></button>
           </span>
         `
       )
@@ -85,13 +85,13 @@
     if (!url) return;
 
     if (categories.length === 0) {
-      showAlert('請至少選擇一個分類');
+      showAlert(i18n.t('share.needCategory'));
       return;
     }
 
     isSubmitting = true;
     shareSubmitBtn.disabled = true;
-    showAlert('分享中...', 'secondary');
+    showAlert(i18n.t('share.sharing'), 'secondary');
 
     try {
       const response = await fetch('/api/v1/shared-photos', {
@@ -108,15 +108,15 @@
         shareInput.value = '';
         categories = [];
         renderCategories();
-        showAlert('分享成功！', 'success');
+        showAlert(i18n.t('share.success'), 'success');
       } else if (response.status === 401) {
         window.auth.clearSession();
         window.location.href = '/auth.html';
       } else {
-        showAlert(body.message || '分享失敗');
+        showAlert(body.message || i18n.t('share.failed'));
       }
     } catch (error) {
-      showAlert('連線錯誤，請確認伺服器是否啟動');
+      showAlert(i18n.t('common.networkError'));
     } finally {
       isSubmitting = false;
       shareSubmitBtn.disabled = false;

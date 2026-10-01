@@ -50,7 +50,7 @@
       const body = await response.json();
 
       if (!response.ok) {
-        showAlert(body.message || '載入個人資料失敗');
+        showAlert(body.message || i18n.t('profile.loadFailed'));
         return;
       }
 
@@ -58,7 +58,7 @@
       nameInput.value = body.data.user.name;
       updateNameValidation();
     } catch (error) {
-      showAlert('連線錯誤，請確認伺服器是否啟動');
+      showAlert(i18n.t('common.networkError'));
     }
   }
 
@@ -69,11 +69,11 @@
     const name = nameInput.value.trim();
 
     if (!name) {
-      showAlert('暱稱為必填');
+      showAlert(i18n.t('auth.nameRequired'));
       return;
     }
 
-    showAlert('儲存中...', 'secondary');
+    showAlert(i18n.t('profile.saving'), 'secondary');
     try {
       const response = await fetch('/api/v1/users/me', {
         method: 'PATCH',
@@ -86,14 +86,14 @@
       const body = await response.json();
 
       if (!response.ok) {
-        showAlert(body.message || '儲存失敗，請稍後再試');
+        showAlert(body.message || i18n.t('profile.saveFailed'));
         return;
       }
 
       window.auth.setSession(window.auth.getToken(), body.data.user.name);
-      showAlert('儲存成功', 'success');
+      showAlert(i18n.t('profile.saved'), 'success');
     } catch (error) {
-      showAlert('連線錯誤，請確認伺服器是否啟動');
+      showAlert(i18n.t('common.networkError'));
     }
   });
 
@@ -130,16 +130,11 @@
 
     const password = deleteAccountPasswordInput.value;
     if (!password) {
-      showDeleteAccountAlert('請輸入密碼');
+      showDeleteAccountAlert(i18n.t('profile.enterPassword'));
       return;
     }
 
-    if (
-      !window.confirm(
-        '確定要刪除帳號嗎？此動作無法復原，所有分享、收藏庫、收藏紀錄都會被永久刪除。'
-      )
-    )
-      return;
+    if (!window.confirm(i18n.t('profile.deleteConfirm'))) return;
 
     isDeletingAccount = true;
     deleteAccountSubmitBtn.disabled = true;
@@ -156,19 +151,19 @@
       const body = await response.json();
 
       if (!response.ok) {
-        showDeleteAccountAlert(body.message || '刪除失敗，請稍後再試');
+        showDeleteAccountAlert(body.message || i18n.t('profile.deleteFailed'));
         isDeletingAccount = false;
         deleteAccountSubmitBtn.disabled = false;
         return;
       }
 
       window.auth.clearSession();
-      showDeleteAccountAlert('帳號已刪除，即將跳轉至首頁...', 'success');
+      showDeleteAccountAlert(i18n.t('profile.deleted'), 'success');
       setTimeout(() => {
         window.location.href = '/';
       }, 2000);
     } catch (error) {
-      showDeleteAccountAlert('連線錯誤，請確認伺服器是否啟動');
+      showDeleteAccountAlert(i18n.t('common.networkError'));
       isDeletingAccount = false;
       deleteAccountSubmitBtn.disabled = false;
     }

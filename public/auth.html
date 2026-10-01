@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>登入 / 註冊 | PicShare</title>
+  <title data-i18n="title.auth">登入 / 註冊 | PicShare</title>
   <link rel="icon" type="image/x-icon" href="/favicon.ico" />
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
@@ -30,23 +30,23 @@
                 <div id="login-alert-message" class="flex-grow-1"></div>
                 <button type="button" class="btn-close" aria-label="Close"></button>
               </div>
-              <h5 class="card-title mb-3 text-center">登入</h5>
+              <h5 class="card-title mb-3 text-center" data-i18n="auth.login">登入</h5>
               <form id="login-form">
                 <div class="mb-3">
                   <label for="login-email" class="form-label">Email</label>
                   <input type="email" id="login-email" class="form-control" required />
                 </div>
                 <div class="mb-3">
-                  <label for="login-password" class="form-label">密碼</label>
+                  <label for="login-password" class="form-label" data-i18n="password.label">密碼</label>
                   <input type="password" id="login-password" class="form-control" required />
                 </div>
-                <button type="submit" class="btn btn-dark w-100" style="margin-top: 20px;">登入</button>
+                <button type="submit" class="btn btn-dark w-100" style="margin-top: 20px;" data-i18n="auth.login">登入</button>
               </form>
               <p class="text-center small mt-3 mb-0">
-                還沒有帳號？<a href="#" id="show-register-link">註冊</a>
+                <span data-i18n="auth.noAccount">還沒有帳號？</span><a href="#" id="show-register-link" data-i18n="auth.register">註冊</a>
               </p>
               <p class="text-center small mt-1 mb-0">
-                <a href="#" id="show-forgot-link">忘記密碼？</a>
+                <a href="#" id="show-forgot-link" data-i18n="auth.forgotLink">忘記密碼？</a>
               </p>
             </div>
           </div>
@@ -60,17 +60,17 @@
                 <div id="forgot-alert-message" class="flex-grow-1"></div>
                 <button type="button" class="btn-close" aria-label="Close"></button>
               </div>
-              <h5 class="card-title mb-3 text-center">忘記密碼</h5>
+              <h5 class="card-title mb-3 text-center" data-i18n="auth.forgotHeading">忘記密碼</h5>
               <form id="forgot-form">
                 <div class="mb-3">
                   <label for="forgot-email" class="form-label">Email</label>
                   <input type="email" id="forgot-email" class="form-control" required />
-                  <div class="form-text">我們會寄送重設密碼連結到此信箱</div>
+                  <div class="form-text" data-i18n="auth.forgotHint">我們會寄送重設密碼連結到此信箱</div>
                 </div>
-                <button type="submit" class="btn btn-dark w-100" style="margin-top: 20px;">寄送重設密碼信</button>
+                <button type="submit" class="btn btn-dark w-100" style="margin-top: 20px;" data-i18n="auth.sendReset">寄送重設密碼信</button>
               </form>
               <p class="text-center small mt-3 mb-0">
-                想起密碼了？<a href="#" id="show-login-from-forgot-link">返回登入</a>
+                <span data-i18n="auth.remembered">想起密碼了？</span><a href="#" id="show-login-from-forgot-link" data-i18n="password.backToLogin">返回登入</a>
               </p>
             </div>
           </div>
@@ -84,10 +84,10 @@
                 <div id="register-alert-message" class="flex-grow-1"></div>
                 <button type="button" class="btn-close" aria-label="Close"></button>
               </div>
-              <h5 class="card-title mb-3 text-center">註冊</h5>
+              <h5 class="card-title mb-3 text-center" data-i18n="auth.register">註冊</h5>
               <form id="register-form">
                 <div class="mb-3">
-                  <label for="register-name" class="form-label">暱稱</label>
+                  <label for="register-name" class="form-label" data-i18n="user.nickname">暱稱</label>
                   <input type="text" id="register-name" class="form-control" required />
                 </div>
                 <div class="mb-3">
@@ -95,14 +95,14 @@
                   <input type="email" id="register-email" class="form-control" required />
                 </div>
                 <div class="mb-3">
-                  <label for="register-password" class="form-label">密碼</label>
+                  <label for="register-password" class="form-label" data-i18n="password.label">密碼</label>
                   <input type="password" id="register-password" class="form-control" required />
-                  <div class="form-text">至少 8 碼，需同時包含英文字母與數字</div>
+                  <div class="form-text" data-i18n="password.hint">至少 8 碼，需同時包含英文字母與數字</div>
                 </div>
-                <button type="submit" class="btn btn-dark w-100" style="margin-top: 20px;">註冊</button>
+                <button type="submit" class="btn btn-dark w-100" style="margin-top: 20px;" data-i18n="auth.register">註冊</button>
               </form>
               <p class="text-center small mt-3 mb-0">
-                已經有帳號了？<a href="#" id="show-login-link">登入</a>
+                <span data-i18n="auth.haveAccount">已經有帳號了？</span><a href="#" id="show-login-link" data-i18n="auth.login">登入</a>
               </p>
             </div>
           </div>
@@ -115,6 +115,7 @@
   <div data-include="/partials/footer.html"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/js/i18n.js"></script>
   <script src="/js/include.js"></script>
   <script src="/js/auth.js"></script>
   <script src="/js/authPage.js"></script>

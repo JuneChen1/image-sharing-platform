@@ -81,6 +81,7 @@
     const logoutBtn = document.getElementById('logout-btn');
     const mySharedPhotosLink = document.getElementById('my-shared-photos-link');
     const adminPanelLink = document.getElementById('admin-panel-link');
+    const langSwitchNav = document.getElementById('lang-switch-nav');
 
     function renderAuthUI() {
       const loggedIn = isLoggedIn();
@@ -90,6 +91,7 @@
       shareBtn.classList.toggle('d-none', !loggedIn);
       searchLink.classList.toggle('d-none', onAuthPage);
       adminPanelLink.classList.toggle('d-none', !loggedIn || !isAdmin());
+      langSwitchNav.classList.toggle('d-none', loggedIn);
       if (loggedIn) {
         userNameEl.textContent = getUserName();
         mySharedPhotosLink.href = `/user-shared-photos.html?userId=${getUserId()}`;

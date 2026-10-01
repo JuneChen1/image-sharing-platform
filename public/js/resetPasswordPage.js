@@ -35,7 +35,7 @@
   const token = new URLSearchParams(window.location.search).get('token');
 
   if (!token) {
-    showAlert('連結無效，請重新申請忘記密碼');
+    showAlert(i18n.t('resetPassword.invalidLink'));
     newPasswordInput.disabled = true;
     confirmPasswordInput.disabled = true;
     resetSubmitBtn.disabled = true;
@@ -48,15 +48,15 @@
     const confirmPassword = confirmPasswordInput.value;
 
     if (!isValidPassword(newPassword)) {
-      showAlert('密碼至少 8 碼，需同時包含英文字母與數字');
+      showAlert(i18n.t('password.rule'));
       return;
     }
     if (newPassword !== confirmPassword) {
-      showAlert('兩次輸入的新密碼不一致');
+      showAlert(i18n.t('password.mismatch'));
       return;
     }
 
-    showAlert('重設中...', 'secondary');
+    showAlert(i18n.t('resetPassword.resetting'), 'secondary');
     try {
       const response = await fetch('/api/v1/auth/reset-password', {
         method: 'POST',
@@ -70,18 +70,18 @@
       const body = await response.json();
 
       if (!response.ok) {
-        showAlert(body.message || '重設失敗，請重新申請忘記密碼');
+        showAlert(body.message || i18n.t('resetPassword.resetFailed'));
         return;
       }
 
       resetForm.reset();
       resetSubmitBtn.disabled = true;
-      showAlert(`${body.message}，即將跳轉至登入頁...`, 'success');
+      showAlert(i18n.t('resetPassword.successRedirect'), 'success');
       setTimeout(() => {
         window.location.href = '/auth.html';
       }, 2000);
     } catch (error) {
-      showAlert('連線錯誤，請確認伺服器是否啟動');
+      showAlert(i18n.t('common.networkError'));
     }
   });
 })();

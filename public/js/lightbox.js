@@ -40,7 +40,7 @@
     onRemoveFromCollection
   }) => {
     lightboxImage.src = imageUrl;
-    lightboxImage.alt = `${photographerName} 的照片`;
+    lightboxImage.alt = i18n.t('common.photoAlt', { name: photographerName });
     lightboxPhotographer.innerHTML = avatarLinkHTML(photographerName);
     lightboxPhotographer.href = photographerUrl;
     lightboxDownload.href = downloadUrl;

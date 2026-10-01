@@ -6,4 +6,6 @@ window.partialsReady = (async function loadPartials() {
       node.outerHTML = await response.text();
     })
   );
+  i18n.applyI18n();
+  i18n.renderLangControls();
 })();

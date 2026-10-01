@@ -44,19 +44,19 @@
     const confirmPassword = confirmPasswordInput.value;
 
     if (!oldPassword) {
-      showAlert('請輸入舊密碼');
+      showAlert(i18n.t('changePassword.needOld'));
       return;
     }
     if (!isValidPassword(newPassword)) {
-      showAlert('新密碼至少 8 碼，需同時包含英文字母與數字');
+      showAlert(i18n.t('password.newRule'));
       return;
     }
     if (newPassword !== confirmPassword) {
-      showAlert('兩次輸入的新密碼不一致');
+      showAlert(i18n.t('password.mismatch'));
       return;
     }
 
-    showAlert('更新中...', 'secondary');
+    showAlert(i18n.t('changePassword.updating'), 'secondary');
     try {
       const response = await fetch('/api/v1/users/me/password', {
         method: 'PATCH',
@@ -73,14 +73,14 @@
       const body = await response.json();
 
       if (!response.ok) {
-        showAlert(body.message || '更新失敗，請稍後再試');
+        showAlert(body.message || i18n.t('changePassword.updateFailed'));
         return;
       }
 
       changePasswordForm.reset();
-      showAlert(body.message, 'success');
+      showAlert(i18n.t('changePassword.updateSuccess'), 'success');
     } catch (error) {
-      showAlert('連線錯誤，請確認伺服器是否啟動');
+      showAlert(i18n.t('common.networkError'));
     }
   });
 })();

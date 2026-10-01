@@ -38,10 +38,7 @@
     };
   }
 
-  function formatDate(isoString) {
-    const date = new Date(isoString);
-    return date.toLocaleDateString('zh-Hant', { year: 'numeric', month: '2-digit', day: '2-digit' });
-  }
+  const { formatDate } = i18n;
 
   function buildPaginationHtml(currentPage, totalPages) {
     if (totalPages < 1) return '';
@@ -106,6 +103,7 @@
   const USERS_LIMIT = 10;
   let currentUsersKeyword = '';
   let currentUsersBanned = '';
+  let currentUsersPage = 1;
 
   function setUsersStatus(text) {
     usersStatusEl.textContent = text;
@@ -119,8 +117,8 @@
         const isSelf = user.id === selfId;
         const isAdminUser = user.role === 'ADMIN';
         const statusBadge = user.is_banned
-          ? '<span class="admin-badge admin-badge-danger">已停權</span>'
-          : '<span class="admin-badge admin-badge-success">正常</span>';
+          ? `<span class="admin-badge admin-badge-danger">${i18n.t('admin.badgeBanned')}</span>`
+          : `<span class="admin-badge admin-badge-success">${i18n.t('admin.badgeActive')}</span>`;
         const roleCell = isAdminUser
           ? '<span class="admin-role-admin">ADMIN</span>'
           : user.role;
@@ -128,8 +126,8 @@
         let actionCell = '';
         if (!isAdminUser && !isSelf) {
           actionCell = user.is_banned
-            ? `<button type="button" class="admin-action-btn text-dark" data-unban-id="${user.id}">解除停權</button>`
-            : `<button type="button" class="admin-action-btn text-danger" data-ban-id="${user.id}">停權</button>`;
+            ? `<button type="button" class="admin-action-btn text-dark" data-unban-id="${user.id}">${i18n.t('admin.unban')}</button>`
+            : `<button type="button" class="admin-action-btn text-danger" data-ban-id="${user.id}">${i18n.t('admin.ban')}</button>`;
         }
 
         return `
@@ -147,7 +145,7 @@
   }
 
   async function fetchAndRenderUsers(page, keepAlert = false) {
-    setUsersStatus('載入中...');
+    setUsersStatus(i18n.t('common.loading'));
     if (!keepAlert) usersAlert.hide();
 
     const params = new URLSearchParams({ page, limit: USERS_LIMIT });
@@ -162,15 +160,17 @@
 
       if (!response.ok) {
         setUsersStatus('');
-        usersAlert.show(body.message || '載入使用者失敗');
+        usersAlert.show(body.message || i18n.t('admin.loadUsersFailed'));
         return;
       }
+
+      currentUsersPage = page;
 
       if (body.data.users.length === 0) {
         usersTableBody.innerHTML = '';
         usersPaginationEl.innerHTML = '';
-        usersPaginationInfoEl.textContent = '顯示 0 - 0 筆，共 0 筆';
-        setUsersStatus('找不到符合條件的使用者');
+        usersPaginationInfoEl.textContent = i18n.t('admin.paginationInfo', { start: 0, end: 0, total: 0 });
+        setUsersStatus(i18n.t('admin.noUsers'));
         return;
       }
 
@@ -178,11 +178,11 @@
       renderUsersTable(body.data.users);
       const usersStart = (page - 1) * USERS_LIMIT + 1;
       const usersEnd = usersStart + body.data.users.length - 1;
-      usersPaginationInfoEl.textContent = `顯示 ${usersStart} - ${usersEnd} 筆，共 ${body.data.pagination.total} 筆`;
+      usersPaginationInfoEl.textContent = i18n.t('admin.paginationInfo', { start: usersStart, end: usersEnd, total: body.data.pagination.total });
       usersPaginationEl.innerHTML = buildPaginationHtml(page, body.data.pagination.total_pages);
     } catch (error) {
       setUsersStatus('');
-      usersAlert.show('連線錯誤，請確認伺服器是否啟動');
+      usersAlert.show(i18n.t('common.networkError'));
     }
   }
 
@@ -201,7 +201,7 @@
     const id = banBtn ? banBtn.dataset.banId : unbanBtn.dataset.unbanId;
     const isBanAction = Boolean(banBtn);
 
-    if (isBanAction && !window.confirm('確定要停權這位使用者嗎？停權後對方將無法登入使用本站。')) return;
+    if (isBanAction && !window.confirm(i18n.t('admin.banConfirm'))) return;
 
     try {
       const response = await fetch(`/api/v1/admin/users/${id}/${isBanAction ? 'ban' : 'unban'}`, {
@@ -211,14 +211,14 @@
       const body = await response.json();
 
       if (!response.ok) {
-        usersAlert.show(body.message || (isBanAction ? '停權失敗' : '解除停權失敗'));
+        usersAlert.show(body.message || i18n.t(isBanAction ? 'admin.banFailed' : 'admin.unbanFailed'));
         return;
       }
 
-      usersAlert.show(isBanAction ? '已停權該使用者' : '已解除停權', 'success');
+      usersAlert.show(i18n.t(isBanAction ? 'admin.banned' : 'admin.unbanned'), 'success');
       await fetchAndRenderUsers(1, true);
     } catch (error) {
-      usersAlert.show('連線錯誤，請確認伺服器是否啟動');
+      usersAlert.show(i18n.t('common.networkError'));
     }
   });
 
@@ -248,6 +248,7 @@
   let currentPhotosKeyword = '';
   let currentPhotosCategory = '';
   let currentPhotos = [];
+  let currentPhotosPage = 1;
 
   function setPhotosStatus(text) {
     photosStatusEl.textContent = text;
@@ -260,7 +261,7 @@
       if (!response.ok) return;
 
       photosCategoryFilter.innerHTML =
-        '<option value="">全部分類</option>' +
+        `<option value="" data-i18n="admin.allCategories">${i18n.t('admin.allCategories')}</option>` +
         body.data.map((category) => `<option value="${category.name}">${category.name}</option>`).join('');
     } catch (error) {
       // 分類下拉選單載入失敗不影響主要列表功能
@@ -275,19 +276,19 @@
             <td>
               <img
                 src="${photo.image_url}"
-                alt="${photo.photographer_name} 的照片"
+                alt="${i18n.t('common.photoAlt', { name: photo.photographer_name })}"
                 data-photo-id="${photo.id}"
                 class="lightbox-trigger"
                 style="width: 64px; height: 64px; object-fit: cover; border-radius: 4px;"
               />
             </td>
-            <td>${(photo.categories || []).join('、')}</td>
+            <td>${(photo.categories || []).join(i18n.t('common.listSeparator'))}</td>
             <td>
               <a href="/user-shared-photos.html?userId=${photo.user_id}">${photo.user_name}</a>
             </td>
             <td>${formatDate(photo.created_at)}</td>
             <td>
-              <button type="button" class="admin-action-btn text-danger" data-force-delete-id="${photo.id}">強制刪除</button>
+              <button type="button" class="admin-action-btn text-danger" data-force-delete-id="${photo.id}">${i18n.t('admin.forceDelete')}</button>
             </td>
           </tr>
         `
@@ -296,7 +297,7 @@
   }
 
   async function fetchAndRenderPhotos(page, keepAlert = false) {
-    setPhotosStatus('載入中...');
+    setPhotosStatus(i18n.t('common.loading'));
     if (!keepAlert) photosAlert.hide();
 
     const params = new URLSearchParams({ page, limit: PHOTOS_LIMIT });
@@ -309,15 +310,17 @@
 
       if (!response.ok) {
         setPhotosStatus('');
-        photosAlert.show(body.message || '載入照片失敗');
+        photosAlert.show(body.message || i18n.t('admin.loadPhotosFailed'));
         return;
       }
+
+      currentPhotosPage = page;
 
       if (body.data.length === 0) {
         photosTableBody.innerHTML = '';
         photosPaginationEl.innerHTML = '';
-        photosPaginationInfoEl.textContent = '顯示 0 - 0 筆，共 0 筆';
-        setPhotosStatus('找不到符合條件的照片');
+        photosPaginationInfoEl.textContent = i18n.t('admin.paginationInfo', { start: 0, end: 0, total: 0 });
+        setPhotosStatus(i18n.t('common.noPhotoMatch'));
         return;
       }
 
@@ -326,12 +329,12 @@
       renderPhotosTable(body.data);
       const photosStart = (page - 1) * PHOTOS_LIMIT + 1;
       const photosEnd = photosStart + body.data.length - 1;
-      photosPaginationInfoEl.textContent = `顯示 ${photosStart} - ${photosEnd} 筆，共 ${body.pagination.total} 筆`;
+      photosPaginationInfoEl.textContent = i18n.t('admin.paginationInfo', { start: photosStart, end: photosEnd, total: body.pagination.total });
       const totalPages = Math.ceil(body.pagination.total / body.pagination.limit);
       photosPaginationEl.innerHTML = buildPaginationHtml(page, totalPages);
     } catch (error) {
       setPhotosStatus('');
-      photosAlert.show('連線錯誤，請確認伺服器是否啟動');
+      photosAlert.show(i18n.t('common.networkError'));
     }
   }
 
@@ -351,7 +354,7 @@
 
       if (!response.ok) {
         const body = await response.json();
-        photosAlert.show(body.message || '匯出失敗');
+        photosAlert.show(body.message || i18n.t('admin.exportFailed'));
         return;
       }
 
@@ -363,7 +366,7 @@
       a.click();
       URL.revokeObjectURL(url);
     } catch (error) {
-      photosAlert.show('連線錯誤，請確認伺服器是否啟動');
+      photosAlert.show(i18n.t('common.networkError'));
     } finally {
       exportDeletedPhotosBtn.disabled = false;
     }
@@ -404,7 +407,7 @@
     event.preventDefault();
     if (!forceDeleteTargetId) return;
 
-    if (!window.confirm('確定要強制刪除這張照片嗎？此動作無法復原，將一併移除相關的分類與收藏紀錄。')) return;
+    if (!window.confirm(i18n.t('admin.forceDeleteConfirm'))) return;
 
     try {
       const response = await fetch(`/api/v1/admin/shared-photos/${forceDeleteTargetId}`, {
@@ -418,15 +421,15 @@
       const body = await response.json();
 
       if (!response.ok) {
-        photosAlert.show(body.message || '強制刪除失敗');
+        photosAlert.show(body.message || i18n.t('admin.forceDeleteFailed'));
         return;
       }
 
       bootstrap.Modal.getOrCreateInstance(forceDeleteReasonModalEl).hide();
-      photosAlert.show('已強制刪除該照片', 'success');
+      photosAlert.show(i18n.t('admin.forceDeleted'), 'success');
       await fetchAndRenderPhotos(1, true);
     } catch (error) {
-      photosAlert.show('連線錯誤，請確認伺服器是否啟動');
+      photosAlert.show(i18n.t('common.networkError'));
     }
   });
 
@@ -447,6 +450,11 @@
   });
 
   // ---------- Init ----------
+  document.addEventListener('langchange', () => {
+    fetchAndRenderUsers(currentUsersPage, true);
+    fetchAndRenderPhotos(currentPhotosPage, true);
+  });
+
   await fetchAndRenderUsers(1);
   await loadCategoryFilter();
   await fetchAndRenderPhotos(1);

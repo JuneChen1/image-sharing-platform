@@ -24,13 +24,13 @@
     const query = input.value.trim();
     if (!query) return;
 
-    setStatus('搜尋中...', false);
+    setStatus(i18n.t('common.searching'), false);
 
     try {
       await fetchAndRenderPhotos(query, 1);
       setStatus('', false);
     } catch (error) {
-      setStatus(error.message || '連線錯誤，請確認伺服器是否啟動', true);
+      setStatus(error.message || i18n.t('common.networkError'), true);
     }
   });
 
@@ -45,7 +45,7 @@
     try {
       await fetchAndRenderPhotos(currentQuery, Number(link.dataset.page));
     } catch (error) {
-      setStatus(error.message || '連線錯誤，請確認伺服器是否啟動', true);
+      setStatus(error.message || i18n.t('common.networkError'), true);
     }
   });
 
@@ -73,12 +73,12 @@
   const initialQuery = new URLSearchParams(window.location.search).get('q');
   if (initialQuery) {
     input.value = initialQuery;
-    setStatus('搜尋中...', false);
+    setStatus(i18n.t('common.searching'), false);
     try {
       await fetchAndRenderPhotos(initialQuery, 1);
       setStatus('', false);
     } catch (error) {
-      setStatus(error.message || '連線錯誤，請確認伺服器是否啟動', true);
+      setStatus(error.message || i18n.t('common.networkError'), true);
     }
   }
 
@@ -90,6 +90,12 @@
       }
     }, 200)
   );
+
+  document.addEventListener('langchange', () => {
+    if (currentPhotos.length > 0) {
+      renderMasonry(currentPhotos);
+    }
+  });
 
   function debounce(fn, delay) {
     let timeoutId;
@@ -193,9 +199,9 @@
         />
         <div class="card-body">
           <p class="card-text">
-            攝影師：<a href="${photo.user.links.html}" target="_blank" rel="noopener">${photo.user.name}</a>
+            ${i18n.t('search.photographer')}<a href="${photo.user.links.html}" target="_blank" rel="noopener">${photo.user.name}</a>
           </p>
-          <button type="button" class="btn btn-sm btn-dark w-100" data-share-url="${photo.links.html}">分享</button>
+          <button type="button" class="btn btn-sm btn-dark w-100" data-share-url="${photo.links.html}">${i18n.t('common.share')}</button>
         </div>
       </div>
     `;

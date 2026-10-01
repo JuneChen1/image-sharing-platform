@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>搜尋 Unsplash 照片 | PicShare</title>
+  <title data-i18n="title.search">搜尋 Unsplash 照片 | PicShare</title>
   <link rel="icon" type="image/x-icon" href="/favicon.ico" />
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
@@ -19,7 +19,7 @@
   <div data-include="/partials/chrome.html"></div>
 
   <main class="container">
-    <h1 class="h4 mb-3">從 Unsplash 搜尋</h1>
+    <h1 class="h4 mb-3" data-i18n="search.heading">從 Unsplash 搜尋</h1>
     <form id="search-form" class="d-flex gap-2 mb-4">
       <div class="search-box">
         <span class="search-box-icon">
@@ -32,10 +32,11 @@
           id="search-input"
           class="form-control"
           placeholder="輸入關鍵字搜尋 Unsplash 圖片，例如 Long-tailed Tit"
+          data-i18n-placeholder="search.placeholder"
           required
         />
       </div>
-      <button type="submit" class="btn btn-dark text-nowrap">搜尋</button>
+      <button type="submit" class="btn btn-dark text-nowrap" data-i18n="common.search">搜尋</button>
     </form>
     <div id="status" class="text-muted mb-3"></div>
     <div id="results" class="masonry-grid"></div>
@@ -47,6 +48,7 @@
   <div data-include="/partials/footer.html"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/js/i18n.js"></script>
   <script src="/js/include.js"></script>
   <script src="/js/auth.js"></script>
   <script src="/js/share.js"></script>

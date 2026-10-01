@@ -69,14 +69,14 @@
 
   function renderCollectionPreview(previewImageUrl) {
     if (!previewImageUrl) {
-      return '<div class="collection-preview-empty">尚無照片</div>';
+      return `<div class="collection-preview-empty">${i18n.t('collections.noPhotos')}</div>`;
     }
 
     return `<img src="${previewImageUrl}" alt="" />`;
   }
 
   async function loadCollections() {
-    setListStatus('載入中...', false);
+    setListStatus(i18n.t('common.loading'), false);
     try {
       const response = await fetch('/api/v1/users/me/collections', {
         headers: { ...window.auth.getAuthHeader() }
@@ -85,13 +85,13 @@
 
       if (await handleUnauthorized(response)) return;
       if (!response.ok) {
-        setListStatus(body.message || '載入收藏庫失敗', true);
+        setListStatus(body.message || i18n.t('collections.loadFailed'), true);
         return;
       }
 
       if (body.data.length === 0) {
         collectionsGridEl.innerHTML = '';
-        setListStatus('尚未建立任何收藏庫，點擊右上角「新增收藏庫」開始收藏照片吧！', false);
+        setListStatus(i18n.t('collections.emptyList'), false);
         return;
       }
 
@@ -111,7 +111,7 @@
                 </div>
                 <div class="collection-info">
                   <div class="collection-name text-truncate">${collection.name}</div>
-                  <div class="text-muted small">${collection.photoCount ?? 0} 張照片</div>
+                  <div class="text-muted small">${i18n.t('collections.photoCount', { count: collection.photoCount ?? 0 })}</div>
                 </div>
               </button>
             </div>
@@ -119,7 +119,7 @@
         )
         .join('');
     } catch (error) {
-      setListStatus('連線錯誤，請確認伺服器是否啟動', true);
+      setListStatus(i18n.t('common.networkError'), true);
     }
   }
 
@@ -138,7 +138,7 @@
   }
 
   async function loadCollectionPhotos() {
-    setPhotosStatus('載入中...', false);
+    setPhotosStatus(i18n.t('common.loading'), false);
     collectionPhotosGridEl.innerHTML = '';
     try {
       const response = await fetch(
@@ -149,20 +149,20 @@
 
       if (await handleUnauthorized(response)) return;
       if (!response.ok) {
-        setPhotosStatus(body.message || '載入照片失敗', true);
+        setPhotosStatus(body.message || i18n.t('collections.loadPhotosFailed'), true);
         return;
       }
 
       currentPhotos = body.data;
       if (currentPhotos.length === 0) {
-        setPhotosStatus('這個收藏庫還沒有照片', false);
+        setPhotosStatus(i18n.t('collections.emptyCollection'), false);
         return;
       }
 
       setPhotosStatus('', false);
       renderPhotosGrid();
     } catch (error) {
-      setPhotosStatus('連線錯誤，請確認伺服器是否啟動', true);
+      setPhotosStatus(i18n.t('common.networkError'), true);
     }
   }
 
@@ -177,7 +177,7 @@
                 src="${photo.image_url}"
                 class="card-img-top lightbox-trigger"
                 data-photo-id="${photo.id}"
-                alt="${photo.photographer_name} 的照片"
+                alt="${i18n.t('common.photoAlt', { name: photo.photographer_name })}"
                 style="height: 180px; object-fit: cover;"
               />
               <div class="card-body">
@@ -188,7 +188,7 @@
                   </a>
                 </p>
                 <button type="button" class="btn btn-sm btn-outline-danger rounded-pill w-100" data-remove-photo-id="${photo.id}">
-                  從收藏庫移除
+                  ${i18n.t('collections.removePhoto')}
                 </button>
               </div>
             </div>
@@ -199,7 +199,7 @@
   }
 
   async function removePhotoFromCollection(photoId) {
-    if (!window.confirm('確定要從這個收藏庫移除這張照片嗎？')) return;
+    if (!window.confirm(i18n.t('collections.removeConfirm'))) return;
     try {
       const response = await fetch(
         `/api/v1/users/me/collections/${currentCollection.id}/favorites/${photoId}`,
@@ -212,18 +212,18 @@
 
       if (await handleUnauthorized(response)) return;
       if (!response.ok) {
-        setPhotosStatus(body.message || '移除失敗', true);
+        setPhotosStatus(body.message || i18n.t('common.removeFailed'), true);
         return;
       }
 
       await loadCollectionPhotos();
     } catch (error) {
-      setPhotosStatus('連線錯誤，請確認伺服器是否啟動', true);
+      setPhotosStatus(i18n.t('common.networkError'), true);
     }
   }
 
   async function deleteCurrentCollection() {
-    if (!window.confirm(`確定要刪除收藏庫「${currentCollection.name}」嗎？此動作無法復原。`)) return;
+    if (!window.confirm(i18n.t('collections.deleteConfirm', { name: currentCollection.name }))) return;
     try {
       const response = await fetch(`/api/v1/users/me/collections/${currentCollection.id}`, {
         method: 'DELETE',
@@ -233,14 +233,14 @@
 
       if (await handleUnauthorized(response)) return;
       if (!response.ok) {
-        setPhotosStatus(body.message || '刪除失敗', true);
+        setPhotosStatus(body.message || i18n.t('common.deleteFailed'), true);
         return;
       }
 
       closeCollectionDetail();
       await loadCollections();
     } catch (error) {
-      setPhotosStatus('連線錯誤，請確認伺服器是否啟動', true);
+      setPhotosStatus(i18n.t('common.networkError'), true);
     }
   }
 
@@ -311,17 +311,25 @@
 
       if (await handleUnauthorized(response)) return;
       if (!response.ok) {
-        showNewCollectionAlert(body.message || '建立失敗');
+        showNewCollectionAlert(body.message || i18n.t('common.createFailed'));
         return;
       }
 
       bootstrap.Modal.getOrCreateInstance(newCollectionModalEl).hide();
       await loadCollections();
     } catch (error) {
-      showNewCollectionAlert('連線錯誤，請確認伺服器是否啟動');
+      showNewCollectionAlert(i18n.t('common.networkError'));
     } finally {
       isCreatingCollection = false;
       newCollectionSubmitBtn.disabled = false;
+    }
+  });
+
+  document.addEventListener('langchange', () => {
+    if (currentCollection) {
+      loadCollectionPhotos();
+    } else {
+      loadCollections();
     }
   });
 

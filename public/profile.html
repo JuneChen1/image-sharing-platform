@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>個人資料 | PicShare</title>
+  <title data-i18n="title.profile">個人資料 | PicShare</title>
   <link rel="icon" type="image/x-icon" href="/favicon.ico" />
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
@@ -20,7 +20,7 @@
 
   <main class="container" style="max-width: 480px;">
     <div id="profile-pane">
-      <h1 class="h4 mb-4 text-center">個人資料</h1>
+      <h1 class="h4 mb-4 text-center" data-i18n="profile.heading">個人資料</h1>
       <form id="profile-form">
         <div class="mb-3">
           <label for="profile-email" class="form-label">Email</label>
@@ -34,16 +34,17 @@
               viewBox="0 0 16 16"
               role="img"
               aria-label="Email 為唯讀欄位"
+              data-i18n-aria-label="profile.emailReadonly"
             >
               <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2m3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2"/>
             </svg>
           </div>
         </div>
         <div class="mb-3">
-          <label for="profile-name" class="form-label">暱稱</label>
+          <label for="profile-name" class="form-label" data-i18n="user.nickname">暱稱</label>
           <input type="text" id="profile-name" class="form-control" maxlength="50" required />
           <div class="d-flex justify-content-between mt-1">
-            <span id="profile-name-error" class="text-danger small d-none">暱稱不可為空</span>
+            <span id="profile-name-error" class="text-danger small d-none" data-i18n="profile.nameEmpty">暱稱不可為空</span>
             <span id="profile-name-count" class="text-muted small ms-auto">0/50</span>
           </div>
         </div>
@@ -52,18 +53,18 @@
           <div id="profile-alert-message" class="flex-grow-1"></div>
           <button type="button" class="btn-close" aria-label="Close"></button>
         </div>
-        <button type="submit" id="profile-save-btn" class="btn btn-dark w-100 mb-3">儲存變更</button>
-        <a href="/change-password.html" class="btn btn-outline-dark w-100">修改密碼</a>
+        <button type="submit" id="profile-save-btn" class="btn btn-dark w-100 mb-3" data-i18n="profile.save">儲存變更</button>
+        <a href="/change-password.html" class="btn btn-outline-dark w-100" data-i18n="profile.changePassword">修改密碼</a>
       </form>
 
       <hr class="my-4" />
 
       <div class="danger-zone rounded p-3">
-        <h2 class="h6 text-danger mb-2">危險區域</h2>
-        <p class="text-muted small mb-3">
+        <h2 class="h6 text-danger mb-2" data-i18n="profile.dangerZone">危險區域</h2>
+        <p class="text-muted small mb-3" data-i18n="profile.deleteWarning">
           刪除帳號後，你的所有分享、收藏庫、收藏紀錄將被永久刪除，此動作無法復原。
         </p>
-        <button type="button" class="btn btn-danger w-100" data-bs-toggle="modal" data-bs-target="#deleteAccountModal">刪除帳號</button>
+        <button type="button" class="btn btn-danger w-100" data-bs-toggle="modal" data-bs-target="#deleteAccountModal" data-i18n="profile.deleteAccount">刪除帳號</button>
       </div>
     </div>
   </main>
@@ -74,15 +75,15 @@
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="deleteAccountModalLabel">刪除帳號</h5>
+          <h5 class="modal-title" id="deleteAccountModalLabel" data-i18n="profile.deleteAccount">刪除帳號</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <form id="delete-account-form">
           <div class="modal-body">
-            <p class="text-muted small">
+            <p class="text-muted small" data-i18n="profile.deleteWarning">
               刪除帳號後，你的所有分享、收藏庫、收藏紀錄將被永久刪除，此動作無法復原。
             </p>
-            <label for="delete-account-password" class="form-label">請輸入密碼以確認</label>
+            <label for="delete-account-password" class="form-label" data-i18n="profile.confirmPassword">請輸入密碼以確認</label>
             <input type="password" id="delete-account-password" class="form-control" required />
             <div id="delete-account-alert" class="alert d-none alert-dismissible d-flex align-items-center mt-3 mb-0" role="alert">
               <svg id="delete-account-alert-icon" width="16" height="16" fill="currentColor" class="flex-shrink-0 me-2" viewBox="0 0 16 16" role="img" aria-hidden="true"></svg>
@@ -91,8 +92,8 @@
             </div>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-            <button type="submit" class="btn btn-danger">確認刪除</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-i18n="common.cancel">取消</button>
+            <button type="submit" class="btn btn-danger" data-i18n="common.confirmDelete">確認刪除</button>
           </div>
         </form>
       </div>
@@ -100,6 +101,7 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/js/i18n.js"></script>
   <script src="/js/include.js"></script>
   <script src="/js/auth.js"></script>
   <script src="/js/profilePage.js"></script>

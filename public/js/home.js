@@ -15,6 +15,8 @@
   let currentQuery = '';
   let currentSort = 'latest';
   let currentPhotos = [];
+  let currentPage = 1;
+  let categories = [];
 
   function setStatus(text, isError) {
     statusEl.textContent = text;
@@ -27,11 +29,11 @@
     event.preventDefault();
     currentQuery = searchInputEl.value.trim();
 
-    setStatus('搜尋中...', false);
+    setStatus(i18n.t('common.searching'), false);
     try {
       await fetchAndRenderPhotos(1);
     } catch (error) {
-      setStatus(error.message || '連線錯誤，請確認伺服器是否啟動', true);
+      setStatus(error.message || i18n.t('common.networkError'), true);
     }
   });
 
@@ -42,11 +44,11 @@
     currentCategory = button.dataset.category || undefined;
     renderCategoryBarActive();
 
-    setStatus('載入中...', false);
+    setStatus(i18n.t('common.loading'), false);
     try {
       await fetchAndRenderPhotos(1);
     } catch (error) {
-      setStatus(error.message || '連線錯誤，請確認伺服器是否啟動', true);
+      setStatus(error.message || i18n.t('common.networkError'), true);
     }
   });
 
@@ -57,11 +59,11 @@
     currentSort = button.dataset.sort;
     renderSortBarActive();
 
-    setStatus('載入中...', false);
+    setStatus(i18n.t('common.loading'), false);
     try {
       await fetchAndRenderPhotos(1);
     } catch (error) {
-      setStatus(error.message || '連線錯誤，請確認伺服器是否啟動', true);
+      setStatus(error.message || i18n.t('common.networkError'), true);
     }
   });
 
@@ -81,9 +83,9 @@
 
     const cancelBtn = event.target.closest('button[data-cancel-id]');
     if (cancelBtn) {
-      if (!window.confirm('確定要取消分享這張照片嗎？此動作無法復原。')) return;
+      if (!window.confirm(i18n.t('home.unshareConfirm'))) return;
 
-      setStatus('取消中...', false);
+      setStatus(i18n.t('home.unsharing'), false);
       try {
         const response = await fetch(
           `/api/v1/shared-photos/${cancelBtn.dataset.cancelId}`,
@@ -92,13 +94,13 @@
         const body = await response.json();
 
         if (!response.ok) {
-          setStatus(body.message || '取消分享失敗', true);
+          setStatus(body.message || i18n.t('home.unshareFailed'), true);
           return;
         }
 
         await fetchAndRenderPhotos(1);
       } catch (error) {
-        setStatus('連線錯誤，請確認伺服器是否啟動', true);
+        setStatus(i18n.t('common.networkError'), true);
       }
       return;
     }
@@ -132,7 +134,7 @@
     try {
       await fetchAndRenderPhotos(Number(link.dataset.page));
     } catch (error) {
-      setStatus(error.message || '連線錯誤，請確認伺服器是否啟動', true);
+      setStatus(error.message || i18n.t('common.networkError'), true);
     }
   });
 
@@ -146,12 +148,21 @@
     }, 200)
   );
 
-  setStatus('載入中...', false);
+  document.addEventListener('langchange', async () => {
+    renderCategoryBar();
+    try {
+      await fetchAndRenderPhotos(currentPage);
+    } catch (error) {
+      setStatus(error.message || i18n.t('common.networkError'), true);
+    }
+  });
+
+  setStatus(i18n.t('common.loading'), false);
   try {
     await loadCategories();
     await fetchAndRenderPhotos(1);
   } catch (error) {
-    setStatus(error.message || '連線錯誤，請確認伺服器是否啟動', true);
+    setStatus(error.message || i18n.t('common.networkError'), true);
   }
 
   function debounce(fn, delay) {
@@ -170,15 +181,21 @@
       throw new Error(body.message);
     }
 
-    categoryBarEl.innerHTML = [{ name: '全部' }, ...body.data]
+    categories = body.data;
+    renderCategoryBar();
+  }
+
+  function renderCategoryBar() {
+    const allCategory = { name: '', label: i18n.t('home.allCategories') };
+    categoryBarEl.innerHTML = [allCategory, ...categories.map(({ name }) => ({ name, label: name }))]
       .map(
         (category) => `
           <button
             type="button"
-            class="btn btn-sm text-nowrap ${category.name === '全部' ? 'btn-dark active' : 'btn-outline-dark'}"
-            data-category="${category.name === '全部' ? '' : category.name}"
+            class="btn btn-sm text-nowrap ${(category.name || undefined) === currentCategory ? 'btn-dark active' : 'btn-outline-dark'}"
+            data-category="${category.name}"
           >
-            ${category.name}
+            ${category.label}
           </button>
         `
       )
@@ -223,13 +240,15 @@
       throw new Error(body.message);
     }
 
+    currentPage = page;
+
     if (body.data.length === 0 && page === 1) {
       resultsEl.innerHTML = '';
       paginationEl.innerHTML = '';
       setStatus(
         currentCategory || currentQuery
-          ? '找不到符合條件的照片'
-          : '目前尚無分享照片，敬請期待！',
+          ? i18n.t('common.noPhotoMatch')
+          : i18n.t('home.empty'),
         false
       );
       return;
@@ -327,23 +346,23 @@
             src="${photo.image_url}"
             class="card-img-top lightbox-trigger"
             data-photo-id="${photo.id}"
-            alt="${photo.photographer_name} 的照片"
+            alt="${i18n.t('common.photoAlt', { name: photo.photographer_name })}"
           />
           <div class="photo-overlay-top">
             ${
               window.auth.isLoggedIn()
-                ? `<button type="button" class="btn-icon" data-share-id="${photo.id}" title="分享" aria-label="分享">
+                ? `<button type="button" class="btn-icon" data-share-id="${photo.id}" title="${i18n.t('common.share')}" aria-label="${i18n.t('common.share')}">
                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
                       <path d="M11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.5 2.5 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5"/>
                     </svg>
                   </button>
-                  <button type="button" class="photo-collect-badge" data-collect-id="${photo.id}" title="${favoritesCount} 人收藏，點擊收藏">
+                  <button type="button" class="photo-collect-badge" data-collect-id="${photo.id}" title="${i18n.t('home.savedByTitle', { count: favoritesCount })}">
                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
                       <path d="M2 2v13.5a.5.5 0 0 0 .74.439L8 13.069l5.26 2.87A.5.5 0 0 0 14 15.5V2a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2z"/>
                     </svg>
                     <span>${favoritesCount}</span>
                   </button>`
-                : `<div class="photo-collect-badge" title="${favoritesCount} 人收藏">
+                : `<div class="photo-collect-badge" title="${i18n.t('home.savedBy', { count: favoritesCount })}">
                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
                       <path d="M2 2v13.5a.5.5 0 0 0 .74.439L8 13.069l5.26 2.87A.5.5 0 0 0 14 15.5V2a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2z"/>
                     </svg>
@@ -361,13 +380,13 @@
                 <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"/>
                 <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z"/>
               </svg>
-              下載
+              ${i18n.t('common.download')}
             </a>
           </div>
         </div>
         ${
           photo.user_id && photo.user_id === window.auth.getUserId()
-            ? `<button type="button" class="btn btn-sm btn-outline-danger w-100 mt-2" data-cancel-id="${photo.id}">取消分享</button>`
+            ? `<button type="button" class="btn btn-sm btn-outline-danger w-100 mt-2" data-cancel-id="${photo.id}">${i18n.t('home.unshare')}</button>`
             : ''
         }
       </div>
