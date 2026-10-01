@@ -85,6 +85,9 @@
     const url = shareInput.value.trim();
     if (!url) return;
 
+    // 輸入框裡打了字但還沒按「新增」，送出時一併視為要加入的分類
+    addCategory();
+
     if (categories.length === 0) {
       showAlert(i18n.t('share.needCategory'));
       return;
