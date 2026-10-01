@@ -654,10 +654,35 @@ const i18n = (function () {
     });
   }
 
+  // 已顯示在畫面上的訊息（alert、狀態列）是翻譯後的純文字，切換語言時依原本語言反查 key 再重新翻譯
+  const MESSAGE_SELECTOR = '[id$="alert-message"], [id$="status"]';
+
+  function retranslateMessages(fromLang, toLang) {
+    const textToKey = new Map();
+    Object.entries(STRINGS[fromLang]).forEach(([key, text]) => {
+      if (text.includes('{')) return;
+
+      const known = textToKey.get(text);
+      if (known === undefined) {
+        textToKey.set(text, key);
+      } else if (known !== null && STRINGS[toLang][known] !== STRINGS[toLang][key]) {
+        // 同一段文字對應到翻譯不同的 key，無法確定是哪一個，略過
+        textToKey.set(text, null);
+      }
+    });
+
+    document.querySelectorAll(MESSAGE_SELECTOR).forEach((el) => {
+      const key = textToKey.get(el.textContent.trim());
+      if (key) el.textContent = t(key);
+    });
+  }
+
   function setLang(lang) {
     const normalized = isValidLang(lang) ? lang : DEFAULT_LANG;
+    const previous = getLang();
     localStorage.setItem(STORAGE_KEY, normalized);
     document.documentElement.lang = htmlLangFor(normalized);
+    if (previous !== normalized) retranslateMessages(previous, normalized);
     applyI18n();
     renderLangControls();
     document.dispatchEvent(new CustomEvent('langchange', { detail: { lang: getLang() } }));
