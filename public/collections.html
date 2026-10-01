@@ -21,7 +21,13 @@
   <main class="container">
     <div id="collections-list-view">
       <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h4 mb-0" data-i18n="collections.heading">我的收藏庫</h1>
+        <h1 class="visually-hidden" data-i18n="collections.heading">我的收藏庫</h1>
+        <nav aria-label="導覽路徑" data-i18n-aria-label="collections.breadcrumbAria">
+          <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a href="/" data-i18n="collections.breadcrumbHome">首頁</a></li>
+            <li class="breadcrumb-item active" aria-current="page" data-i18n="collections.heading">我的收藏庫</li>
+          </ol>
+        </nav>
         <button type="button" id="new-collection-btn" class="btn btn-dark" data-i18n="collections.new">新增收藏庫</button>
       </div>
       <div id="collections-status" class="text-muted mb-3"></div>
@@ -29,13 +35,26 @@
     </div>
 
     <div id="collection-detail-view" class="d-none">
-      <div class="collection-detail-header mb-4">
-        <button type="button" id="back-to-collections-btn" class="btn btn-dark btn-sm" data-i18n="collections.back">← 返回</button>
-        <h1 id="collection-detail-title" class="h4 mb-0"></h1>
-        <button type="button" id="delete-collection-btn" class="btn btn-outline-danger btn-sm" data-i18n="collections.delete">刪除此收藏庫</button>
-      </div>
+      <nav aria-label="導覽路徑" data-i18n-aria-label="collections.breadcrumbAria">
+        <ol class="breadcrumb mb-2">
+          <li class="breadcrumb-item"><a href="/" data-i18n="collections.breadcrumbHome">首頁</a></li>
+          <li class="breadcrumb-item"><a href="#" id="breadcrumb-collections-link" data-i18n="collections.heading">我的收藏庫</a></li>
+          <li class="breadcrumb-item active text-break" aria-current="page" id="breadcrumb-collection-name"></li>
+        </ol>
+      </nav>
+      <h1 id="collection-detail-title" class="h4 mb-4 text-break"></h1>
       <div id="collection-photos-status" class="text-muted mb-3"></div>
       <div id="collection-photos-grid" class="row g-3"></div>
+
+      <div class="border-top pt-3 mt-5 d-flex justify-content-end">
+        <button type="button" id="delete-collection-btn" class="collection-delete-link">
+          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true">
+            <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
+            <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
+          </svg>
+          <span data-i18n="collections.delete">刪除此收藏庫</span>
+        </button>
+      </div>
     </div>
   </main>
 
@@ -70,6 +89,30 @@
             <button type="submit" class="btn btn-dark" data-i18n="collections.create">建立</button>
           </div>
         </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="deleteCollectionModal" tabindex="-1" aria-labelledby="deleteCollectionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="deleteCollectionModalLabel" data-i18n="collections.delete">刪除此收藏庫</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p id="delete-collection-message" class="mb-2 text-break"></p>
+          <p class="text-muted small mb-0" data-i18n="collections.deleteKeepsPhotos">照片本身不會被刪除。</p>
+          <div id="delete-collection-alert" class="alert d-none alert-dismissible d-flex align-items-center mt-3 mb-0" role="alert">
+            <svg id="delete-collection-alert-icon" width="16" height="16" fill="currentColor" class="flex-shrink-0 me-2" viewBox="0 0 16 16" role="img" aria-hidden="true"></svg>
+            <div id="delete-collection-alert-message" class="flex-grow-1"></div>
+            <button type="button" class="btn-close" aria-label="Close"></button>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-i18n="common.cancel">取消</button>
+          <button type="button" id="confirm-delete-collection-btn" class="btn btn-danger" data-i18n="common.confirmDelete">確認刪除</button>
+        </div>
       </div>
     </div>
   </div>

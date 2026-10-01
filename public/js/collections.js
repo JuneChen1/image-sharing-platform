@@ -18,9 +18,16 @@
   const newCollectionAlertIconEl = document.getElementById('new-collection-alert-icon');
   const newCollectionAlertMessageEl = document.getElementById('new-collection-alert-message');
 
-  const backToCollectionsBtn = document.getElementById('back-to-collections-btn');
+  const breadcrumbCollectionsLink = document.getElementById('breadcrumb-collections-link');
+  const breadcrumbCollectionNameEl = document.getElementById('breadcrumb-collection-name');
   const collectionDetailTitleEl = document.getElementById('collection-detail-title');
   const deleteCollectionBtn = document.getElementById('delete-collection-btn');
+  const deleteCollectionModalEl = document.getElementById('deleteCollectionModal');
+  const deleteCollectionMessageEl = document.getElementById('delete-collection-message');
+  const confirmDeleteCollectionBtn = document.getElementById('confirm-delete-collection-btn');
+  const deleteCollectionAlertEl = document.getElementById('delete-collection-alert');
+  const deleteCollectionAlertIconEl = document.getElementById('delete-collection-alert-icon');
+  const deleteCollectionAlertMessageEl = document.getElementById('delete-collection-alert-message');
   const collectionPhotosStatusEl = document.getElementById('collection-photos-status');
   const collectionPhotosGridEl = document.getElementById('collection-photos-grid');
 
@@ -59,6 +66,18 @@
   }
 
   newCollectionAlertEl.querySelector('.btn-close').addEventListener('click', hideNewCollectionAlert);
+
+  function showDeleteCollectionAlert(message, type = 'danger') {
+    deleteCollectionAlertIconEl.innerHTML = ALERT_ICON_PATHS[type] || '';
+    deleteCollectionAlertMessageEl.textContent = message;
+    deleteCollectionAlertEl.className = `alert alert-dismissible d-flex align-items-center mt-3 mb-0 alert-${type}`;
+  }
+
+  function hideDeleteCollectionAlert() {
+    deleteCollectionAlertEl.classList.add('d-none');
+  }
+
+  deleteCollectionAlertEl.querySelector('.btn-close').addEventListener('click', hideDeleteCollectionAlert);
 
   async function handleUnauthorized(response) {
     if (response.status !== 401) return false;
@@ -126,6 +145,7 @@
   async function openCollectionDetail(collectionId, collectionName) {
     currentCollection = { id: collectionId, name: collectionName };
     collectionDetailTitleEl.textContent = collectionName;
+    breadcrumbCollectionNameEl.textContent = collectionName;
     listViewEl.classList.add('d-none');
     detailViewEl.classList.remove('d-none');
     await loadCollectionPhotos();
@@ -135,6 +155,7 @@
     currentCollection = null;
     detailViewEl.classList.add('d-none');
     listViewEl.classList.remove('d-none');
+    window.scrollTo({ top: 0 });
   }
 
   async function loadCollectionPhotos() {
@@ -172,24 +193,34 @@
         const initial = (photo.photographer_name || '?').trim().charAt(0).toUpperCase();
         return `
           <div class="col-md-3 col-6">
-            <div class="card h-100">
-              <img
-                src="${photo.image_url}"
-                class="card-img-top lightbox-trigger"
-                data-photo-id="${photo.id}"
-                alt="${i18n.t('common.photoAlt', { name: photo.photographer_name })}"
-                style="height: 180px; object-fit: cover;"
-              />
+            <div class="card h-100 collection-photo-card">
+              <div class="collection-photo-media">
+                <img
+                  src="${photo.image_url}"
+                  class="card-img-top lightbox-trigger"
+                  data-photo-id="${photo.id}"
+                  alt="${i18n.t('common.photoAlt', { name: photo.photographer_name })}"
+                  style="height: 180px; object-fit: cover;"
+                />
+                <button
+                  type="button"
+                  class="collection-remove-btn"
+                  data-remove-photo-id="${photo.id}"
+                  title="${i18n.t('collections.removePhoto')}"
+                  aria-label="${i18n.t('collections.removePhoto')}"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true">
+                    <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+                  </svg>
+                </button>
+              </div>
               <div class="card-body">
-                <p class="card-text">
+                <p class="card-text mb-0">
                   <a href="${photo.photographer_url}" target="_blank" rel="noopener" class="person-avatar-link">
                     <span class="photo-author-avatar">${initial}</span>
                     <span class="photo-author-name">${photo.photographer_name}</span>
                   </a>
                 </p>
-                <button type="button" class="btn btn-sm btn-outline-danger rounded-pill w-100" data-remove-photo-id="${photo.id}">
-                  ${i18n.t('collections.removePhoto')}
-                </button>
               </div>
             </div>
           </div>
@@ -222,8 +253,19 @@
     }
   }
 
+  function openDeleteCollectionModal() {
+    deleteCollectionMessageEl.textContent = i18n.t('collections.deleteConfirm', { name: currentCollection.name });
+    hideDeleteCollectionAlert();
+    bootstrap.Modal.getOrCreateInstance(deleteCollectionModalEl).show();
+  }
+
+  let isDeletingCollection = false;
+
   async function deleteCurrentCollection() {
-    if (!window.confirm(i18n.t('collections.deleteConfirm', { name: currentCollection.name }))) return;
+    if (isDeletingCollection) return;
+    isDeletingCollection = true;
+    confirmDeleteCollectionBtn.disabled = true;
+    hideDeleteCollectionAlert();
     try {
       const response = await fetch(`/api/v1/users/me/collections/${currentCollection.id}`, {
         method: 'DELETE',
@@ -233,14 +275,18 @@
 
       if (await handleUnauthorized(response)) return;
       if (!response.ok) {
-        setPhotosStatus(body.message || i18n.t('common.deleteFailed'), true);
+        showDeleteCollectionAlert(body.message || i18n.t('common.deleteFailed'));
         return;
       }
 
+      bootstrap.Modal.getOrCreateInstance(deleteCollectionModalEl).hide();
       closeCollectionDetail();
       await loadCollections();
     } catch (error) {
-      setPhotosStatus(i18n.t('common.networkError'), true);
+      showDeleteCollectionAlert(i18n.t('common.networkError'));
+    } finally {
+      isDeletingCollection = false;
+      confirmDeleteCollectionBtn.disabled = false;
     }
   }
 
@@ -250,13 +296,20 @@
     openCollectionDetail(button.dataset.collectionId, button.dataset.collectionName);
   });
 
-  backToCollectionsBtn.addEventListener('click', closeCollectionDetail);
-  deleteCollectionBtn.addEventListener('click', deleteCurrentCollection);
+  breadcrumbCollectionsLink.addEventListener('click', (event) => {
+    event.preventDefault();
+    closeCollectionDetail();
+  });
+  deleteCollectionBtn.addEventListener('click', openDeleteCollectionModal);
+  confirmDeleteCollectionBtn.addEventListener('click', deleteCurrentCollection);
+  deleteCollectionModalEl.addEventListener('hidden.bs.modal', hideDeleteCollectionAlert);
 
   collectionPhotosGridEl.addEventListener('click', (event) => {
     const removeBtn = event.target.closest('button[data-remove-photo-id]');
     if (removeBtn) {
       removePhotoFromCollection(removeBtn.dataset.removePhotoId);
+      // 滑鼠點擊後把焦點移開，避免確認框取消後按鈕一直停在圖片上；鍵盤操作（detail 為 0）保留焦點
+      if (event.detail > 0) removeBtn.blur();
       return;
     }
 

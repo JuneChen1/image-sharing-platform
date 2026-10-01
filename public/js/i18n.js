@@ -157,8 +157,10 @@ const i18n = (function () {
 
       'collections.heading': '我的收藏庫',
       'collections.new': '新增收藏庫',
-      'collections.back': '← 返回',
+      'collections.breadcrumbHome': '首頁',
+      'collections.breadcrumbAria': '導覽路徑',
       'collections.delete': '刪除此收藏庫',
+      'collections.deleteKeepsPhotos': '照片本身不會被刪除。',
       'collections.create': '建立',
       'collections.noPhotos': '尚無照片',
       'collections.photoCount': '{count} 張照片',
@@ -375,8 +377,10 @@ const i18n = (function () {
 
       'collections.heading': 'My collections',
       'collections.new': 'New collection',
-      'collections.back': '← Back',
+      'collections.breadcrumbHome': 'Home',
+      'collections.breadcrumbAria': 'Breadcrumb',
       'collections.delete': 'Delete this collection',
+      'collections.deleteKeepsPhotos': "The photos themselves won't be deleted.",
       'collections.create': 'Create',
       'collections.noPhotos': 'No photos yet',
       'collections.photoCount': '{count} photos',
