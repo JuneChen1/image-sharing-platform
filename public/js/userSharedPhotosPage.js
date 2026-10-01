@@ -5,6 +5,7 @@
   const resultsEl = document.getElementById('results');
   const paginationEl = document.getElementById('pagination');
   const titleEl = document.querySelector('main h1');
+  const crumbEl = document.getElementById('breadcrumb-current');
 
   const LIMIT = 20;
   const CARD_TEXT_HEIGHT = 100;
@@ -23,13 +24,15 @@
   }
 
   function renderTitle() {
-    if (isOwnPage) {
-      titleEl.dataset.i18n = 'userPhotos.own';
-      titleEl.textContent = i18n.t('userPhotos.own');
-    } else if (sharerName) {
-      titleEl.removeAttribute('data-i18n');
-      titleEl.textContent = i18n.t('userPhotos.other', { name: sharerName });
-    }
+    [titleEl, crumbEl].forEach((el) => {
+      if (isOwnPage) {
+        el.dataset.i18n = 'userPhotos.own';
+        el.textContent = i18n.t('userPhotos.own');
+      } else if (sharerName) {
+        el.removeAttribute('data-i18n');
+        el.textContent = i18n.t('userPhotos.other', { name: sharerName });
+      }
+    });
   }
 
   if (!userId) {

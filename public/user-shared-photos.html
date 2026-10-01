@@ -19,7 +19,13 @@
   <div data-include="/partials/chrome.html"></div>
 
   <main class="container">
-    <h1 class="h4 mb-4" data-i18n="userPhotos.heading">使用者分享紀錄</h1>
+    <nav aria-label="導覽路徑" data-i18n-aria-label="common.breadcrumbAria">
+      <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="/" data-i18n="common.breadcrumbHome">首頁</a></li>
+        <li class="breadcrumb-item active text-break" aria-current="page" id="breadcrumb-current" data-i18n="userPhotos.heading">使用者分享紀錄</li>
+      </ol>
+    </nav>
+    <h1 class="visually-hidden" data-i18n="userPhotos.heading">使用者分享紀錄</h1>
     <div id="status" class="text-muted mb-3"></div>
     <div id="results" class="masonry-grid"></div>
     <nav aria-label="Page navigation" class="mt-4">
