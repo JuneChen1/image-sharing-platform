@@ -39,8 +39,8 @@
       .map(
         (name) => `
           <span class="badge text-bg-secondary d-flex align-items-center gap-1">
-            ${name}
-            <button type="button" class="btn-close btn-close-white" style="font-size: 0.6rem" data-category="${name}" aria-label="${i18n.t('share.removeCategory')}"></button>
+            ${escapeHtml(name)}
+            <button type="button" class="btn-close btn-close-white" style="font-size: 0.6rem" data-category="${escapeHtml(name)}" aria-label="${i18n.t('share.removeCategory')}"></button>
           </span>
         `
       )

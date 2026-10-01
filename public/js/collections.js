@@ -91,7 +91,7 @@
       return `<div class="collection-preview-empty">${i18n.t('collections.noPhotos')}</div>`;
     }
 
-    return `<img src="${previewImageUrl}" alt="" />`;
+    return `<img src="${escapeHtml(previewImageUrl)}" alt="" />`;
   }
 
   async function loadCollections() {
@@ -122,14 +122,14 @@
               <button
                 type="button"
                 class="collection-card"
-                data-collection-id="${collection.id}"
-                data-collection-name="${collection.name}"
+                data-collection-id="${escapeHtml(collection.id)}"
+                data-collection-name="${escapeHtml(collection.name)}"
               >
                 <div class="collection-preview">
                   ${renderCollectionPreview(collection.previewImageUrl)}
                 </div>
                 <div class="collection-info">
-                  <div class="collection-name text-truncate">${collection.name}</div>
+                  <div class="collection-name text-truncate">${escapeHtml(collection.name)}</div>
                   <div class="text-muted small">${i18n.t('collections.photoCount', { count: collection.photoCount ?? 0 })}</div>
                 </div>
               </button>
@@ -196,16 +196,16 @@
             <div class="card h-100 collection-photo-card">
               <div class="collection-photo-media">
                 <img
-                  src="${photo.image_url}"
+                  src="${escapeHtml(photo.image_url)}"
                   class="card-img-top lightbox-trigger"
-                  data-photo-id="${photo.id}"
-                  alt="${i18n.t('common.photoAlt', { name: photo.photographer_name })}"
+                  data-photo-id="${escapeHtml(photo.id)}"
+                  alt="${escapeHtml(i18n.t('common.photoAlt', { name: photo.photographer_name }))}"
                   style="height: 180px; object-fit: cover;"
                 />
                 <button
                   type="button"
                   class="collection-remove-btn"
-                  data-remove-photo-id="${photo.id}"
+                  data-remove-photo-id="${escapeHtml(photo.id)}"
                   title="${i18n.t('collections.removePhoto')}"
                   aria-label="${i18n.t('collections.removePhoto')}"
                 >
@@ -216,9 +216,9 @@
               </div>
               <div class="card-body">
                 <p class="card-text mb-0">
-                  <a href="${photo.photographer_url}" target="_blank" rel="noopener" class="person-avatar-link">
-                    <span class="photo-author-avatar">${initial}</span>
-                    <span class="photo-author-name">${photo.photographer_name}</span>
+                  <a href="${escapeHtml(photo.photographer_url)}" target="_blank" rel="noopener" class="person-avatar-link">
+                    <span class="photo-author-avatar">${escapeHtml(initial)}</span>
+                    <span class="photo-author-name">${escapeHtml(photo.photographer_name)}</span>
                   </a>
                 </p>
               </div>

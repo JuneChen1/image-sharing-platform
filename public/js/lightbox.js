@@ -17,14 +17,14 @@
   let currentOnRemoveFromCollection = null;
 
   function personLinkHTML(name) {
-    return `<span class="person-name">${name}</span>`;
+    return `<span class="person-name">${escapeHtml(name)}</span>`;
   }
 
   function avatarLinkHTML(name) {
     const initial = (name || '?').trim().charAt(0).toUpperCase();
     return `
-      <span class="lightbox-photographer-avatar">${initial}</span>
-      <span class="person-name">${name}</span>
+      <span class="lightbox-photographer-avatar">${escapeHtml(initial)}</span>
+      <span class="person-name">${escapeHtml(name)}</span>
     `;
   }
 
@@ -52,7 +52,7 @@
     );
     lightboxShare.classList.toggle('d-none', !window.auth.isLoggedIn());
     lightboxCategories.innerHTML = (categories || [])
-      .map((name) => `<span class="tag-pill">${name}</span>`)
+      .map((name) => `<span class="tag-pill">${escapeHtml(name)}</span>`)
       .join('');
     lightboxSharer.classList.toggle('d-none', !sharerId || !sharerName);
     if (sharerId && sharerName) {

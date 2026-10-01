@@ -193,19 +193,19 @@
     return `
       <div class="card">
         <img
-          src="${photo.urls.small}"
+          src="${escapeHtml(photo.urls.small)}"
           class="card-img-top lightbox-trigger"
-          data-photo-id="${photo.id}"
+          data-photo-id="${escapeHtml(photo.id)}"
           alt="${photo.alt_description ?? ''}"
         />
         <div class="card-body">
           <p class="card-text">
-            <a href="${photo.user.links.html}" target="_blank" rel="noopener" class="person-avatar-link">
-              <span class="photo-author-avatar">${initial}</span>
-              <span class="photo-author-name">${photo.user.name}</span>
+            <a href="${escapeHtml(photo.user.links.html)}" target="_blank" rel="noopener" class="person-avatar-link">
+              <span class="photo-author-avatar">${escapeHtml(initial)}</span>
+              <span class="photo-author-name">${escapeHtml(photo.user.name)}</span>
             </a>
           </p>
-          <button type="button" class="btn btn-sm btn-dark w-100" data-share-url="${photo.links.html}">${i18n.t('common.share')}</button>
+          <button type="button" class="btn btn-sm btn-dark w-100" data-share-url="${escapeHtml(photo.links.html)}">${i18n.t('common.share')}</button>
         </div>
       </div>
     `;

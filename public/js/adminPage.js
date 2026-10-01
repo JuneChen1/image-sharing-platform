@@ -126,14 +126,14 @@
         let actionCell = '';
         if (!isAdminUser && !isSelf) {
           actionCell = user.is_banned
-            ? `<button type="button" class="admin-action-btn text-dark" data-unban-id="${user.id}">${i18n.t('admin.unban')}</button>`
-            : `<button type="button" class="admin-action-btn text-danger" data-ban-id="${user.id}">${i18n.t('admin.ban')}</button>`;
+            ? `<button type="button" class="admin-action-btn text-dark" data-unban-id="${escapeHtml(user.id)}">${i18n.t('admin.unban')}</button>`
+            : `<button type="button" class="admin-action-btn text-danger" data-ban-id="${escapeHtml(user.id)}">${i18n.t('admin.ban')}</button>`;
         }
 
         return `
           <tr>
-            <td>${user.name}</td>
-            <td>${user.email}</td>
+            <td>${escapeHtml(user.name)}</td>
+            <td>${escapeHtml(user.email)}</td>
             <td>${roleCell}</td>
             <td>${formatDate(user.created_at)}</td>
             <td>${statusBadge}</td>
@@ -262,7 +262,7 @@
 
       photosCategoryFilter.innerHTML =
         `<option value="" data-i18n="admin.allCategories">${i18n.t('admin.allCategories')}</option>` +
-        body.data.map((category) => `<option value="${category.name}">${category.name}</option>`).join('');
+        body.data.map((category) => `<option value="${escapeHtml(category.name)}">${escapeHtml(category.name)}</option>`).join('');
     } catch (error) {
       // 分類下拉選單載入失敗不影響主要列表功能
     }
@@ -275,20 +275,20 @@
           <tr>
             <td>
               <img
-                src="${photo.image_url}"
-                alt="${i18n.t('common.photoAlt', { name: photo.photographer_name })}"
-                data-photo-id="${photo.id}"
+                src="${escapeHtml(photo.image_url)}"
+                alt="${escapeHtml(i18n.t('common.photoAlt', { name: photo.photographer_name }))}"
+                data-photo-id="${escapeHtml(photo.id)}"
                 class="lightbox-trigger"
                 style="width: 64px; height: 64px; object-fit: cover; border-radius: 4px;"
               />
             </td>
             <td>${(photo.categories || []).join(i18n.t('common.listSeparator'))}</td>
             <td>
-              <a href="/user-shared-photos.html?userId=${photo.user_id}">${photo.user_name}</a>
+              <a href="/user-shared-photos.html?userId=${escapeHtml(photo.user_id)}">${escapeHtml(photo.user_name)}</a>
             </td>
             <td>${formatDate(photo.created_at)}</td>
             <td>
-              <button type="button" class="admin-action-btn text-danger" data-force-delete-id="${photo.id}">${i18n.t('admin.forceDelete')}</button>
+              <button type="button" class="admin-action-btn text-danger" data-force-delete-id="${escapeHtml(photo.id)}">${i18n.t('admin.forceDelete')}</button>
             </td>
           </tr>
         `

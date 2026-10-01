@@ -263,20 +263,20 @@
       <div class="card">
         <div class="photo-media">
           <img
-            src="${photo.image_url}"
+            src="${escapeHtml(photo.image_url)}"
             class="card-img-top lightbox-trigger"
-            data-photo-id="${photo.id}"
-            alt="${i18n.t('common.photoAlt', { name: photo.photographer_name })}"
+            data-photo-id="${escapeHtml(photo.id)}"
+            alt="${escapeHtml(i18n.t('common.photoAlt', { name: photo.photographer_name }))}"
           />
           <div class="photo-overlay-top">
             ${
               window.auth.isLoggedIn()
-                ? `<button type="button" class="btn-icon" data-share-id="${photo.id}" title="${i18n.t('common.share')}" aria-label="${i18n.t('common.share')}">
+                ? `<button type="button" class="btn-icon" data-share-id="${escapeHtml(photo.id)}" title="${i18n.t('common.share')}" aria-label="${i18n.t('common.share')}">
                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
                       <path d="M11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.5 2.5 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5"/>
                     </svg>
                   </button>
-                  <button type="button" class="photo-collect-badge" data-collect-id="${photo.id}" title="${i18n.t('home.savedByTitle', { count: favoritesCount })}">
+                  <button type="button" class="photo-collect-badge" data-collect-id="${escapeHtml(photo.id)}" title="${i18n.t('home.savedByTitle', { count: favoritesCount })}">
                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
                       <path d="M2 2v13.5a.5.5 0 0 0 .74.439L8 13.069l5.26 2.87A.5.5 0 0 0 14 15.5V2a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2z"/>
                     </svg>
@@ -291,11 +291,11 @@
             }
           </div>
           <div class="photo-overlay-bottom">
-            <a href="${photo.photographer_url}" target="_blank" rel="noopener" class="photo-author">
-              <span class="photo-author-avatar">${initial}</span>
-              <span class="photo-author-name">${photo.photographer_name}</span>
+            <a href="${escapeHtml(photo.photographer_url)}" target="_blank" rel="noopener" class="photo-author">
+              <span class="photo-author-avatar">${escapeHtml(initial)}</span>
+              <span class="photo-author-name">${escapeHtml(photo.photographer_name)}</span>
             </a>
-            <a href="${photo.unsplash_page_url}" target="_blank" rel="noopener" class="btn-download">
+            <a href="${escapeHtml(photo.unsplash_page_url)}" target="_blank" rel="noopener" class="btn-download">
               <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
                 <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"/>
                 <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z"/>
@@ -306,7 +306,7 @@
         </div>
         ${
           isOwnPage
-            ? `<button type="button" class="btn btn-sm btn-outline-danger w-100 mt-2" data-cancel-id="${photo.id}">${i18n.t('home.unshare')}</button>`
+            ? `<button type="button" class="btn btn-sm btn-outline-danger w-100 mt-2" data-cancel-id="${escapeHtml(photo.id)}">${i18n.t('home.unshare')}</button>`
             : ''
         }
       </div>
