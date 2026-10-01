@@ -189,6 +189,7 @@
   }
 
   function renderPhotoCard(photo) {
+    const initial = (photo.user.name || '?').trim().charAt(0).toUpperCase();
     return `
       <div class="card">
         <img
@@ -199,7 +200,10 @@
         />
         <div class="card-body">
           <p class="card-text">
-            ${i18n.t('search.photographer')}<a href="${photo.user.links.html}" target="_blank" rel="noopener">${photo.user.name}</a>
+            <a href="${photo.user.links.html}" target="_blank" rel="noopener" class="person-avatar-link d-flex">
+              <span class="photo-author-avatar">${initial}</span>
+              <span class="photo-author-name">${photo.user.name}</span>
+            </a>
           </p>
           <button type="button" class="btn btn-sm btn-dark w-100" data-share-url="${photo.links.html}">${i18n.t('common.share')}</button>
         </div>

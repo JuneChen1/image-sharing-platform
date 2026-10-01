@@ -44,7 +44,7 @@ const i18n = (function () {
       'user.nickname': '暱稱',
 
       'nav.share': '分享',
-      'nav.searchMore': '搜尋更多',
+      'nav.findPhotos': '找圖片',
       'nav.login': '登入',
       'nav.register': '註冊',
       'nav.profile': '個人資料',
@@ -100,7 +100,6 @@ const i18n = (function () {
 
       'search.heading': '從 Unsplash 搜尋',
       'search.placeholder': '輸入關鍵字搜尋 Unsplash 圖片，例如 Long-tailed Tit',
-      'search.photographer': '攝影師：',
 
       'auth.login': '登入',
       'auth.register': '註冊',
@@ -261,7 +260,7 @@ const i18n = (function () {
       'user.nickname': 'Nickname',
 
       'nav.share': 'Share',
-      'nav.searchMore': 'Search more',
+      'nav.findPhotos': 'Find photos',
       'nav.login': 'Log in',
       'nav.register': 'Sign up',
       'nav.profile': 'Profile',
@@ -319,7 +318,6 @@ const i18n = (function () {
 
       'search.heading': 'Search Unsplash',
       'search.placeholder': 'Enter keywords to search Unsplash photos, e.g. Long-tailed Tit',
-      'search.photographer': 'Photographer: ',
 
       'auth.login': 'Log in',
       'auth.register': 'Sign up',

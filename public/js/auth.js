@@ -86,10 +86,11 @@
     function renderAuthUI() {
       const loggedIn = isLoggedIn();
       const onAuthPage = window.location.pathname === '/auth.html';
+      const onSearchPage = window.location.pathname === '/search.html';
       guestEl.classList.toggle('d-none', loggedIn || onAuthPage);
       userEl.classList.toggle('d-none', !loggedIn);
       shareBtn.classList.toggle('d-none', !loggedIn);
-      searchLink.classList.toggle('d-none', onAuthPage);
+      searchLink.classList.toggle('d-none', onAuthPage || onSearchPage);
       adminPanelLink.classList.toggle('d-none', !loggedIn || !isAdmin());
       langSwitchNav.classList.toggle('d-none', loggedIn);
       if (loggedIn) {
