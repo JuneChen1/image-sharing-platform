@@ -129,7 +129,7 @@
                   ${renderCollectionPreview(collection.previewImageUrl)}
                 </div>
                 <div class="collection-info">
-                  <div class="collection-name text-truncate">${escapeHtml(collection.name)}</div>
+                  <div class="collection-name text-truncate" title="${escapeHtml(collection.name)}">${escapeHtml(collection.name)}</div>
                   <div class="text-muted small">${i18n.t('collections.photoCount', { count: collection.photoCount ?? 0 })}</div>
                 </div>
               </button>
