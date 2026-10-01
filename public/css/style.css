@@ -374,6 +374,7 @@ body > main {
 
 .person-avatar-link {
   display: inline-flex;
+  max-width: 100%;
   align-items: center;
   gap: 0.5rem;
   color: #212529;
