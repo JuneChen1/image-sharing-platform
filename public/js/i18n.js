@@ -5,7 +5,6 @@ const i18n = (function () {
   // key 後綴 _one 表示 count === 1 時的單數形（中文不需要）
   const STRINGS = {
     zh: {
-      'title.home': '圖個方便 | PicShare',
       'title.auth': '登入 / 註冊 | PicShare',
       'title.admin': '管理後台 | PicShare',
       'title.profile': '個人資料 | PicShare',
@@ -15,7 +14,6 @@ const i18n = (function () {
       'title.search': '搜尋 Unsplash 照片 | PicShare',
       'title.userPhotos': '使用者分享紀錄 | PicShare',
 
-      'common.brand': '圖個方便 | PicShare',
       'common.cancel': '取消',
       'common.share': '分享',
       'common.download': '下載',
@@ -56,7 +54,6 @@ const i18n = (function () {
       'nav.switchLangAria': '切換語言',
 
       'footer.contact': '聯絡我們：',
-      'footer.copyright': '© 2026 圖個方便 | PicShare',
 
       'share.title': '分享 Unsplash 照片',
       'share.urlPlaceholder': 'Unsplash 圖片網址，例如 https://unsplash.com/photos/xxxxx',
@@ -223,7 +220,6 @@ const i18n = (function () {
       'admin.forceDeleted': '已強制刪除該照片'
     },
     en: {
-      'title.home': 'PicShare',
       'title.auth': 'Log in / Sign up | PicShare',
       'title.admin': 'Admin Panel | PicShare',
       'title.profile': 'Profile | PicShare',
@@ -233,7 +229,6 @@ const i18n = (function () {
       'title.search': 'Search Unsplash Photos | PicShare',
       'title.userPhotos': 'Shared Photos | PicShare',
 
-      'common.brand': 'PicShare',
       'common.cancel': 'Cancel',
       'common.share': 'Share',
       'common.download': 'Download',
@@ -274,7 +269,6 @@ const i18n = (function () {
       'nav.switchLangAria': 'Switch language',
 
       'footer.contact': 'Contact us: ',
-      'footer.copyright': '© 2026 PicShare',
 
       'share.title': 'Share an Unsplash photo',
       'share.urlPlaceholder': 'Unsplash photo URL, e.g. https://unsplash.com/photos/xxxxx',
@@ -338,7 +332,7 @@ const i18n = (function () {
       'auth.nameRequired': 'Nickname is required',
       'auth.registering': 'Signing up...',
       'auth.registerFailed': 'Sign-up failed',
-      'auth.registerSuccess': 'Sign-up successful',
+      'auth.registerSuccess': 'Account created successfully',
       'auth.sending': 'Sending...',
       'auth.sendFailed': 'Failed to send. Please try again later.',
 
