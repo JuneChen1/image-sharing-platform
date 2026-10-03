@@ -6,7 +6,7 @@ function isAdmin(req, res, next) {
     if (err) return next(err);
 
     if (req.user.role !== 'ADMIN') {
-      return next(appError(403, '您沒有權限執行此操作', 'FORBIDDEN'));
+      return next(appError('FORBIDDEN'));
     }
 
     next();

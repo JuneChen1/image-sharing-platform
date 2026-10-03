@@ -6,7 +6,7 @@ async function isAuth(req, res, next) {
   try {
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return next(appError(401, '請先登入', 'UNAUTHORIZED'));
+      return next(appError('UNAUTHORIZED'));
     }
 
     const token = authHeader.split(' ')[1];
@@ -14,23 +14,16 @@ async function isAuth(req, res, next) {
     const userRepo = dataSource.getRepository('Users');
     const user = await userRepo.findOneBy({ id: decoded.id });
 
-    if (!user) return next(appError(401, '無效的 token', 'TOKEN_INVALID'));
-    if (user.is_banned)
-      return next(
-        appError(
-          403,
-          '您的帳號已被停權，如有疑問請聯絡管理者',
-          'ACCOUNT_BANNED'
-        )
-      );
+    if (!user) return next(appError('TOKEN_INVALID'));
+    if (user.is_banned) return next(appError('ACCOUNT_BANNED'));
 
     req.user = user;
     next();
   } catch (error) {
     if (error.name === 'TokenExpiredError')
-      return next(appError(401, 'Token 已過期', 'TOKEN_EXPIRED'));
+      return next(appError('TOKEN_EXPIRED'));
 
-    next(appError(401, '無效的 token', 'TOKEN_INVALID'));
+    next(appError('TOKEN_INVALID'));
   }
 }
 

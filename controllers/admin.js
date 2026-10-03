@@ -13,10 +13,10 @@ const adminController = {
       const { keyword, banned, page, limit } = req.query;
 
       if (keyword !== undefined && typeof keyword !== 'string')
-        return next(appError(400, '欄位未填寫正確', 'INVALID_FIELDS'));
+        return next(appError('INVALID_FIELDS'));
 
       if (banned !== undefined && banned !== 'true' && banned !== 'false')
-        return next(appError(400, '欄位未填寫正確', 'INVALID_FIELDS'));
+        return next(appError('INVALID_FIELDS'));
 
       const pageNum = page !== undefined ? Number(page) : 1;
       const limitNum = limit !== undefined ? Number(limit) : 20;
@@ -25,7 +25,7 @@ const adminController = {
         !isPositiveInteger(limitNum) ||
         limitNum > 100
       )
-        return next(appError(400, '欄位未填寫正確', 'INVALID_FIELDS'));
+        return next(appError('INVALID_FIELDS'));
 
       const userRepo = dataSource.getRepository('Users');
       const where = {};
@@ -67,18 +67,15 @@ const adminController = {
   async banUser(req, res, next) {
     try {
       const { id } = req.params;
-      if (!isValidUUID(id))
-        return next(appError(400, '欄位未填寫正確', 'INVALID_FIELDS'));
+      if (!isValidUUID(id)) return next(appError('INVALID_FIELDS'));
 
-      if (id === req.user.id)
-        return next(appError(403, '無法停權自己的帳號', 'CANNOT_BAN_SELF'));
+      if (id === req.user.id) return next(appError('CANNOT_BAN_SELF'));
 
       const userRepo = dataSource.getRepository('Users');
       const user = await userRepo.findOneBy({ id });
 
-      if (!user) return next(appError(404, '找不到使用者', 'USER_NOT_FOUND'));
-      if (user.role === 'ADMIN')
-        return next(appError(403, '無法停權管理者帳號', 'CANNOT_BAN_ADMIN'));
+      if (!user) return next(appError('USER_NOT_FOUND'));
+      if (user.role === 'ADMIN') return next(appError('CANNOT_BAN_ADMIN'));
 
       await userRepo.update(id, { is_banned: true });
 
@@ -96,12 +93,11 @@ const adminController = {
   async unbanUser(req, res, next) {
     try {
       const { id } = req.params;
-      if (!isValidUUID(id))
-        return next(appError(400, '欄位未填寫正確', 'INVALID_FIELDS'));
+      if (!isValidUUID(id)) return next(appError('INVALID_FIELDS'));
 
       const userRepo = dataSource.getRepository('Users');
       const user = await userRepo.findOneBy({ id });
-      if (!user) return next(appError(404, '找不到使用者', 'USER_NOT_FOUND'));
+      if (!user) return next(appError('USER_NOT_FOUND'));
 
       await userRepo.update(id, { is_banned: false });
 
@@ -119,8 +115,7 @@ const adminController = {
   async forceDeleteSharedPhoto(req, res, next) {
     try {
       const { id } = req.params;
-      if (!isValidUUID(id))
-        return next(appError(400, '欄位未填寫正確', 'INVALID_FIELDS'));
+      if (!isValidUUID(id)) return next(appError('INVALID_FIELDS'));
 
       const reason = isValidString(req.body.reason)
         ? req.body.reason.trim()
@@ -160,7 +155,7 @@ const adminController = {
         }
       });
 
-      if (!deleted) return next(appError(404, '查無資料', 'NOT_FOUND'));
+      if (!deleted) return next(appError('NOT_FOUND'));
 
       res.status(200).json({ status: 'success', data: null });
     } catch (error) {

@@ -7,7 +7,7 @@ const collectionsController = {
   async getCollections(req, res, next) {
     const { photoId } = req.query;
     if (photoId !== undefined && !isValidUUID(photoId)) {
-      return next(appError(400, 'photo id 格式錯誤', 'INVALID_PHOTO_ID'));
+      return next(appError('INVALID_PHOTO_ID'));
     }
 
     try {
@@ -56,8 +56,7 @@ const collectionsController = {
   },
   async addCollection(req, res, next) {
     const { name } = req.body;
-    if (!isSafeText(name, 100))
-      return next(appError(400, '名稱格式錯誤', 'INVALID_NAME'));
+    if (!isSafeText(name, 100)) return next(appError('INVALID_NAME'));
 
     try {
       const collectionsRepo = dataSource.getRepository('Collections');
@@ -65,17 +64,13 @@ const collectionsController = {
       const collectCount = await collectionsRepo.count({
         where: { user: { id: req.user.id } }
       });
-      if (collectCount >= 10)
-        return next(
-          appError(400, '最多只能有 10 個收藏庫', 'COLLECTION_LIMIT_REACHED')
-        );
+      if (collectCount >= 10) return next(appError('COLLECTION_LIMIT_REACHED'));
 
       const existing = await collectionsRepo.findOneBy({
         name: name.trim(),
         user: { id: req.user.id }
       });
-      if (existing)
-        return next(appError(409, '已有同名的收藏庫', 'COLLECTION_NAME_TAKEN'));
+      if (existing) return next(appError('COLLECTION_NAME_TAKEN'));
 
       const data = await collectionsRepo.save({
         name: name.trim(),
@@ -85,7 +80,7 @@ const collectionsController = {
       res.status(200).json({ status: 'success', data });
     } catch (error) {
       if (error.code === '23505')
-        return next(appError(409, '已有同名的收藏庫', 'COLLECTION_NAME_TAKEN'));
+        return next(appError('COLLECTION_NAME_TAKEN'));
 
       next(error);
     }
@@ -93,9 +88,7 @@ const collectionsController = {
   async deleteCollection(req, res, next) {
     const { collectionId } = req.params;
     if (!isValidUUID(collectionId))
-      return next(
-        appError(400, 'collection id 格式錯誤', 'INVALID_COLLECTION_ID')
-      );
+      return next(appError('INVALID_COLLECTION_ID'));
 
     try {
       const collectionsRepo = dataSource.getRepository('Collections');
@@ -104,7 +97,7 @@ const collectionsController = {
         user: { id: req.user.id }
       });
 
-      if (!data) return next(appError(404, '查無此資料', 'NOT_FOUND'));
+      if (!data) return next(appError('NOT_FOUND'));
 
       await collectionsRepo.delete(collectionId);
 
@@ -120,11 +113,8 @@ const collectionsController = {
     const { collectionId } = req.params;
     const { photoId } = req.body;
     if (!isValidUUID(collectionId))
-      return next(
-        appError(400, 'collection id 格式錯誤', 'INVALID_COLLECTION_ID')
-      );
-    if (!isValidUUID(photoId))
-      return next(appError(400, 'photo id 格式錯誤', 'INVALID_PHOTO_ID'));
+      return next(appError('INVALID_COLLECTION_ID'));
+    if (!isValidUUID(photoId)) return next(appError('INVALID_PHOTO_ID'));
 
     try {
       const collectionsRepo = dataSource.getRepository('Collections');
@@ -133,14 +123,14 @@ const collectionsController = {
         user: { id: req.user.id }
       });
 
-      if (!collection) return next(appError(404, '查無此資料', 'NOT_FOUND'));
+      if (!collection) return next(appError('NOT_FOUND'));
 
       const sharePhotosRepo = dataSource.getRepository('SharedPhotos');
       const photo = await sharePhotosRepo.findOneBy({
         id: photoId
       });
 
-      if (!photo) return next(appError(404, '查無此資料', 'NOT_FOUND'));
+      if (!photo) return next(appError('NOT_FOUND'));
 
       const favoritesRepo = dataSource.getRepository('Favorites');
       const data = await favoritesRepo
@@ -151,7 +141,7 @@ const collectionsController = {
         })
         .catch((err) => {
           if (err.code === '23505') {
-            throw appError(409, '不可重複加入', 'ALREADY_IN_COLLECTION');
+            throw appError('ALREADY_IN_COLLECTION');
           }
           throw err;
         });
@@ -164,9 +154,7 @@ const collectionsController = {
   async getPhotosInCollection(req, res, next) {
     const { collectionId } = req.params;
     if (!isValidUUID(collectionId))
-      return next(
-        appError(400, 'collection id 格式錯誤', 'INVALID_COLLECTION_ID')
-      );
+      return next(appError('INVALID_COLLECTION_ID'));
     try {
       const collectionsRepo = dataSource.getRepository('Collections');
       const collection = await collectionsRepo.findOneBy({
@@ -174,7 +162,7 @@ const collectionsController = {
         user: { id: req.user.id }
       });
 
-      if (!collection) return next(appError(404, '查無此資料', 'NOT_FOUND'));
+      if (!collection) return next(appError('NOT_FOUND'));
 
       const favoritesRepo = dataSource.getRepository('Favorites');
       const photos = await favoritesRepo.find({
@@ -196,11 +184,8 @@ const collectionsController = {
   async deletePhotoInCollection(req, res, next) {
     const { collectionId, photoId } = req.params;
     if (!isValidUUID(collectionId))
-      return next(
-        appError(400, 'collection id 格式錯誤', 'INVALID_COLLECTION_ID')
-      );
-    if (!isValidUUID(photoId))
-      return next(appError(400, 'photo id 格式錯誤', 'INVALID_PHOTO_ID'));
+      return next(appError('INVALID_COLLECTION_ID'));
+    if (!isValidUUID(photoId)) return next(appError('INVALID_PHOTO_ID'));
     try {
       const favoritesRepo = dataSource.getRepository('Favorites');
       const result = await favoritesRepo.delete({
@@ -209,8 +194,7 @@ const collectionsController = {
         user: { id: req.user.id }
       });
 
-      if (result.affected === 0)
-        return next(appError(404, '查無此資料', 'NOT_FOUND'));
+      if (result.affected === 0) return next(appError('NOT_FOUND'));
 
       res.status(200).json({
         status: 'success',
