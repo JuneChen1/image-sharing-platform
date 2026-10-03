@@ -3,24 +3,20 @@ const collectionsController = require('../controllers/collections');
 const isAuth = require('../middlewares/isAuth');
 const router = express.Router();
 
+router.use(isAuth);
+
 router.delete(
   '/:collectionId/favorites/:photoId',
-  isAuth,
   collectionsController.deletePhotoInCollection
 );
 router.get(
   '/:collectionId/favorites',
-  isAuth,
   collectionsController.getPhotosInCollection
 );
-router.post(
-  '/:collectionId/favorites',
-  isAuth,
-  collectionsController.addToCollection
-);
+router.post('/:collectionId/favorites', collectionsController.addToCollection);
 
-router.delete('/:collectionId', isAuth, collectionsController.deleteCollection);
-router.get('/', isAuth, collectionsController.getCollections);
-router.post('/', isAuth, collectionsController.addCollection);
+router.delete('/:collectionId', collectionsController.deleteCollection);
+router.get('/', collectionsController.getCollections);
+router.post('/', collectionsController.addCollection);
 
 module.exports = router;
