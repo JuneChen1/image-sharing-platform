@@ -15,6 +15,7 @@ router.get(
 );
 router.post('/:collectionId/favorites', collectionsController.addToCollection);
 
+router.patch('/:collectionId', collectionsController.updateCollection);
 router.delete('/:collectionId', collectionsController.deleteCollection);
 router.get('/', collectionsController.getCollections);
 router.post('/', collectionsController.addCollection);

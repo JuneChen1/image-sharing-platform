@@ -85,6 +85,45 @@ const collectionsController = {
       next(error);
     }
   },
+  async updateCollection(req, res, next) {
+    const { collectionId } = req.params;
+    if (!isValidUUID(collectionId))
+      return next(appError('INVALID_COLLECTION_ID'));
+    const { name } = req.body;
+    if (!isSafeText(name, 100)) return next(appError('INVALID_NAME'));
+
+    try {
+      const collectionsRepo = dataSource.getRepository('Collections');
+      const findCollection = await collectionsRepo.findOneBy({
+        id: collectionId,
+        user: { id: req.user.id }
+      });
+
+      if (!findCollection) return next(appError('NOT_FOUND'));
+      if (findCollection.name === name.trim())
+        return res
+          .status(200)
+          .json({ status: 'success', data: findCollection });
+
+      const existing = await collectionsRepo.findOneBy({
+        name: name.trim(),
+        user: { id: req.user.id }
+      });
+      if (existing) return next(appError('COLLECTION_NAME_TAKEN'));
+
+      const data = await collectionsRepo.save({
+        ...findCollection,
+        name: name.trim()
+      });
+
+      res.status(200).json({ status: 'success', data });
+    } catch (error) {
+      if (error.code === '23505')
+        return next(appError('COLLECTION_NAME_TAKEN'));
+
+      next(error);
+    }
+  },
   async deleteCollection(req, res, next) {
     const { collectionId } = req.params;
     if (!isValidUUID(collectionId))
