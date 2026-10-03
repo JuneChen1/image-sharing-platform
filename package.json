@@ -22,6 +22,7 @@
     "migration:revert": "typeorm migration:revert -d ./db/data-source.js",
     "seed": "node db/seeds/seed.js",
     "seed:admin": "node db/seeds/admin.seed.js",
+    "check:errors": "node scripts/checkErrorCodes.js",
     "dev": "nodemon app.js"
   },
   "dependencies": {
