@@ -42,7 +42,15 @@
           <li class="breadcrumb-item active text-break" aria-current="page" id="breadcrumb-collection-name"></li>
         </ol>
       </nav>
-      <h1 id="collection-detail-title" class="h4 mb-4 text-break"></h1>
+      <div class="d-flex align-items-center gap-1 mb-4">
+        <h1 id="collection-detail-title" class="h4 mb-0 text-break"></h1>
+        <button type="button" id="edit-collection-btn" class="collection-edit-link flex-shrink-0">
+          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true">
+            <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325"/>
+          </svg>
+          <span data-i18n="collections.rename">編輯</span>
+        </button>
+      </div>
       <div id="collection-photos-status" class="text-muted mb-3"></div>
       <div id="collection-photos-grid" class="row g-3"></div>
 
@@ -87,6 +95,39 @@
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-i18n="common.cancel">取消</button>
             <button type="submit" class="btn btn-dark" data-i18n="collections.create">建立</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="editCollectionModal" tabindex="-1" aria-labelledby="editCollectionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editCollectionModalLabel" data-i18n="collections.renameTitle">編輯收藏庫名稱</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form id="edit-collection-form">
+          <div class="modal-body">
+            <input
+              type="text"
+              id="edit-collection-name"
+              class="form-control"
+              placeholder="輸入收藏庫名稱"
+              data-i18n-placeholder="collect.newPlaceholder"
+              maxlength="100"
+              required
+            />
+            <div id="edit-collection-alert" class="alert d-none alert-dismissible d-flex align-items-center mt-2 mb-0" role="alert">
+              <svg id="edit-collection-alert-icon" width="16" height="16" fill="currentColor" class="flex-shrink-0 me-2" viewBox="0 0 16 16" role="img" aria-hidden="true"></svg>
+              <div id="edit-collection-alert-message" class="flex-grow-1"></div>
+              <button type="button" class="btn-close" aria-label="Close"></button>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-i18n="common.cancel">取消</button>
+            <button type="submit" class="btn btn-dark" data-i18n="common.save">儲存</button>
           </div>
         </form>
       </div>

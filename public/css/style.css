@@ -755,6 +755,25 @@ body > main {
   background-color: #fce8e6;
 }
 
+/* 收藏庫詳情頁標題旁的編輯按鈕：只有灰色文字，沒有框和底色，滑過才出現淡灰底；緊貼標題 */
+.collection-edit-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 4px 8px;
+  border: none;
+  border-radius: 6px;
+  background: none;
+  color: #6c757d;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.collection-edit-link:hover {
+  background-color: #e9ecef;
+  color: #212529;
+}
+
 #collect-list {
   max-height: 240px;
   overflow-y: auto;

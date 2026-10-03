@@ -21,6 +21,13 @@
   const breadcrumbCollectionsLink = document.getElementById('breadcrumb-collections-link');
   const breadcrumbCollectionNameEl = document.getElementById('breadcrumb-collection-name');
   const collectionDetailTitleEl = document.getElementById('collection-detail-title');
+  const editCollectionBtn = document.getElementById('edit-collection-btn');
+  const editCollectionModalEl = document.getElementById('editCollectionModal');
+  const editCollectionForm = document.getElementById('edit-collection-form');
+  const editCollectionNameEl = document.getElementById('edit-collection-name');
+  const editCollectionAlertEl = document.getElementById('edit-collection-alert');
+  const editCollectionAlertIconEl = document.getElementById('edit-collection-alert-icon');
+  const editCollectionAlertMessageEl = document.getElementById('edit-collection-alert-message');
   const deleteCollectionBtn = document.getElementById('delete-collection-btn');
   const deleteCollectionModalEl = document.getElementById('deleteCollectionModal');
   const deleteCollectionMessageEl = document.getElementById('delete-collection-message');
@@ -66,6 +73,18 @@
   }
 
   newCollectionAlertEl.querySelector('.btn-close').addEventListener('click', hideNewCollectionAlert);
+
+  function showEditCollectionAlert(message, type = 'danger') {
+    editCollectionAlertIconEl.innerHTML = ALERT_ICON_PATHS[type] || '';
+    editCollectionAlertMessageEl.textContent = message;
+    editCollectionAlertEl.className = `alert alert-dismissible d-flex align-items-center mt-2 mb-0 alert-${type}`;
+  }
+
+  function hideEditCollectionAlert() {
+    editCollectionAlertEl.classList.add('d-none');
+  }
+
+  editCollectionAlertEl.querySelector('.btn-close').addEventListener('click', hideEditCollectionAlert);
 
   function showDeleteCollectionAlert(message, type = 'danger') {
     deleteCollectionAlertIconEl.innerHTML = ALERT_ICON_PATHS[type] || '';
@@ -253,6 +272,61 @@
     }
   }
 
+  function openEditCollectionModal() {
+    editCollectionNameEl.value = currentCollection.name;
+    hideEditCollectionAlert();
+    bootstrap.Modal.getOrCreateInstance(editCollectionModalEl).show();
+  }
+
+  let isEditingCollection = false;
+  const editCollectionSubmitBtn = editCollectionForm.querySelector('button[type="submit"]');
+
+  async function renameCurrentCollection(event) {
+    event.preventDefault();
+    if (isEditingCollection) return;
+    const name = editCollectionNameEl.value.trim();
+    if (!name) return;
+
+    // 名稱沒有變就不用送出請求
+    if (name === currentCollection.name) {
+      bootstrap.Modal.getOrCreateInstance(editCollectionModalEl).hide();
+      return;
+    }
+
+    isEditingCollection = true;
+    editCollectionSubmitBtn.disabled = true;
+    hideEditCollectionAlert();
+    try {
+      const response = await fetch(`/api/v1/users/me/collections/${currentCollection.id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          ...window.auth.getAuthHeader()
+        },
+        body: JSON.stringify({ name })
+      });
+      const body = await response.json();
+
+      if (await handleUnauthorized(response)) return;
+      if (!response.ok) {
+        showEditCollectionAlert(i18n.apiMessage(body, 'collections.renameFailed'));
+        return;
+      }
+
+      currentCollection.name = body.data.name;
+      collectionDetailTitleEl.textContent = currentCollection.name;
+      breadcrumbCollectionNameEl.textContent = currentCollection.name;
+      bootstrap.Modal.getOrCreateInstance(editCollectionModalEl).hide();
+      // 列表頁卡片上的名稱（含 data-collection-name）也要更新，回到列表時才不會看到舊名稱
+      await loadCollections();
+    } catch (error) {
+      showEditCollectionAlert(i18n.t('common.networkError'));
+    } finally {
+      isEditingCollection = false;
+      editCollectionSubmitBtn.disabled = false;
+    }
+  }
+
   function openDeleteCollectionModal() {
     deleteCollectionMessageEl.textContent = i18n.t('collections.deleteConfirm', { name: currentCollection.name });
     hideDeleteCollectionAlert();
@@ -300,6 +374,13 @@
     event.preventDefault();
     closeCollectionDetail();
   });
+  editCollectionBtn.addEventListener('click', openEditCollectionModal);
+  editCollectionForm.addEventListener('submit', renameCurrentCollection);
+  editCollectionModalEl.addEventListener('shown.bs.modal', () => {
+    editCollectionNameEl.focus();
+    editCollectionNameEl.select();
+  });
+  editCollectionModalEl.addEventListener('hidden.bs.modal', hideEditCollectionAlert);
   deleteCollectionBtn.addEventListener('click', openDeleteCollectionModal);
   confirmDeleteCollectionBtn.addEventListener('click', deleteCurrentCollection);
   deleteCollectionModalEl.addEventListener('hidden.bs.modal', hideDeleteCollectionAlert);
