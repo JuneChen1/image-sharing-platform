@@ -26,5 +26,11 @@ module.exports = new EntitySchema({
       joinColumn: { name: 'user_id' },
       nullable: false
     }
-  }
+  },
+  uniques: [
+    {
+      name: 'UQ_user_id_name_pair',
+      columns: ['name', 'user']
+    }
+  ]
 });
