@@ -61,14 +61,21 @@ const collectionsController = {
 
     try {
       const collectionsRepo = dataSource.getRepository('Collections');
+
       const collectCount = await collectionsRepo.count({
         where: { user: { id: req.user.id } }
       });
-
       if (collectCount >= 10)
         return next(
           appError(400, '最多只能有 10 個收藏庫', 'COLLECTION_LIMIT_REACHED')
         );
+
+      const existing = await collectionsRepo.findOneBy({
+        name: name.trim(),
+        user: { id: req.user.id }
+      });
+      if (existing)
+        return next(appError(409, '已有同名的收藏庫', 'COLLECTION_NAME_TAKEN'));
 
       const data = await collectionsRepo.save({
         name: name.trim(),
@@ -77,6 +84,9 @@ const collectionsController = {
 
       res.status(200).json({ status: 'success', data });
     } catch (error) {
+      if (error.code === '23505')
+        return next(appError(409, '已有同名的收藏庫', 'COLLECTION_NAME_TAKEN'));
+
       next(error);
     }
   },
