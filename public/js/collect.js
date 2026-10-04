@@ -107,6 +107,11 @@
       }
       if (response.ok) {
         showAlert(i18n.t('collect.added'), 'success');
+        document.dispatchEvent(
+          new CustomEvent('photocollected', {
+            detail: { photoId: currentPhotoId }
+          })
+        );
       } else if (response.status === 409) {
         showAlert(i18n.t('collect.duplicate'));
       } else {

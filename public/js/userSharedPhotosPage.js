@@ -123,6 +123,19 @@
     }, 200)
   );
 
+  document.addEventListener('photocollected', (event) => {
+    const photo = currentPhotos.find((p) => p.id === event.detail.photoId);
+    if (!photo) return;
+
+    photo.favorites_count = (photo.favorites_count || 0) + 1;
+    const badge = resultsEl.querySelector(
+      `.photo-collect-badge[data-collect-id="${CSS.escape(photo.id)}"]`
+    );
+    if (!badge) return;
+    badge.title = i18n.t('home.savedByTitle', { count: photo.favorites_count });
+    badge.querySelector('span').textContent = photo.favorites_count;
+  });
+
   document.addEventListener('authchange', async () => {
     try {
       await fetchAndRenderPhotos(currentPage);

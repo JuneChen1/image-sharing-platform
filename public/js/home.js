@@ -151,6 +151,20 @@
     }, 200)
   );
 
+  // 收藏成功後就地更新收藏數（同步 currentPhotos，縮放重繪時才不會變回舊數字）
+  document.addEventListener('photocollected', (event) => {
+    const photo = currentPhotos.find((p) => p.id === event.detail.photoId);
+    if (!photo) return;
+
+    photo.favorites_count = (photo.favorites_count || 0) + 1;
+    const badge = resultsEl.querySelector(
+      `.photo-collect-badge[data-collect-id="${CSS.escape(photo.id)}"]`
+    );
+    if (!badge) return;
+    badge.title = i18n.t('home.savedByTitle', { count: photo.favorites_count });
+    badge.querySelector('span').textContent = photo.favorites_count;
+  });
+
   // 登出後重新渲染，移除只有登入者／作者看得到的按鈕
   document.addEventListener('authchange', async () => {
     try {
