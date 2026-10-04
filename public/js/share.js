@@ -50,7 +50,9 @@
   function addCategory() {
     const name = categoryInput.value.trim();
     categoryInput.value = '';
-    if (!name || categories.includes(name)) return;
+    // 後端以不分大小寫去重，前端同步，避免出現 Animal 與 animal 兩個標籤
+    const lowerName = name.toLowerCase();
+    if (!name || categories.some((c) => c.toLowerCase() === lowerName)) return;
 
     categories.push(name);
     renderCategories();
