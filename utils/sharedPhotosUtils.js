@@ -47,4 +47,35 @@ async function attachFavoritesCount(photos) {
   }));
 }
 
-module.exports = { attachCategories, attachFavoritesCount };
+// category / q 篩選條件。用 EXISTS 比對分類而不是 JOIN，JOIN 會讓一張照片重複出現
+function buildPhotoFilter(category, q) {
+  const params = [];
+  const conditions = [];
+  if (category) {
+    params.push(category);
+    conditions.push(`
+      AND EXISTS (
+        SELECT 1 FROM shared_photo_categories spc
+        JOIN categories c ON c.id = spc.category_id
+        WHERE spc.shared_photo_id = sp.id AND c.name = $${params.length}
+      )
+    `);
+  }
+  if (q) {
+    params.push(q);
+    conditions.push(`
+      AND (
+        sp.photographer_name ILIKE '%' || $${params.length} || '%'
+        OR EXISTS (
+          SELECT 1 FROM shared_photo_categories spc
+          JOIN categories c ON c.id = spc.category_id
+          WHERE spc.shared_photo_id = sp.id AND c.name ILIKE '%' || $${params.length} || '%'
+        )
+      )
+    `);
+  }
+
+  return { params, whereClause: `WHERE TRUE ${conditions.join(' ')}` };
+}
+
+module.exports = { attachCategories, attachFavoritesCount, buildPhotoFilter };
