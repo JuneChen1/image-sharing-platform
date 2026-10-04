@@ -79,6 +79,9 @@ const userController = {
       const isMatch = await bcrypt.compare(old_password, req.user.password);
       if (!isMatch) return next(appError('OLD_PASSWORD_WRONG'));
 
+      if (old_password === new_password)
+        return next(appError('NEW_PASSWORD_SAME_AS_OLD'));
+
       const hashedPassword = await bcrypt.hash(new_password, 10);
       const userRepo = dataSource.getRepository('Users');
       await userRepo.save({ ...req.user, password: hashedPassword });
