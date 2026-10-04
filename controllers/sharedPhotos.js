@@ -157,7 +157,7 @@ const getSharedImages = async (req, res, next) => {
           relations: { user: true },
           skip,
           take,
-          order: { created_at: 'DESC' }
+          order: { created_at: 'DESC', id: 'ASC' }
         });
         data = rawData.map(({ user, ...photo }) => ({
           ...photo,
@@ -181,7 +181,7 @@ const getSharedImages = async (req, res, next) => {
           FROM shared_photos sp
           JOIN users AS u ON u.id = sp.user_id
           ${whereClause}
-          ORDER BY sp.created_at DESC
+          ORDER BY sp.created_at DESC, sp.id
           LIMIT $${params.length + 1} OFFSET $${params.length + 2}
           `,
           [...params, take, skip]
@@ -202,7 +202,7 @@ const getSharedImages = async (req, res, next) => {
           JOIN users AS u ON u.id = sp.user_id
           LEFT JOIN favorites AS f ON f.shared_photo_id = sp.id
           GROUP BY sp.id, u.name
-          ORDER BY favorites_count DESC, sp.created_at DESC
+          ORDER BY favorites_count DESC, sp.created_at DESC, sp.id
           LIMIT $1 OFFSET $2
           `,
           [take, skip]
@@ -224,7 +224,7 @@ const getSharedImages = async (req, res, next) => {
           LEFT JOIN favorites AS f ON f.shared_photo_id = sp.id
           ${whereClause}
           GROUP BY sp.id, u.name
-          ORDER BY favorites_count DESC, sp.created_at DESC
+          ORDER BY favorites_count DESC, sp.created_at DESC, sp.id
           LIMIT $${params.length + 1} OFFSET $${params.length + 2}
           `,
           [...params, take, skip]
