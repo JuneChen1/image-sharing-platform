@@ -75,6 +75,8 @@ const login = async (req, res, next) => {
     const isMach = await bcrypt.compare(password, user.password);
     if (!isMach) return next(appError('INVALID_CREDENTIALS'));
 
+    if (user.is_banned) return next(appError('ACCOUNT_BANNED'));
+
     const token = jwt.sign(
       { id: user.id, role: user.role },
       process.env.JWT_SECRET,
