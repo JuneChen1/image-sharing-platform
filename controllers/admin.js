@@ -184,7 +184,11 @@ const adminController = {
 
       const csvEscape = (value) => {
         const raw = value instanceof Date ? value.toISOString() : value;
-        const str = raw === null || raw === undefined ? '' : String(raw);
+        let str = raw === null || raw === undefined ? '' : String(raw);
+
+        // 避免 Excel / Sheets 把開頭是 = + - @ 的內容當成公式執行
+        if (/^[=+\-@\t\r]/.test(str)) str = `'${str}`;
+
         if (/[",\n]/.test(str)) {
           return `"${str.replace(/"/g, '""')}"`;
         }
