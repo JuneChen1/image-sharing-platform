@@ -151,6 +151,15 @@
     }, 200)
   );
 
+  // 登出後重新渲染，移除只有登入者／作者看得到的按鈕
+  document.addEventListener('authchange', async () => {
+    try {
+      await fetchAndRenderPhotos(currentPage);
+    } catch (error) {
+      setStatus(error.message || i18n.t('common.networkError'), true);
+    }
+  });
+
   document.addEventListener('langchange', async () => {
     renderCategoryBar();
     try {

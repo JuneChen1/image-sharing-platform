@@ -123,6 +123,14 @@
     }, 200)
   );
 
+  document.addEventListener('authchange', async () => {
+    try {
+      await fetchAndRenderPhotos(currentPage);
+    } catch (error) {
+      setStatus(error.message || i18n.t('common.networkError'), true);
+    }
+  });
+
   document.addEventListener('langchange', async () => {
     renderTitle();
     try {

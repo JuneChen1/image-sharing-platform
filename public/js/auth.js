@@ -1,6 +1,14 @@
 (function () {
   const TOKEN_KEY = 'picshare_token';
   const USER_NAME_KEY = 'picshare_user_name';
+  // 登出後不該再停留的頁面
+  const LOGIN_REQUIRED_PAGES = [
+    '/auth.html',
+    '/collections.html',
+    '/profile.html',
+    '/change-password.html',
+    '/admin.html'
+  ];
 
   function getToken() {
     return localStorage.getItem(TOKEN_KEY);
@@ -114,9 +122,11 @@
       }
       clearSession();
       renderAuthUI();
-      if (window.location.pathname === '/auth.html') {
+      if (LOGIN_REQUIRED_PAGES.includes(window.location.pathname)) {
         window.location.href = '/';
+        return;
       }
+      document.dispatchEvent(new CustomEvent('authchange'));
     });
 
     renderAuthUI();
