@@ -13,5 +13,6 @@ router.get(
   '/deleted-shared-photos/export',
   adminController.exportDeletedSharedPhotos
 );
+router.get('/unsplash-quota', adminController.getUnsplashQuota);
 
 module.exports = router;

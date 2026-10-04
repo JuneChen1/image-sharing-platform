@@ -5,6 +5,7 @@ const {
   isValidUUID
 } = require('../utils/validUtils');
 const appError = require('../utils/appError');
+const { getRateLimit } = require('../utils/unsplashApiUtils');
 const { dataSource } = require('../db/data-source');
 
 const adminController = {
@@ -206,6 +207,10 @@ const adminController = {
     } catch (error) {
       next(error);
     }
+  },
+
+  getUnsplashQuota(req, res) {
+    res.status(200).json({ status: 'success', data: getRateLimit() });
   }
 };
 
