@@ -94,7 +94,7 @@ const i18n = (function () {
       'home.unsharing': '取消中...',
       'home.unshareFailed': '取消分享失敗',
       'home.savedByTitle': '{count} 人收藏，點擊收藏',
-      'home.savedBy': '{count} 人收藏',
+      'home.savedByLoginTitle': '{count} 人收藏，登入後即可收藏',
 
       'search.heading': '從 Unsplash 搜尋',
       'search.placeholder': '輸入關鍵字搜尋 Unsplash 圖片，例如 Long-tailed Tit',
@@ -114,6 +114,7 @@ const i18n = (function () {
       'auth.loggingIn': '登入中...',
       'auth.loginFailed': '登入失敗',
       'auth.nameRequired': '暱稱為必填',
+      'auth.nameInvalidChars': '暱稱不可包含 < 或 >',
       'auth.registering': '註冊中...',
       'auth.registerFailed': '註冊失敗',
       'auth.registerSuccess': '註冊成功',
@@ -155,6 +156,8 @@ const i18n = (function () {
 
       'collections.heading': '我的收藏庫',
       'collections.new': '新增收藏庫',
+      'collections.nameRequired': '請輸入收藏庫名稱',
+      'collections.nameInvalidChars': '收藏庫名稱不可包含 < 或 >',
       'common.breadcrumbHome': '首頁',
       'common.breadcrumbAria': '導覽路徑',
       'collections.rename': '編輯',
@@ -360,8 +363,8 @@ const i18n = (function () {
       'home.unshareFailed': 'Failed to unshare',
       'home.savedByTitle': 'Saved by {count} people. Click to save.',
       'home.savedByTitle_one': 'Saved by 1 person. Click to save.',
-      'home.savedBy': 'Saved by {count} people',
-      'home.savedBy_one': 'Saved by 1 person',
+      'home.savedByLoginTitle': 'Saved by {count} people. Log in to save.',
+      'home.savedByLoginTitle_one': 'Saved by 1 person. Log in to save.',
 
       'search.heading': 'Search Unsplash',
       'search.placeholder': 'Enter keywords to search Unsplash photos, e.g. Long-tailed Tit',
@@ -381,6 +384,7 @@ const i18n = (function () {
       'auth.loggingIn': 'Logging in...',
       'auth.loginFailed': 'Login failed',
       'auth.nameRequired': 'Nickname is required',
+      'auth.nameInvalidChars': "Nickname can't contain < or >",
       'auth.registering': 'Signing up...',
       'auth.registerFailed': 'Sign-up failed',
       'auth.registerSuccess': 'Account created successfully',
@@ -422,6 +426,8 @@ const i18n = (function () {
 
       'collections.heading': 'My collections',
       'collections.new': 'New collection',
+      'collections.nameRequired': 'Please enter a collection name',
+      'collections.nameInvalidChars': "Collection name can't contain < or >",
       'common.breadcrumbHome': 'Home',
       'common.breadcrumbAria': 'Breadcrumb',
       'collections.rename': 'Edit',

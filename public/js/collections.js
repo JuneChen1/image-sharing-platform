@@ -285,7 +285,14 @@
     event.preventDefault();
     if (isEditingCollection) return;
     const name = editCollectionNameEl.value.trim();
-    if (!name) return;
+    if (!name) {
+      showEditCollectionAlert(i18n.t('collections.nameRequired'));
+      return;
+    }
+    if (/[<>]/.test(name)) {
+      showEditCollectionAlert(i18n.t('collections.nameInvalidChars'));
+      return;
+    }
 
     // 名稱沒有變就不用送出請求
     if (name === currentCollection.name) {
@@ -427,7 +434,14 @@
     event.preventDefault();
     if (isCreatingCollection) return;
     const name = newCollectionNameEl.value.trim();
-    if (!name) return;
+    if (!name) {
+      showNewCollectionAlert(i18n.t('collections.nameRequired'));
+      return;
+    }
+    if (/[<>]/.test(name)) {
+      showNewCollectionAlert(i18n.t('collections.nameInvalidChars'));
+      return;
+    }
 
     isCreatingCollection = true;
     newCollectionSubmitBtn.disabled = true;

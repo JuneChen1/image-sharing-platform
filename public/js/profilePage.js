@@ -72,6 +72,10 @@
       showAlert(i18n.t('auth.nameRequired'));
       return;
     }
+    if (/[<>]/.test(name)) {
+      showAlert(i18n.t('auth.nameInvalidChars'));
+      return;
+    }
 
     showAlert(i18n.t('profile.saving'), 'secondary');
     try {

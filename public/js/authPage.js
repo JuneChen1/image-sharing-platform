@@ -137,6 +137,10 @@
       registerAlert.show(i18n.t('auth.nameRequired'));
       return;
     }
+    if (/[<>]/.test(name)) {
+      registerAlert.show(i18n.t('auth.nameInvalidChars'));
+      return;
+    }
     if (!isValidEmail(email)) {
       registerAlert.show(i18n.t('auth.invalidEmail'));
       return;
