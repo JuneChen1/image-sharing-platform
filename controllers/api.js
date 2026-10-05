@@ -21,7 +21,9 @@ const getOneImageInfo = async (req, res, next) => {
   try {
     const result = await fetchUnsplashPhoto(unsplashId);
     if (!result.success) {
-      const status = result.status === 404 ? 404 : 502;
+      if (result.status === 404)
+        return next(appError('UNSPLASH_PHOTO_NOT_FOUND'));
+
       const errorCode =
         result.status === 403 ? 'UNSPLASH_BUSY' : 'UNSPLASH_API_ERROR';
       console.error(
@@ -30,7 +32,7 @@ const getOneImageInfo = async (req, res, next) => {
         result.unsplashMessage
       );
 
-      return next(appError(errorCode, { status }));
+      return next(appError(errorCode));
     }
 
     res.status(200).json({ status: 'success', data: result.data });

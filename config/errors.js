@@ -55,7 +55,8 @@ module.exports = {
   ALREADY_IN_COLLECTION: { status: 409, message: '不可重複加入' },
   ALREADY_SHARED: { status: 409, message: '你已經分享過這張照片了' },
 
-  // Unsplash 上游（上游回 404 時呼叫端會用 { status: 404 } 覆寫）
+  // Unsplash 上游（查單張照片回 404 用 UNSPLASH_PHOTO_NOT_FOUND；其他路徑上游回 404 時呼叫端會用 { status: 404 } 覆寫）
+  UNSPLASH_PHOTO_NOT_FOUND: { status: 404, message: '找不到這張圖片' },
   UNSPLASH_BUSY: { status: 502, message: '圖片服務目前較忙碌，請稍後再試' },
   UNSPLASH_API_ERROR: { status: 502, message: 'Unsplash API error' },
   PHOTO_DATA_INCOMPLETE: {

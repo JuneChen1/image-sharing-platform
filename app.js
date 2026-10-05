@@ -62,6 +62,12 @@ async function main() {
       });
     }
 
+    if (err.type === 'entity.parse.failed') {
+      return res
+        .status(errors.INVALID_FIELDS.status)
+        .json(errorBody('INVALID_FIELDS'));
+    }
+
     console.error(err);
     res
       .status(errors.SERVER_ERROR.status)

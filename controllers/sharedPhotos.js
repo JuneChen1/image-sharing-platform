@@ -49,14 +49,18 @@ const shareImageWithUrl = async (req, res, next) => {
     const result = await fetchUnsplashPhoto(imageId);
 
     if (!result.success) {
-      const status = result.status === 404 ? 404 : 502;
+      if (result.status === 404)
+        return next(appError('UNSPLASH_PHOTO_NOT_FOUND'));
+
+      const errorCode =
+        result.status === 403 ? 'UNSPLASH_BUSY' : 'UNSPLASH_API_ERROR';
       console.error(
         'Unsplash API error:',
         result.status,
         result.unsplashMessage
       );
 
-      return next(appError('UNSPLASH_API_ERROR', { status }));
+      return next(appError(errorCode));
     }
 
     const uniqueNames = [
