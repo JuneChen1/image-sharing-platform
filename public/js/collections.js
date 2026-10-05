@@ -29,12 +29,6 @@
   const editCollectionAlertIconEl = document.getElementById('edit-collection-alert-icon');
   const editCollectionAlertMessageEl = document.getElementById('edit-collection-alert-message');
   const deleteCollectionBtn = document.getElementById('delete-collection-btn');
-  const deleteCollectionModalEl = document.getElementById('deleteCollectionModal');
-  const deleteCollectionMessageEl = document.getElementById('delete-collection-message');
-  const confirmDeleteCollectionBtn = document.getElementById('confirm-delete-collection-btn');
-  const deleteCollectionAlertEl = document.getElementById('delete-collection-alert');
-  const deleteCollectionAlertIconEl = document.getElementById('delete-collection-alert-icon');
-  const deleteCollectionAlertMessageEl = document.getElementById('delete-collection-alert-message');
   const collectionPhotosStatusEl = document.getElementById('collection-photos-status');
   const collectionPhotosGridEl = document.getElementById('collection-photos-grid');
 
@@ -85,18 +79,6 @@
   }
 
   editCollectionAlertEl.querySelector('.btn-close').addEventListener('click', hideEditCollectionAlert);
-
-  function showDeleteCollectionAlert(message, type = 'danger') {
-    deleteCollectionAlertIconEl.innerHTML = ALERT_ICON_PATHS[type] || '';
-    deleteCollectionAlertMessageEl.textContent = message;
-    deleteCollectionAlertEl.className = `alert alert-dismissible d-flex align-items-center mt-3 mb-0 alert-${type}`;
-  }
-
-  function hideDeleteCollectionAlert() {
-    deleteCollectionAlertEl.classList.add('d-none');
-  }
-
-  deleteCollectionAlertEl.querySelector('.btn-close').addEventListener('click', hideDeleteCollectionAlert);
 
   async function handleUnauthorized(response) {
     if (response.status !== 401) return false;
@@ -334,19 +316,14 @@
     }
   }
 
-  function openDeleteCollectionModal() {
-    deleteCollectionMessageEl.textContent = i18n.t('collections.deleteConfirm', { name: currentCollection.name });
-    hideDeleteCollectionAlert();
-    bootstrap.Modal.getOrCreateInstance(deleteCollectionModalEl).show();
-  }
-
   let isDeletingCollection = false;
 
   async function deleteCurrentCollection() {
     if (isDeletingCollection) return;
+    const message = `${i18n.t('collections.deleteConfirm', { name: currentCollection.name })}\n${i18n.t('collections.deleteKeepsPhotos')}`;
+    if (!window.confirm(message)) return;
+
     isDeletingCollection = true;
-    confirmDeleteCollectionBtn.disabled = true;
-    hideDeleteCollectionAlert();
     try {
       const response = await fetch(`/api/v1/users/me/collections/${currentCollection.id}`, {
         method: 'DELETE',
@@ -356,18 +333,16 @@
 
       if (await handleUnauthorized(response)) return;
       if (!response.ok) {
-        showDeleteCollectionAlert(i18n.apiMessage(body, 'common.deleteFailed'));
+        setPhotosStatus(i18n.apiMessage(body, 'common.deleteFailed'), true);
         return;
       }
 
-      bootstrap.Modal.getOrCreateInstance(deleteCollectionModalEl).hide();
       closeCollectionDetail();
       await loadCollections();
     } catch (error) {
-      showDeleteCollectionAlert(i18n.t('common.networkError'));
+      setPhotosStatus(i18n.t('common.networkError'), true);
     } finally {
       isDeletingCollection = false;
-      confirmDeleteCollectionBtn.disabled = false;
     }
   }
 
@@ -388,9 +363,7 @@
     editCollectionNameEl.select();
   });
   editCollectionModalEl.addEventListener('hidden.bs.modal', hideEditCollectionAlert);
-  deleteCollectionBtn.addEventListener('click', openDeleteCollectionModal);
-  confirmDeleteCollectionBtn.addEventListener('click', deleteCurrentCollection);
-  deleteCollectionModalEl.addEventListener('hidden.bs.modal', hideDeleteCollectionAlert);
+  deleteCollectionBtn.addEventListener('click', deleteCurrentCollection);
 
   collectionPhotosGridEl.addEventListener('click', (event) => {
     const removeBtn = event.target.closest('button[data-remove-photo-id]');
