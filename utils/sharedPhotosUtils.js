@@ -1,5 +1,6 @@
 const { In } = require('typeorm');
 const { dataSource } = require('../db/data-source');
+const { escapeLike } = require('./sqlUtils');
 
 async function attachCategories(photos) {
   if (photos.length === 0) return photos;
@@ -62,7 +63,7 @@ function buildPhotoFilter(category, q) {
     `);
   }
   if (q) {
-    params.push(q);
+    params.push(escapeLike(q));
     conditions.push(`
       AND (
         sp.photographer_name ILIKE '%' || $${params.length} || '%'

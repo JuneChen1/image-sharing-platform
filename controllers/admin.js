@@ -6,6 +6,7 @@ const {
 } = require('../utils/validUtils');
 const appError = require('../utils/appError');
 const { getRateLimit } = require('../utils/unsplashApiUtils');
+const { escapeLike } = require('../utils/sqlUtils');
 const { dataSource } = require('../db/data-source');
 
 const adminController = {
@@ -31,7 +32,7 @@ const adminController = {
       const userRepo = dataSource.getRepository('Users');
       const where = {};
       if (keyword !== undefined && isValidString(keyword))
-        where.name = ILike(`%${keyword.trim()}%`);
+        where.name = ILike(`%${escapeLike(keyword.trim())}%`);
       if (banned !== undefined) where.is_banned = banned === 'true';
 
       const [users, total] = await userRepo.findAndCount({
