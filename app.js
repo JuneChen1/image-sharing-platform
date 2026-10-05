@@ -36,6 +36,10 @@ async function main() {
 
   app.use(cors());
   app.use(express.json());
+  app.use((req, res, next) => {
+    if (req.body === undefined) req.body = {};
+    next();
+  });
   app.use(express.static('public'));
   app.use(globalLimiter);
 
