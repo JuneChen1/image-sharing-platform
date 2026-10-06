@@ -77,6 +77,11 @@
         return;
       }
 
+      // 改密碼後舊 token 已失效，換成後端回傳的新 token，目前這個裝置才不會被登出
+      if (body.data?.token) {
+        window.auth.setSession(body.data.token, window.auth.getUserName());
+      }
+
       changePasswordForm.reset();
       showAlert(i18n.t('changePassword.updateSuccess'), 'success');
     } catch (error) {
