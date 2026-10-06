@@ -130,13 +130,14 @@
             : `<button type="button" class="admin-action-btn text-danger" data-ban-id="${escapeHtml(user.id)}">${i18n.t('admin.ban')}</button>`;
         }
 
+        // data-label 給手機版的卡片排版用（CSS 用 attr(data-label) 顯示欄位名稱）
         return `
           <tr>
-            <td>${escapeHtml(user.name)}</td>
-            <td>${escapeHtml(user.email)}</td>
-            <td>${roleCell}</td>
-            <td>${formatDate(user.created_at)}</td>
-            <td>${statusBadge}</td>
+            <td data-label="${escapeHtml(i18n.t('user.nickname'))}">${escapeHtml(user.name)}</td>
+            <td data-label="Email">${escapeHtml(user.email)}</td>
+            <td data-label="${escapeHtml(i18n.t('admin.colRole'))}">${roleCell}</td>
+            <td data-label="${escapeHtml(i18n.t('admin.colRegistered'))}">${formatDate(user.created_at)}</td>
+            <td data-label="${escapeHtml(i18n.t('admin.colStatus'))}">${statusBadge}</td>
             <td>${actionCell}</td>
           </tr>
         `;
@@ -169,7 +170,7 @@
       if (body.data.users.length === 0) {
         usersTableBody.innerHTML = '';
         usersPaginationEl.innerHTML = '';
-        usersPaginationInfoEl.textContent = i18n.t('admin.paginationInfo', { start: 0, end: 0, total: 0 });
+        usersPaginationInfoEl.textContent = '';
         setUsersStatus(i18n.t('admin.noUsers'));
         return;
       }
@@ -273,7 +274,7 @@
       .map(
         (photo) => `
           <tr>
-            <td>
+            <td data-label="${escapeHtml(i18n.t('admin.colPhoto'))}">
               <img
                 src="${escapeHtml(photo.image_url)}"
                 alt="${escapeHtml(i18n.t('common.photoAlt', { name: photo.photographer_name }))}"
@@ -282,11 +283,11 @@
                 style="width: 64px; height: 64px; object-fit: cover; border-radius: 4px;"
               />
             </td>
-            <td>${(photo.categories || []).join(i18n.t('common.listSeparator'))}</td>
-            <td>
+            <td data-label="${escapeHtml(i18n.t('admin.colCategories'))}">${(photo.categories || []).join(i18n.t('common.listSeparator'))}</td>
+            <td data-label="${escapeHtml(i18n.t('admin.colSharer'))}">
               <a href="/user-shared-photos.html?userId=${escapeHtml(photo.user_id)}">${escapeHtml(photo.user_name)}</a>
             </td>
-            <td>${formatDate(photo.created_at)}</td>
+            <td data-label="${escapeHtml(i18n.t('admin.colSharedAt'))}">${formatDate(photo.created_at)}</td>
             <td>
               <button type="button" class="admin-action-btn text-danger" data-force-delete-id="${escapeHtml(photo.id)}">${i18n.t('admin.forceDelete')}</button>
             </td>
@@ -319,7 +320,7 @@
       if (body.data.length === 0) {
         photosTableBody.innerHTML = '';
         photosPaginationEl.innerHTML = '';
-        photosPaginationInfoEl.textContent = i18n.t('admin.paginationInfo', { start: 0, end: 0, total: 0 });
+        photosPaginationInfoEl.textContent = '';
         setPhotosStatus(i18n.t('common.noPhotoMatch'));
         return;
       }
@@ -449,12 +450,61 @@
     fetchAndRenderPhotos(Number(link.dataset.page));
   });
 
+  // ---------- Unsplash quota ----------
+  const unsplashQuotaEl = document.getElementById('unsplash-quota');
+  const QUOTA_LOW_THRESHOLD = 10;
+  let lastQuota = null;
+
+  function renderUnsplashQuota() {
+    if (!lastQuota) {
+      unsplashQuotaEl.textContent = '';
+      return;
+    }
+
+    const { limit, remaining, checkedAt } = lastQuota;
+    // 伺服器重啟後在還沒呼叫過 Unsplash 前，三個欄位都是 null
+    if (limit === null || remaining === null) {
+      unsplashQuotaEl.textContent = i18n.t('admin.quotaUnknown');
+      unsplashQuotaEl.title = i18n.t('admin.quotaUnknownTitle');
+      unsplashQuotaEl.classList.add('text-muted');
+      unsplashQuotaEl.classList.remove('text-danger');
+      return;
+    }
+
+    const locale = i18n.getLang() === 'zh' ? 'zh-Hant' : 'en-US';
+    unsplashQuotaEl.textContent = i18n.t('admin.quota', { remaining, limit });
+    unsplashQuotaEl.title = i18n.t('admin.quotaTitle', {
+      time: new Date(checkedAt).toLocaleString(locale)
+    });
+    const isLow = remaining <= QUOTA_LOW_THRESHOLD;
+    unsplashQuotaEl.classList.toggle('text-danger', isLow);
+    unsplashQuotaEl.classList.toggle('text-muted', !isLow);
+  }
+
+  async function loadUnsplashQuota() {
+    try {
+      const response = await fetch('/api/v1/admin/unsplash-quota', {
+        headers: window.auth.getAuthHeader()
+      });
+      if (!response.ok) return;
+      const body = await response.json();
+      lastQuota = body.data;
+      renderUnsplashQuota();
+    } catch (error) {
+      // 額度只是參考資訊，載入失敗就不顯示，不打擾管理員
+    }
+  }
+
+  tabPhotosBtn.addEventListener('click', loadUnsplashQuota);
+
   // ---------- Init ----------
   document.addEventListener('langchange', () => {
     fetchAndRenderUsers(currentUsersPage, true);
     fetchAndRenderPhotos(currentPhotosPage, true);
+    renderUnsplashQuota();
   });
 
+  loadUnsplashQuota();
   await fetchAndRenderUsers(1);
   await loadCategoryFilter();
   await fetchAndRenderPhotos(1);

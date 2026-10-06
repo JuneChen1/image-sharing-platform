@@ -19,7 +19,10 @@
   <div data-include="/partials/chrome.html"></div>
 
   <main class="container">
-    <h1 class="h4 mb-4" data-i18n="admin.heading">管理後台</h1>
+    <div class="d-flex flex-wrap align-items-baseline justify-content-between gap-2 mb-4">
+      <h1 class="h4 mb-0" data-i18n="admin.heading">管理後台</h1>
+      <span id="unsplash-quota" class="small text-muted"></span>
+    </div>
 
     <div class="btn-group mb-2" role="group" aria-label="管理後台頁籤" data-i18n-aria-label="admin.tabsAria">
       <button type="button" class="btn btn-dark" id="tab-users-btn" data-tab="users" data-i18n="admin.tabUsers">使用者管理</button>
