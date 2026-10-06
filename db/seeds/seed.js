@@ -6,9 +6,11 @@ const SharedPhotoCategories = require('../../entities/shared_photo_categories');
 const Users = require('../../entities/users');
 const Collections = require('../../entities/collections');
 const Favorites = require('../../entities/favorites');
+const DeletedSharedPhotos = require('../../entities/deleted_shared_photos');
 
 async function clearAll() {
   const ORDER = [
+    DeletedSharedPhotos,
     Favorites,
     Collections,
     SharedPhotoCategories,
