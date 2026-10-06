@@ -100,6 +100,14 @@
     return target;
   }
 
+  // 瀏覽器原生驗證（必填、Email 格式）擋下送出時不會觸發 submit，上一次的提示會一直留著，
+  // 和原生的氣泡訊息並存；invalid 事件不會冒泡，所以用 capture 在表單上接，把舊提示收掉
+  [
+    [loginForm, loginAlert],
+    [registerForm, registerAlert],
+    [forgotForm, forgotAlert]
+  ].forEach(([form, alert]) => form.addEventListener('invalid', alert.hide, true));
+
   function isValidEmail(email) {
     return /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email);
   }
