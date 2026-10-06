@@ -15,6 +15,10 @@ const i18n = (function () {
       'title.userPhotos': '使用者分享紀錄 | PicShare',
 
       'common.cancel': '取消',
+      'common.close': '關閉',
+      'common.previous': '上一頁',
+      'common.next': '下一頁',
+      'common.paginationAria': '分頁導覽',
       'common.save': '儲存',
       'common.share': '分享',
       'common.download': '下載',
@@ -290,6 +294,10 @@ const i18n = (function () {
       'title.userPhotos': 'Shared Photos | PicShare',
 
       'common.cancel': 'Cancel',
+      'common.close': 'Close',
+      'common.previous': 'Previous',
+      'common.next': 'Next',
+      'common.paginationAria': 'Page navigation',
       'common.save': 'Save',
       'common.share': 'Share',
       'common.download': 'Download',

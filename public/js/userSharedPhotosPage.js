@@ -264,13 +264,13 @@
 
     paginationEl.innerHTML = `
       <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
-        <a class="page-link" href="#" data-page="${currentPage - 1}" aria-label="Previous">
+        <a class="page-link" href="#" data-page="${currentPage - 1}" aria-label="${i18n.t('common.previous')}">
           <span aria-hidden="true">&laquo;</span>
         </a>
       </li>
       ${pageItems.join('')}
       <li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
-        <a class="page-link" href="#" data-page="${currentPage + 1}" aria-label="Next">
+        <a class="page-link" href="#" data-page="${currentPage + 1}" aria-label="${i18n.t('common.next')}">
           <span aria-hidden="true">&raquo;</span>
         </a>
       </li>
