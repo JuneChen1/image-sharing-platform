@@ -198,7 +198,7 @@
       .map((photo) => {
         const initial = (photo.photographer_name || '?').trim().charAt(0).toUpperCase();
         return `
-          <div class="col-md-3 col-6">
+          <div class="col-md-3 col-sm-6 col-12">
             <div class="card h-100 collection-photo-card">
               <div class="collection-photo-media">
                 <img
@@ -206,7 +206,6 @@
                   class="card-img-top lightbox-trigger"
                   data-photo-id="${escapeHtml(photo.id)}"
                   alt="${escapeHtml(i18n.t('common.photoAlt', { name: photo.photographer_name }))}"
-                  style="height: 180px; object-fit: cover;"
                 />
                 <button
                   type="button"

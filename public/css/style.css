@@ -398,6 +398,11 @@ body > main {
   position: relative;
 }
 
+.collection-photo-media .card-img-top {
+  height: 180px;
+  object-fit: cover;
+}
+
 .collection-remove-btn {
   position: absolute;
   top: 0.5rem;
@@ -543,9 +548,51 @@ body > main {
     min-height: 2.75rem;
   }
 
+  /* 收藏庫內的照片卡片：第一列左邊是作者、右邊是移除鈕（叉叉，同一行），第二列是圖片；點擊區 44px。
+     手機沒有 hover，移除鈕不再蓋在圖片右上角，而是常駐顯示。
+     做法：卡片改成 grid，.collection-photo-media 和 .card-body 用 display: contents 拆掉，裡面的元素直接成為卡片的格子 */
+  .collection-photo-card {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-content: start;
+    align-items: center;
+    row-gap: 0.25rem;
+    padding: 0.25rem 0 0.5rem;
+  }
+
+  .collection-photo-media,
+  .collection-photo-card > .card-body {
+    display: contents;
+  }
+
+  .collection-photo-card .card-text {
+    grid-row: 1;
+    grid-column: 1;
+    min-width: 0;
+    padding: 0 0.5rem;
+  }
+
+  .collection-photo-card .person-avatar-link {
+    min-height: 2.75rem;
+  }
+
   .collection-remove-btn {
+    position: static;
+    grid-row: 1;
+    grid-column: 2;
     width: 2.75rem;
     height: 2.75rem;
+    margin-right: 0.5rem;
+    border: 1px solid #dee2e6;
+    border-radius: 0.5rem;
+    opacity: 1;
+  }
+
+  .collection-photo-media .card-img-top {
+    grid-row: 2;
+    grid-column: 1 / -1;
+    height: auto;
+    border-radius: 0.375rem;
   }
 }
 
