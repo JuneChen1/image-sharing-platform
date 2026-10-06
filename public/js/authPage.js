@@ -166,7 +166,12 @@
       const response = await fetch('/api/v1/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, password })
+        body: JSON.stringify({
+          name,
+          email,
+          password,
+          confirm_password: confirmPassword
+        })
       });
       const body = await response.json();
 
