@@ -71,6 +71,7 @@ const i18n = (function () {
       'lightbox.removeFromCollection': '移出收藏',
       'lightbox.sharedBy': '分享者：',
       'lightbox.collect': '收藏',
+      'lightbox.collectLogin': '登入後即可收藏',
 
       'collect.title': '加入收藏庫',
       'collect.newLabel': '建立新收藏庫',
@@ -115,6 +116,8 @@ const i18n = (function () {
       'auth.loginFailed': '登入失敗',
       'auth.nameRequired': '暱稱為必填',
       'auth.nameInvalidChars': '暱稱不可包含 < 或 >',
+      'auth.confirmPassword': '確認密碼',
+      'auth.passwordMismatch': '兩次輸入的密碼不一致',
       'auth.registering': '註冊中...',
       'auth.registerFailed': '註冊失敗',
       'auth.registerSuccess': '註冊成功',
@@ -339,6 +342,7 @@ const i18n = (function () {
       'lightbox.removeFromCollection': 'Remove from collection',
       'lightbox.sharedBy': 'Shared by: ',
       'lightbox.collect': 'Save',
+      'lightbox.collectLogin': 'Log in to save',
 
       'collect.title': 'Add to collection',
       'collect.newLabel': 'Create a new collection',
@@ -385,6 +389,8 @@ const i18n = (function () {
       'auth.loginFailed': 'Login failed',
       'auth.nameRequired': 'Nickname is required',
       'auth.nameInvalidChars': "Nickname can't contain < or >",
+      'auth.confirmPassword': 'Confirm password',
+      'auth.passwordMismatch': "Passwords don't match",
       'auth.registering': 'Signing up...',
       'auth.registerFailed': 'Sign-up failed',
       'auth.registerSuccess': 'Account created successfully',

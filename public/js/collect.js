@@ -11,6 +11,9 @@
 
   let currentPhotoId = null;
 
+  // 每人的收藏庫上限，要和 controllers/collections.js 的 collectCount 檢查一致
+  const COLLECTION_LIMIT = 10;
+
   const ALERT_ICON_PATHS = {
     success:
       '<path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>',
@@ -47,6 +50,14 @@
       collectListEl.innerHTML = '';
       showAlert(i18n.apiMessage(body, 'collections.loadFailed'));
       return;
+    }
+
+    // 已達收藏庫上限就不能再建立新的，直接停用輸入並說明
+    const atLimit = body.data.length >= COLLECTION_LIMIT;
+    collectNewNameEl.disabled = atLimit;
+    if (atLimit) {
+      collectNewBtn.disabled = true;
+      showAlert(i18n.t('error.COLLECTION_LIMIT_REACHED'));
     }
 
     if (body.data.length === 0) {
@@ -183,6 +194,7 @@
   collectModalEl.addEventListener('hidden.bs.modal', () => {
     hideAlert();
     collectNewNameEl.value = '';
+    collectNewNameEl.disabled = false;
     collectNewBtn.disabled = true;
     currentPhotoId = null;
   });

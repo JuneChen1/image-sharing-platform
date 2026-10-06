@@ -48,6 +48,12 @@
     loginPane.classList.toggle('d-none', tab !== 'login');
     registerPane.classList.toggle('d-none', tab !== 'register');
     forgotPane.classList.toggle('d-none', tab !== 'forgot');
+
+    // 網址的 ?tab= 跟著目前顯示的畫面走（登入是預設，不帶參數），其他參數如 redirect 保留
+    const url = new URL(window.location.href);
+    if (tab === 'login') url.searchParams.delete('tab');
+    else url.searchParams.set('tab', tab);
+    window.history.replaceState(null, '', url);
   }
 
   showRegisterLink.addEventListener('click', (event) => {
@@ -132,6 +138,7 @@
     const name = document.getElementById('register-name').value.trim();
     const email = document.getElementById('register-email').value.trim();
     const password = document.getElementById('register-password').value;
+    const confirmPassword = document.getElementById('register-confirm-password').value;
 
     if (!name) {
       registerAlert.show(i18n.t('auth.nameRequired'));
@@ -147,6 +154,10 @@
     }
     if (!isValidPassword(password)) {
       registerAlert.show(i18n.t('password.rule'));
+      return;
+    }
+    if (password !== confirmPassword) {
+      registerAlert.show(i18n.t('auth.passwordMismatch'));
       return;
     }
 

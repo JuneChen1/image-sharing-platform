@@ -46,10 +46,10 @@
     lightboxDownload.href = downloadUrl;
     currentShareUrl = downloadUrl;
     currentCollectId = collectId || null;
-    lightboxCollect.classList.toggle(
-      'd-none',
-      !currentCollectId || !window.auth.isLoggedIn()
-    );
+    // 訪客也看得到收藏鈕，點下去會導向登入頁（openCollectModal 處理）
+    lightboxCollect.classList.toggle('d-none', !currentCollectId);
+    if (window.auth.isLoggedIn()) lightboxCollect.removeAttribute('title');
+    else lightboxCollect.title = i18n.t('lightbox.collectLogin');
     lightboxShare.classList.toggle('d-none', !window.auth.isLoggedIn());
     lightboxCategories.innerHTML = (categories || [])
       .map((name) => `<span class="tag-pill">${escapeHtml(name)}</span>`)

@@ -95,6 +95,10 @@
     return `<img src="${escapeHtml(previewImageUrl)}" alt="" />`;
   }
 
+  // 每人的收藏庫上限，要和 controllers/collections.js 的 collectCount 檢查一致
+  const COLLECTION_LIMIT = 10;
+  let collectionCount = 0;
+
   async function loadCollections() {
     setListStatus(i18n.t('common.loading'), false);
     try {
@@ -109,6 +113,7 @@
         return;
       }
 
+      collectionCount = body.data.length;
       if (body.data.length === 0) {
         collectionsGridEl.innerHTML = '';
         setListStatus(i18n.t('collections.emptyList'), false);
@@ -392,12 +397,20 @@
   });
 
   newCollectionBtn.addEventListener('click', () => {
+    // 已達上限就一打開彈窗直接說明，不要等使用者填完名稱送出才被拒絕
+    const atLimit = collectionCount >= COLLECTION_LIMIT;
+    newCollectionNameEl.disabled = atLimit;
+    newCollectionForm.querySelector('button[type="submit"]').disabled = atLimit;
+    if (atLimit) showNewCollectionAlert(i18n.t('error.COLLECTION_LIMIT_REACHED'));
+    else hideNewCollectionAlert();
     bootstrap.Modal.getOrCreateInstance(newCollectionModalEl).show();
   });
 
   newCollectionModalEl.addEventListener('hidden.bs.modal', () => {
     newCollectionForm.reset();
     hideNewCollectionAlert();
+    newCollectionNameEl.disabled = false;
+    newCollectionForm.querySelector('button[type="submit"]').disabled = false;
   });
 
   let isCreatingCollection = false;
