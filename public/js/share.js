@@ -47,16 +47,23 @@
       .join('');
   }
 
+  // 回傳 false 代表輸入的分類不合法（已顯示提示、文字保留在輸入框讓使用者修改），呼叫端不該繼續往下走
   function addCategory() {
     const name = categoryInput.value.trim();
+    if (/[<>]/.test(name)) {
+      showAlert(i18n.t('share.categoryInvalidChars'));
+      return false;
+    }
+
     categoryInput.value = '';
     // 後端以不分大小寫去重，前端同步，避免出現 Animal 與 animal 兩個標籤
     const lowerName = name.toLowerCase();
-    if (!name || categories.some((c) => c.toLowerCase() === lowerName)) return;
+    if (!name || categories.some((c) => c.toLowerCase() === lowerName)) return true;
 
     categories.push(name);
     renderCategories();
     hideAlert();
+    return true;
   }
 
   categoryAddBtn.addEventListener('click', addCategory);
@@ -88,7 +95,7 @@
     if (!url) return;
 
     // 輸入框裡打了字但還沒按「新增」，送出時一併視為要加入的分類
-    addCategory();
+    if (!addCategory()) return;
 
     if (categories.length === 0) {
       showAlert(i18n.t('share.needCategory'));
