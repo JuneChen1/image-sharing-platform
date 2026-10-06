@@ -511,6 +511,47 @@ body > main {
     min-height: 2.75rem;
   }
 
+  /* 導覽列（找圖片、分享、登入、註冊、使用者選單、語言切換）：每個按鈕至少 44px 高 */
+  .navbar .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.75rem;
+  }
+
+  .navbar .lang-globe-btn {
+    min-width: 2.75rem;
+  }
+
+  /* 首頁搜尋框：輸入框與右側的搜尋圓鈕都拉到 44px，圓鈕貼齊輸入框右緣 */
+  .search-box input.form-control {
+    min-height: 2.75rem;
+  }
+
+  .search-box-submit {
+    right: 0;
+    width: 2.75rem;
+    height: 2.75rem;
+  }
+
+  /* 麵包屑：每一項（含分隔符號、目前頁面文字）都 44px 高並垂直置中，連結被撐高後才不會和文字錯位 */
+  .breadcrumb-item {
+    display: flex;
+    align-items: center;
+    min-height: 2.75rem;
+  }
+
+  /* 麵包屑的連結、收藏庫「新增／編輯／刪除」按鈕、頁尾的聯絡信箱連結 */
+  .breadcrumb-item a,
+  #new-collection-btn,
+  .collection-edit-link,
+  .collection-delete-link,
+  footer a[href^="mailto:"] {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+  }
+
   #results .photo-media {
     display: grid;
     grid-template-columns: auto auto 1fr;
