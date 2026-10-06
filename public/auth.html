@@ -79,11 +79,6 @@
         <div id="register-pane" class="d-none">
           <div class="card mx-auto" style="max-width: 400px;">
             <div class="card-body" style="padding: 32px;">
-              <div id="register-alert" class="alert d-none alert-dismissible d-flex align-items-center mb-3" role="alert">
-                <svg id="register-alert-icon" width="16" height="16" fill="currentColor" class="flex-shrink-0 me-2" viewBox="0 0 16 16" role="img" aria-hidden="true"></svg>
-                <div id="register-alert-message" class="flex-grow-1"></div>
-                <button type="button" class="btn-close" aria-label="關閉" data-i18n-aria-label="common.close"></button>
-              </div>
               <h5 class="card-title mb-3 text-center" data-i18n="auth.register">註冊</h5>
               <form id="register-form">
                 <div class="mb-3">
@@ -102,6 +97,12 @@
                 <div class="mb-3">
                   <label for="register-confirm-password" class="form-label" data-i18n="auth.confirmPassword">確認密碼</label>
                   <input type="password" id="register-confirm-password" class="form-control" autocomplete="new-password" required />
+                </div>
+                <!-- 提示放在送出鈕上方（使用者剛操作完的地方），而不是卡片頂部，手機上才不用捲動才看得到 -->
+                <div id="register-alert" class="alert d-none alert-dismissible d-flex align-items-center mb-0" data-alert-spacing="mb-0" role="alert">
+                  <svg id="register-alert-icon" width="16" height="16" fill="currentColor" class="flex-shrink-0 me-2" viewBox="0 0 16 16" role="img" aria-hidden="true"></svg>
+                  <div id="register-alert-message" class="flex-grow-1"></div>
+                  <button type="button" class="btn-close" aria-label="關閉" data-i18n-aria-label="common.close"></button>
                 </div>
                 <button type="submit" class="btn btn-dark w-100" style="margin-top: 20px;" data-i18n="auth.register">註冊</button>
               </form>

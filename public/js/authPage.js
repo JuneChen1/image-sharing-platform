@@ -34,7 +34,8 @@
       show(message, type = 'danger') {
         iconEl.innerHTML = ALERT_ICON_PATHS[type] || '';
         messageEl.textContent = message;
-        el.className = `alert alert-dismissible d-flex align-items-center mb-3 alert-${type}`;
+        // 間距可由標記上的 data-alert-spacing 指定（例如放在送出鈕上方的註冊提示要 mb-0），預設 mb-3
+        el.className = `alert alert-dismissible d-flex align-items-center ${el.dataset.alertSpacing || 'mb-3'} alert-${type}`;
       },
       hide
     };
