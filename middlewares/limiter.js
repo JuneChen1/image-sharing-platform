@@ -22,14 +22,51 @@ const shareLimiter = rateLimit({
   message: errorBody('TOO_MANY_REQUESTS')
 });
 
-const authLimiter = rateLimit({
+// 帳號相關的限流依用途拆開，避免登入、註冊、改密碼共用同一個計數器
+function createAuthLimiter({
+  windowMs,
+  limit,
+  skipSuccessfulRequests = false
+}) {
+  return rateLimit({
+    windowMs,
+    limit,
+    skipSuccessfulRequests,
+    standardHeaders: 'draft-8',
+    legacyHeaders: false,
+    ipv6Subnet: 56,
+    statusCode: errors.TOO_MANY_ATTEMPTS.status,
+    message: errorBody('TOO_MANY_ATTEMPTS')
+  });
+}
+
+const loginLimiter = createAuthLimiter({
   windowMs: 15 * 60 * 1000,
   limit: 10,
-  standardHeaders: 'draft-8',
-  legacyHeaders: false,
-  ipv6Subnet: 56,
-  statusCode: errors.TOO_MANY_ATTEMPTS.status,
-  message: errorBody('TOO_MANY_ATTEMPTS')
+  skipSuccessfulRequests: true
 });
 
-module.exports = { globalLimiter, shareLimiter, authLimiter };
+const registerLimiter = createAuthLimiter({
+  windowMs: 60 * 60 * 1000,
+  limit: 10
+});
+
+const passwordResetLimiter = createAuthLimiter({
+  windowMs: 60 * 60 * 1000,
+  limit: 5
+});
+
+const accountLimiter = createAuthLimiter({
+  windowMs: 15 * 60 * 1000,
+  limit: 10,
+  skipSuccessfulRequests: true
+});
+
+module.exports = {
+  globalLimiter,
+  shareLimiter,
+  loginLimiter,
+  registerLimiter,
+  passwordResetLimiter,
+  accountLimiter
+};
