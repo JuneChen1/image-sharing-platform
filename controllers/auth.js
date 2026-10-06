@@ -25,13 +25,17 @@ function getResetPasswordSecret() {
 
 const register = async (req, res, next) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, confirm_password } = req.body;
     if (
       !isSafeText(name, nameMaxLength) ||
       !isValidEmail(email) ||
-      !isValidPassword(password)
+      !isValidPassword(password) ||
+      !isValidPassword(confirm_password)
     )
       return next(appError('INVALID_FIELDS'));
+
+    if (password !== confirm_password)
+      return next(appError('PASSWORD_MISMATCH'));
 
     const userRepo = dataSource.getRepository('Users');
     const existing = await userRepo.findOneBy({
