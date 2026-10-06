@@ -213,7 +213,9 @@
   }
 
   function getColumnCount() {
-    return window.innerWidth >= 768 ? 4 : 2;
+    if (window.innerWidth >= 768) return 4;
+    if (window.innerWidth >= 576) return 2;
+    return 1;
   }
 
   function renderMasonry(photos) {

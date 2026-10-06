@@ -124,7 +124,8 @@
   function getColumnCount() {
     if (window.innerWidth >= 992) return 5;
     if (window.innerWidth >= 768) return 4;
-    return 2;
+    if (window.innerWidth >= 576) return 2;
+    return 1;
   }
 
   function renderMasonry(photos) {

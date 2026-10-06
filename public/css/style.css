@@ -452,6 +452,103 @@ body > main {
   color: #212529;
 }
 
+/* 手機版（一列一張，比照 Unsplash）：作者在圖片上方，分享／收藏在圖片下方左邊、下載在右邊。
+   觸控裝置沒有 hover，所以按鈕不再蓋在圖片上、也不再平時隱藏，而是一直顯示；每個按鈕點擊區至少 44px（2.75rem）。
+   做法：兩個 overlay 容器用 display: contents 拆掉，裡面的元素直接變成 .photo-media 這個 grid 的格子 */
+@media (max-width: 575.98px) {
+  #results .photo-media {
+    display: grid;
+    grid-template-columns: auto auto 1fr;
+    align-items: center;
+    column-gap: 0.5rem;
+    row-gap: 0.5rem;
+  }
+
+  #results .photo-overlay-top,
+  #results .photo-overlay-bottom {
+    display: contents;
+  }
+
+  #results .photo-author {
+    grid-row: 1;
+    grid-column: 1 / -1;
+    min-height: 2.75rem;
+    padding: 0 0.25rem;
+    color: #212529;
+  }
+
+  #results .photo-media .card-img-top {
+    grid-row: 2;
+    grid-column: 1 / -1;
+    border-radius: 0.375rem;
+  }
+
+  #results .photo-overlay-top .btn-icon,
+  #results .photo-collect-badge,
+  #results .btn-download {
+    grid-row: 3;
+    min-height: 2.75rem;
+    border: 1px solid #dee2e6;
+    border-radius: 0.5rem;
+    background: #fff;
+    color: #212529;
+  }
+
+  #results .photo-overlay-top .btn-icon {
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 0.5rem;
+  }
+
+  #results .photo-collect-badge {
+    height: 2.75rem;
+    padding: 0 0.9rem;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+  }
+
+  #results .btn-download {
+    grid-column: 3;
+    justify-self: end;
+    padding: 0 1rem;
+    font-size: 0.875rem;
+  }
+
+  /* 搜尋頁的卡片，排法比照上面首頁的卡片：作者在圖片上方、分享鈕在圖片下方，點擊區 44px。
+     .card 本來就是 flex 直向排列，拆掉 .card-body 後裡面的作者和分享鈕直接成為 .card 的子項，再用 order 把作者排到圖片前面 */
+  #results .card > .card-body {
+    display: contents;
+  }
+
+  #results .card-text {
+    order: -1;
+    margin: 0;
+    padding: 0 0.25rem;
+  }
+
+  #results .person-avatar-link {
+    min-height: 2.75rem;
+  }
+
+  #results button[data-share-url] {
+    margin-top: 0.5rem;
+  }
+
+  #results .card:has(> .card-body) {
+    padding-bottom: 0.5rem;
+  }
+
+  #results button[data-cancel-id],
+  #results button[data-share-url] {
+    min-height: 2.75rem;
+  }
+
+  .collection-remove-btn {
+    width: 2.75rem;
+    height: 2.75rem;
+  }
+}
+
 .person-link {
   display: inline-flex;
   align-items: center;
