@@ -8,6 +8,7 @@ const {
 } = require('../utils/validUtils');
 const { nameMaxLength } = require('../config/constants');
 const appError = require('../utils/appError');
+const { signAuthToken } = require('../utils/tokenUtils');
 const {
   attachCategories,
   attachFavoritesCount
@@ -86,9 +87,12 @@ const userController = {
       const userRepo = dataSource.getRepository('Users');
       await userRepo.save({ ...req.user, password: hashedPassword });
 
+      const token = signAuthToken({ ...req.user, password: hashedPassword });
+
       res.status(200).json({
         status: 'success',
-        message: '密碼更新成功'
+        message: '密碼更新成功',
+        data: { token }
       });
     } catch (error) {
       next(error);

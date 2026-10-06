@@ -11,6 +11,7 @@ const { nameMaxLength } = require('../config/constants');
 const appError = require('../utils/appError');
 const { dataSource } = require('../db/data-source');
 const { sendResetPasswordEmail } = require('../utils/mailer');
+const { signAuthToken } = require('../utils/tokenUtils');
 
 function getResetPasswordSecret() {
   return (
@@ -77,11 +78,7 @@ const login = async (req, res, next) => {
 
     if (user.is_banned) return next(appError('ACCOUNT_BANNED'));
 
-    const token = jwt.sign(
-      { id: user.id, role: user.role },
-      process.env.JWT_SECRET,
-      { expiresIn: process.env.JWT_EXPIRES_DAY }
-    );
+    const token = signAuthToken(user);
 
     res.status(200).json({
       status: 'success',
