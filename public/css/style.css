@@ -461,6 +461,56 @@ body > main {
    觸控裝置沒有 hover，所以按鈕不再蓋在圖片上、也不再平時隱藏，而是一直顯示；每個按鈕點擊區至少 44px（2.75rem）。
    做法：兩個 overlay 容器用 display: contents 拆掉，裡面的元素直接變成 .photo-media 這個 grid 的格子 */
 @media (max-width: 575.98px) {
+  /* 分類列、排序頁籤：點擊區至少 44px。分類列本來就能橫向捲動，加高不影響版面 */
+  #category-bar .btn {
+    min-height: 2.75rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .sort-tab {
+    min-height: 2.75rem;
+  }
+
+  /* 表單頁（登入、註冊、個人資料、修改密碼…）的全寬主要按鈕，以及修改密碼頁底下的文字連結 */
+  main .btn.w-100 {
+    min-height: 2.75rem;
+  }
+
+  main a[data-i18n="changePassword.back"] {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+  }
+
+  /* 分頁元件：高度 44px；最多 5 個頁碼＋2 個箭頭，寬度 40px、間距縮小，才放得下 375px 寬（含後台卡片內距的 319px） */
+  .pagination {
+    gap: 0.25rem;
+  }
+
+  .pagination .page-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.5rem;
+    min-height: 2.75rem;
+  }
+
+  /* 管理後台：分頁頁籤、搜尋列（輸入框、下拉、按鈕）、每列的操作按鈕、照片列裡的使用者連結 */
+  #tab-users-btn,
+  #tab-photos-btn,
+  #users-search-form > *,
+  #photos-search-form > *,
+  .admin-action-btn {
+    min-height: 2.75rem;
+  }
+
+  #photos-table-body td a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+  }
+
   #results .photo-media {
     display: grid;
     grid-template-columns: auto auto 1fr;
