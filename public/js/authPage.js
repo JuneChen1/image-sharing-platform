@@ -78,6 +78,15 @@
   const initialTab = params.get('tab');
   showTab(initialTab === 'register' || initialTab === 'forgot' ? initialTab : 'login');
 
+  // 使用中被停權會被導來這裡（見 auth.js）：用跟其他提示一致的卡片樣式說明原因
+  if (params.get('reason') === 'banned') {
+    loginAlert.show(i18n.t('error.ACCOUNT_BANNED'));
+    // 重新整理時不要再顯示一次
+    const cleanUrl = new URL(window.location.href);
+    cleanUrl.searchParams.delete('reason');
+    window.history.replaceState(null, '', cleanUrl);
+  }
+
   // 登入後要回去的頁面：只接受站內路徑，避免被導去外部網站（open redirect）
   function getRedirectTarget() {
     const target = params.get('redirect');
