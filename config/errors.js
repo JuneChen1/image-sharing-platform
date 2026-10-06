@@ -25,7 +25,7 @@ module.exports = {
   EMAIL_TAKEN: { status: 409, message: 'Email 已被使用' },
   EMAIL_IMMUTABLE: { status: 400, message: 'Email 不可修改' },
   INVALID_CREDENTIALS: { status: 400, message: '使用者不存在或密碼輸入錯誤' },
-  PASSWORD_MISMATCH: { status: 400, message: '兩次輸入的新密碼不一致' },
+  PASSWORD_MISMATCH: { status: 400, message: '兩次輸入的密碼不一致' },
   OLD_PASSWORD_WRONG: { status: 400, message: '舊密碼錯誤' },
   NEW_PASSWORD_SAME_AS_OLD: { status: 400, message: '新密碼不可與舊密碼相同' },
   PASSWORD_WRONG: { status: 400, message: '密碼錯誤' },
