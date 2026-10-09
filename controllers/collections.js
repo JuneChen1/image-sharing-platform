@@ -1,4 +1,9 @@
-const { isSafeText, isValidUUID } = require('../utils/validUtils');
+const {
+  isSafeText,
+  isValidString,
+  isValidUUID
+} = require('../utils/validUtils');
+const { collectionNameMaxLength } = require('../config/constants');
 const appError = require('../utils/appError');
 const { attachCategories } = require('../utils/sharedPhotosUtils');
 const { dataSource } = require('../db/data-source');
@@ -56,7 +61,10 @@ const collectionsController = {
   },
   async addCollection(req, res, next) {
     const { name } = req.body;
-    if (!isSafeText(name, 100)) return next(appError('INVALID_NAME'));
+    if (isValidString(name) && name.trim().length > collectionNameMaxLength)
+      return next(appError('NAME_TOO_LONG'));
+    if (!isSafeText(name, collectionNameMaxLength))
+      return next(appError('INVALID_NAME'));
 
     try {
       const collectionsRepo = dataSource.getRepository('Collections');
@@ -90,7 +98,10 @@ const collectionsController = {
     if (!isValidUUID(collectionId))
       return next(appError('INVALID_COLLECTION_ID'));
     const { name } = req.body;
-    if (!isSafeText(name, 100)) return next(appError('INVALID_NAME'));
+    if (isValidString(name) && name.trim().length > collectionNameMaxLength)
+      return next(appError('NAME_TOO_LONG'));
+    if (!isSafeText(name, collectionNameMaxLength))
+      return next(appError('INVALID_NAME'));
 
     try {
       const collectionsRepo = dataSource.getRepository('Collections');

@@ -4,6 +4,7 @@ module.exports = {
   // 欄位與格式
   INVALID_FIELDS: { status: 400, message: '欄位未填寫正確' },
   INVALID_NAME: { status: 400, message: '名稱格式錯誤' },
+  NAME_TOO_LONG: { status: 400, message: '名稱不可超過 100 字' },
   INVALID_CATEGORIES: { status: 400, message: '分類格式錯誤' },
   INVALID_URL: { status: 400, message: '網址錯誤' },
   URL_REQUIRED: { status: 400, message: '網址為必填' },
