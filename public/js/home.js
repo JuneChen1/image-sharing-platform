@@ -151,17 +151,26 @@
     }, 200)
   );
 
-  // 收藏成功後就地更新收藏數（同步 currentPhotos，縮放重繪時才不會變回舊數字）
+  // 收藏鈕的提示文字：自己收藏過的照片要讓人看得出來（但仍可再加入其他收藏庫）
+  function collectBadgeTitle(photo) {
+    const key = photo.is_collected ? 'home.savedByCollectedTitle' : 'home.savedByTitle';
+    return i18n.t(key, { count: photo.favorites_count || 0 });
+  }
+
+  // 收藏成功後就地更新收藏數與「已收藏」狀態（同步 currentPhotos，縮放重繪時才不會變回舊狀態）
   document.addEventListener('photocollected', (event) => {
     const photo = currentPhotos.find((p) => p.id === event.detail.photoId);
     if (!photo) return;
 
     photo.favorites_count = (photo.favorites_count || 0) + 1;
+    photo.is_collected = true;
     const badge = resultsEl.querySelector(
       `.photo-collect-badge[data-collect-id="${CSS.escape(photo.id)}"]`
     );
     if (!badge) return;
-    badge.title = i18n.t('home.savedByTitle', { count: photo.favorites_count });
+    badge.classList.add('is-collected');
+    badge.title = collectBadgeTitle(photo);
+    badge.setAttribute('aria-label', badge.title);
     badge.querySelector('span').textContent = photo.favorites_count;
   });
 
@@ -258,7 +267,9 @@
       ? `&q=${encodeURIComponent(currentQuery)}`
       : '';
     const response = await fetch(
-      `/api/v1/shared-photos?page=${page}&limit=${LIMIT}&sort=${currentSort}${categoryParam}${queryParam}`
+      `/api/v1/shared-photos?page=${page}&limit=${LIMIT}&sort=${currentSort}${categoryParam}${queryParam}`,
+      // 登入時帶 token，後端才會回傳每張照片自己是否已收藏（is_collected）；訪客不帶也能看
+      { headers: window.auth.getAuthHeader() }
     );
     const body = await response.json();
 
@@ -384,7 +395,7 @@
                       <path d="M11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.5 2.5 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5"/>
                     </svg>
                   </button>
-                  <button type="button" class="photo-collect-badge" data-collect-id="${escapeHtml(photo.id)}" title="${i18n.t('home.savedByTitle', { count: favoritesCount })}">
+                  <button type="button" class="photo-collect-badge${photo.is_collected ? ' is-collected' : ''}" data-collect-id="${escapeHtml(photo.id)}" title="${collectBadgeTitle(photo)}" aria-label="${collectBadgeTitle(photo)}">
                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
                       <path d="M2 2v13.5a.5.5 0 0 0 .74.439L8 13.069l5.26 2.87A.5.5 0 0 0 14 15.5V2a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2z"/>
                     </svg>

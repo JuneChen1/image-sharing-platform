@@ -321,6 +321,14 @@ body > main {
   background: #fff;
 }
 
+/* 自己已收藏過的照片：整顆收藏鈕反白成深色，一眼看得出來；手機版的白底＋邊框樣式也要蓋掉 */
+#results .photo-collect-badge.is-collected,
+#results button.photo-collect-badge.is-collected:hover {
+  background: #212529;
+  border-color: #212529;
+  color: #fff;
+}
+
 #results .photo-overlay-bottom {
   position: absolute;
   left: 0;

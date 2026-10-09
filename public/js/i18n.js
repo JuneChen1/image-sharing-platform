@@ -100,6 +100,7 @@ const i18n = (function () {
       'home.unsharing': '取消中...',
       'home.unshareFailed': '取消分享失敗',
       'home.savedByTitle': '{count} 人收藏，點擊收藏',
+      'home.savedByCollectedTitle': '{count} 人收藏，你已收藏，點擊可加入其他收藏庫',
       'home.savedByLoginTitle': '{count} 人收藏，登入後即可收藏',
 
       'search.heading': '從 Unsplash 搜尋',
@@ -381,6 +382,8 @@ const i18n = (function () {
       'home.unshareFailed': 'Failed to unshare',
       'home.savedByTitle': 'Saved by {count} people. Click to save.',
       'home.savedByTitle_one': 'Saved by 1 person. Click to save.',
+      'home.savedByCollectedTitle': 'Saved by {count} people, including you. Click to add to another collection.',
+      'home.savedByCollectedTitle_one': 'Saved by you. Click to add to another collection.',
       'home.savedByLoginTitle': 'Saved by {count} people. Log in to save.',
       'home.savedByLoginTitle_one': 'Saved by 1 person. Log in to save.',
 
