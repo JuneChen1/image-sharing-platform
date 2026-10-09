@@ -94,6 +94,13 @@
     const url = shareInput.value.trim();
     if (!url) return;
 
+    // 依表單由上而下的順序驗證：網址在分類上面，所以先擋格式錯誤的網址。
+    // 規則和後端 getUnsplashImageId 一致（開頭必須是這串）；照片是否真的存在只有後端問得到，仍由後端回傳
+    if (!url.startsWith('https://unsplash.com/photos/')) {
+      showAlert(i18n.t('error.INVALID_URL'));
+      return;
+    }
+
     // 輸入框裡打了字但還沒按「新增」，送出時一併視為要加入的分類
     if (!addCategory()) return;
 
