@@ -48,6 +48,25 @@ async function attachFavoritesCount(photos) {
   }));
 }
 
+// 標記「這個使用者是否已把照片加入任何收藏庫」。訪客（沒有 userId）不回傳 is_collected 欄位
+async function attachIsCollected(photos, userId) {
+  if (!userId || photos.length === 0) return photos;
+
+  const result = await dataSource.query(
+    `SELECT DISTINCT shared_photo_id
+     FROM favorites
+     WHERE user_id = $1 AND shared_photo_id = ANY($2)`,
+    [userId, photos.map((photo) => photo.id)]
+  );
+
+  const collectedIds = new Set(result.map((r) => r.shared_photo_id));
+
+  return photos.map((photo) => ({
+    ...photo,
+    is_collected: collectedIds.has(photo.id)
+  }));
+}
+
 // category / q 篩選條件。用 EXISTS 比對分類而不是 JOIN，JOIN 會讓一張照片重複出現
 function buildPhotoFilter(category, q) {
   const params = [];
@@ -79,4 +98,9 @@ function buildPhotoFilter(category, q) {
   return { params, whereClause: `WHERE TRUE ${conditions.join(' ')}` };
 }
 
-module.exports = { attachCategories, attachFavoritesCount, buildPhotoFilter };
+module.exports = {
+  attachCategories,
+  attachFavoritesCount,
+  attachIsCollected,
+  buildPhotoFilter
+};

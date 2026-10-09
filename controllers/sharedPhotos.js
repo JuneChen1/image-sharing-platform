@@ -14,6 +14,7 @@ const appError = require('../utils/appError');
 const {
   attachCategories,
   attachFavoritesCount,
+  attachIsCollected,
   buildPhotoFilter
 } = require('../utils/sharedPhotosUtils');
 const { dataSource } = require('../db/data-source');
@@ -237,6 +238,7 @@ const getSharedImages = async (req, res, next) => {
     }
 
     data = await attachCategories(data);
+    data = await attachIsCollected(data, req.user?.id);
 
     res.status(200).json({
       status: 'success',

@@ -11,7 +11,8 @@ const appError = require('../utils/appError');
 const { signAuthToken } = require('../utils/tokenUtils');
 const {
   attachCategories,
-  attachFavoritesCount
+  attachFavoritesCount,
+  attachIsCollected
 } = require('../utils/sharedPhotosUtils');
 const { dataSource } = require('../db/data-source');
 
@@ -185,7 +186,8 @@ const userController = {
       });
 
       const dataWithCategories = await attachCategories(rawData);
-      const data = await attachFavoritesCount(dataWithCategories);
+      const dataWithCount = await attachFavoritesCount(dataWithCategories);
+      const data = await attachIsCollected(dataWithCount, req.user?.id);
 
       res.status(200).json({
         status: 'success',
