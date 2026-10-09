@@ -33,6 +33,31 @@
 
   alertEl.querySelector('.btn-close').addEventListener('click', hideAlert);
 
+  // 照片已在該收藏庫：打勾並停用
+  function addedItemHtml(name) {
+    return `
+            <button
+              type="button"
+              class="list-group-item list-group-item-added d-flex align-items-center gap-2"
+              title="${escapeHtml(name)}"
+              disabled
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="text-success flex-shrink-0" viewBox="0 0 16 16">
+                <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0"/>
+              </svg>
+              <span class="text-truncate">${escapeHtml(name)}</span>
+            </button>
+          `;
+  }
+
+  // 加入成功（或已存在）後就地換成已加入樣式，不必關掉再打開才看到打勾
+  function markAsAdded(collectionId) {
+    const button = collectListEl.querySelector(
+      `button[data-collection-id="${collectionId}"]`
+    );
+    if (button) button.outerHTML = addedItemHtml(button.title);
+  }
+
   async function loadCollections() {
     collectListEl.innerHTML = `<div class="text-muted small">${i18n.t('common.loading')}</div>`;
     const response = await fetch(
@@ -68,19 +93,7 @@
     collectListEl.innerHTML = body.data
       .map((collection) =>
         collection.hasPhoto
-          ? `
-            <button
-              type="button"
-              class="list-group-item list-group-item-added d-flex align-items-center gap-2"
-              title="${escapeHtml(collection.name)}"
-              disabled
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="text-success flex-shrink-0" viewBox="0 0 16 16">
-                <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0"/>
-              </svg>
-              <span class="text-truncate">${escapeHtml(collection.name)}</span>
-            </button>
-          `
+          ? addedItemHtml(collection.name)
           : `
             <button
               type="button"
@@ -118,6 +131,7 @@
       }
       if (response.ok) {
         showAlert(i18n.t('collect.added'), 'success');
+        markAsAdded(collectionId);
         document.dispatchEvent(
           new CustomEvent('photocollected', {
             detail: { photoId: currentPhotoId }
@@ -125,6 +139,7 @@
         );
       } else if (response.status === 409) {
         showAlert(i18n.t('collect.duplicate'));
+        markAsAdded(collectionId);
       } else {
         showAlert(i18n.apiMessage(body, 'collect.addFailed'));
       }
