@@ -97,6 +97,8 @@
 
   // 每人的收藏庫上限，要和 controllers/collections.js 的 collectCount 檢查一致
   const COLLECTION_LIMIT = 10;
+  // 要和 config/constants.js 的 collectionNameMaxLength、輸入框的 maxlength 一致
+  const COLLECTION_NAME_MAX_LENGTH = 100;
   let collectionCount = 0;
 
   async function loadCollections() {
@@ -275,6 +277,10 @@
       showEditCollectionAlert(i18n.t('collections.nameRequired'));
       return;
     }
+    if (name.length > COLLECTION_NAME_MAX_LENGTH) {
+      showEditCollectionAlert(i18n.t('error.NAME_TOO_LONG'));
+      return;
+    }
     if (/[<>]/.test(name)) {
       showEditCollectionAlert(i18n.t('collections.nameInvalidChars'));
       return;
@@ -421,6 +427,10 @@
     const name = newCollectionNameEl.value.trim();
     if (!name) {
       showNewCollectionAlert(i18n.t('collections.nameRequired'));
+      return;
+    }
+    if (name.length > COLLECTION_NAME_MAX_LENGTH) {
+      showNewCollectionAlert(i18n.t('error.NAME_TOO_LONG'));
       return;
     }
     if (/[<>]/.test(name)) {

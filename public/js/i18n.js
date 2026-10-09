@@ -241,6 +241,7 @@ const i18n = (function () {
       // 後端錯誤碼（對應 appError 的第三個參數）
       'error.INVALID_FIELDS': '欄位未填寫正確',
       'error.INVALID_NAME': '名稱格式錯誤',
+      'error.NAME_TOO_LONG': '名稱不可超過 100 字',
       'error.INVALID_CATEGORIES': '分類格式錯誤',
       'error.INVALID_URL': '網址錯誤',
       'error.URL_REQUIRED': '網址為必填',
@@ -527,6 +528,7 @@ const i18n = (function () {
       // Backend error codes (the third argument of appError)
       'error.INVALID_FIELDS': 'Some fields are missing or invalid',
       'error.INVALID_NAME': 'Invalid name',
+      'error.NAME_TOO_LONG': 'Name can be at most 100 characters',
       'error.INVALID_CATEGORIES': 'Invalid categories',
       'error.INVALID_URL': 'Invalid URL',
       'error.URL_REQUIRED': 'URL is required',
