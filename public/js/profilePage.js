@@ -42,6 +42,10 @@
 
   nameInput.addEventListener('input', updateNameValidation);
 
+  // 原生驗證（required）擋下送出時不會觸發 submit，上一次的提示（例如「儲存成功」）會一直留著；
+  // invalid 事件不會冒泡，所以用 capture 在表單上接
+  profileForm.addEventListener('invalid', hideAlert, true);
+
   async function loadProfile() {
     try {
       const response = await fetch('/api/v1/users/me', {
@@ -68,8 +72,11 @@
     event.preventDefault();
     const name = nameInput.value.trim();
 
+    // 空白時輸入框下方已經有「暱稱不可為空」，不要再跳一則重複的提示卡片
     if (!name) {
-      showAlert(i18n.t('auth.nameRequired'));
+      hideAlert();
+      updateNameValidation();
+      nameInput.focus();
       return;
     }
     if (/[<>]/.test(name)) {
