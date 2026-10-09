@@ -174,6 +174,15 @@
     badge.querySelector('span').textContent = photo.favorites_count;
   });
 
+  // 分享成功並關閉彈窗後，回第 1 頁重新載入（新照片在「最新」排序的最前面）
+  document.addEventListener('photoshared', async () => {
+    try {
+      await fetchAndRenderPhotos(1);
+    } catch (error) {
+      setStatus(error.message || i18n.t('common.networkError'), true);
+    }
+  });
+
   // 登出後重新渲染，移除只有登入者／作者看得到的按鈕
   document.addEventListener('authchange', async () => {
     try {

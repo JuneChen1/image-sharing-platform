@@ -145,6 +145,16 @@
     badge.querySelector('span').textContent = photo.favorites_count;
   });
 
+  // 在自己的分享紀錄頁分享成功並關閉彈窗後，回第 1 頁重新載入；別人的頁面不會多出自己的照片，不用更新
+  document.addEventListener('photoshared', async () => {
+    if (!isOwnPage) return;
+    try {
+      await fetchAndRenderPhotos(1);
+    } catch (error) {
+      setStatus(error.message || i18n.t('common.networkError'), true);
+    }
+  });
+
   document.addEventListener('authchange', async () => {
     try {
       await fetchAndRenderPhotos(currentPage);

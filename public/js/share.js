@@ -14,6 +14,8 @@
 
   let categories = [];
   let isSubmitting = false;
+  // 這次開啟彈窗期間有沒有分享成功：關閉時才通知頁面重新載入清單，避免開著時背景一直跳動
+  let hasShared = false;
 
   const ALERT_ICON_PATHS = {
     success:
@@ -85,6 +87,11 @@
     hideAlert();
     categories = [];
     renderCategories();
+
+    if (hasShared) {
+      hasShared = false;
+      document.dispatchEvent(new CustomEvent('photoshared'));
+    }
   });
 
   shareForm.addEventListener('submit', async (event) => {
@@ -128,6 +135,7 @@
         shareInput.value = '';
         categories = [];
         renderCategories();
+        hasShared = true;
         showAlert(i18n.t('share.success'), 'success');
       } else if (response.status === 401) {
         window.auth.clearSession();
