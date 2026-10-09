@@ -54,7 +54,11 @@ function isValidEmail(email) {
 function isValidPassword(password) {
   const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d).{8,}$/;
 
-  return typeof password === 'string' && passwordRegex.test(password);
+  return (
+    typeof password === 'string' &&
+    passwordRegex.test(password) &&
+    Buffer.byteLength(password, 'utf8') <= 72
+  );
 }
 
 module.exports = {
