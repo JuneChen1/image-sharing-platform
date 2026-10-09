@@ -28,6 +28,7 @@ async function main() {
   const collectionsRouter = require('./routes/collections');
   const userRouter = require('./routes/users');
   const adminRouter = require('./routes/admin');
+  const rejectNullBytes = require('./middlewares/rejectNullBytes');
   const errors = require('./config/errors');
   const errorBody = require('./utils/errorBody');
 
@@ -42,6 +43,7 @@ async function main() {
   });
   app.use(express.static('public'));
   app.use(globalLimiter);
+  app.use(rejectNullBytes);
 
   app.use('/health', healthRouter);
   app.use('/api/v1/shared-photos', sharedPhotosRouter);
