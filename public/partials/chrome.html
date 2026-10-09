@@ -63,11 +63,12 @@
       </div>
       <form id="share-form">
         <div class="modal-body">
+          <label for="share-input" class="form-label" data-i18n="share.urlLabel">Unsplash 圖片網址</label>
           <input
             type="text"
             id="share-input"
             class="form-control mb-3"
-            placeholder="Unsplash 圖片網址，例如 https://unsplash.com/photos/xxxxx"
+            placeholder="例：https://unsplash.com/photos/xxx"
             data-i18n-placeholder="share.urlPlaceholder"
             required
           />
@@ -78,7 +79,7 @@
               type="text"
               id="category-input"
               class="form-control"
-              placeholder="輸入分類名稱，按 Enter 新增"
+              placeholder="輸入分類名稱"
               data-i18n-placeholder="share.categoryPlaceholder"
               maxlength="100"
             />
