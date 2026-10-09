@@ -14,7 +14,7 @@ function verifyCustomCategories(customCategories) {
 }
 
 function isPositiveInteger(number) {
-  return Number.isInteger(number) && number > 0;
+  return Number.isSafeInteger(number) && number > 0;
 }
 
 function isValidString(value) {
