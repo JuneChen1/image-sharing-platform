@@ -90,7 +90,7 @@ const i18n = (function () {
       'collect.addFailed': '加入失敗',
       'collect.creating': '建立中...',
 
-      'home.searchPlaceholder': '搜尋本站分享的照片（攝影師或分類名稱）',
+      'home.searchPlaceholder': '搜尋攝影師或分類',
       'home.sortAria': '排序方式',
       'home.sortLatest': '最新',
       'home.sortPopular': '熱門',
@@ -105,7 +105,7 @@ const i18n = (function () {
       'home.savedByLoginTitle': '{count} 人收藏，登入後即可收藏',
 
       'search.heading': '從 Unsplash 搜尋',
-      'search.placeholder': '輸入關鍵字搜尋 Unsplash 圖片，例如 Long-tailed Tit',
+      'search.placeholder': '關鍵字，例：Long-tailed Tit',
 
       'auth.login': '登入',
       'auth.register': '註冊',
@@ -374,7 +374,7 @@ const i18n = (function () {
       'collect.addFailed': 'Failed to add',
       'collect.creating': 'Creating...',
 
-      'home.searchPlaceholder': 'Search shared photos (photographer or category)',
+      'home.searchPlaceholder': 'Photographer or category',
       'home.sortAria': 'Sort by',
       'home.sortLatest': 'Latest',
       'home.sortPopular': 'Popular',
@@ -392,7 +392,7 @@ const i18n = (function () {
       'home.savedByLoginTitle_one': 'Saved by 1 person. Log in to save.',
 
       'search.heading': 'Search Unsplash',
-      'search.placeholder': 'Enter keywords to search Unsplash photos, e.g. Long-tailed Tit',
+      'search.placeholder': 'Keyword, e.g. Long-tailed Tit',
 
       'auth.login': 'Log in',
       'auth.register': 'Sign up',
