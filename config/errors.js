@@ -20,6 +20,7 @@ module.exports = {
   INVALID_SORT: { status: 400, message: '排序只能是 latest 或 popular' },
   SEARCH_KEYWORD_REQUIRED: { status: 400, message: '搜尋關鍵字為必填' },
   NOTHING_TO_UPDATE: { status: 400, message: '沒有可更新的欄位' },
+  PAYLOAD_TOO_LARGE: { status: 413, message: '傳送的內容太大，請縮小後再試' },
 
   // 帳號與密碼
   EMAIL_TAKEN: { status: 409, message: 'Email 已被使用' },

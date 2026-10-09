@@ -74,6 +74,12 @@ async function main() {
         .json(errorBody('INVALID_FIELDS'));
     }
 
+    if (err.type === 'entity.too.large') {
+      return res
+        .status(errors.PAYLOAD_TOO_LARGE.status)
+        .json(errorBody('PAYLOAD_TOO_LARGE'));
+    }
+
     console.error(err);
     res
       .status(errors.SERVER_ERROR.status)
