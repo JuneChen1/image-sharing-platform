@@ -1,5 +1,5 @@
 const { EntitySchema } = require('typeorm');
-const { nameMaxLength } = require('../config/constants');
+const { nameMaxLength, emailMaxLength } = require('../config/constants');
 
 module.exports = new EntitySchema({
   name: 'Users',
@@ -17,7 +17,7 @@ module.exports = new EntitySchema({
     },
     email: {
       type: 'varchar',
-      length: 100,
+      length: emailMaxLength,
       unique: true,
       nullable: false
     },

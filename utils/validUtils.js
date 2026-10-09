@@ -1,3 +1,5 @@
+const { emailMaxLength } = require('../config/constants');
+
 function verifyUnsplashImageId(unsplashId) {
   const unsplashIdPattern = /^[\w-]{5,20}$/;
   return unsplashIdPattern.test(unsplashId);
@@ -42,7 +44,11 @@ function isValidUUID(value) {
 function isValidEmail(email) {
   const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
-  return typeof email === 'string' && emailRegex.test(email);
+  return (
+    typeof email === 'string' &&
+    email.length <= emailMaxLength &&
+    emailRegex.test(email)
+  );
 }
 
 function isValidPassword(password) {
