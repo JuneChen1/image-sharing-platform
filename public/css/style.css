@@ -887,6 +887,22 @@ body > main {
   padding-bottom: 8px;
 }
 
+/* 表頭與徽章不換行：中文遇到欄寬不足會逐字直排（「狀／態」） */
+.admin-table thead th,
+.admin-badge {
+  white-space: nowrap;
+}
+
+/* 平板寬度（768～991px，表格仍是表格但容器不夠寬）：縮小左右內距，才不必橫向捲動；
+   768px 以下改成卡片排版（見下方） */
+@media (min-width: 768px) and (max-width: 991.98px) {
+  .admin-table th,
+  .admin-table td {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+}
+
 .admin-table thead th {
   background-color: #f8f9fa;
   font-weight: 700;
@@ -964,9 +980,10 @@ body > main {
   background-color: #f1f3f5;
 }
 
-/* 手機版：表格改成一列一張卡片，每格左邊顯示欄位名稱（取自 td 的 data-label），
-   這樣不必橫向捲動就能看到「停權／強制刪除」等操作按鈕 */
-@media (max-width: 575.98px) {
+/* 手機與小平板（767px 以下）：表格改成一列一張卡片，每格左邊顯示欄位名稱（取自 td 的 data-label），
+   這樣不必橫向捲動就能看到「停權／強制刪除」等操作按鈕。
+   斷點是 768px，因為表格最小寬度約 710px，更窄就一定會橫向捲動 */
+@media (max-width: 767.98px) {
   .admin-card .card-body,
   .admin-card .card-footer {
     padding-left: 16px;
