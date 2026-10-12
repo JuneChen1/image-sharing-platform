@@ -196,6 +196,7 @@ const i18n = (function () {
       'userPhotos.other': '{name} 的分享紀錄',
       'userPhotos.missingUserId': '缺少使用者 ID，無法載入分享紀錄',
       'userPhotos.ownEmpty': '你還沒有分享過任何照片',
+      'userPhotos.shareFirst': '分享第一張照片',
       'userPhotos.otherEmpty': '這位使用者還沒有分享過任何照片',
 
       'admin.heading': '管理後台',
@@ -259,7 +260,7 @@ const i18n = (function () {
       'error.INVALID_PAGINATION': '頁數(page)和每頁筆數(limit)只能是正整數',
       'error.LIMIT_TOO_LARGE': '每頁筆數(limit)不能大於100',
       'error.INVALID_SORT': '排序只能是 latest 或 popular',
-      'error.SEARCH_KEYWORD_REQUIRED': '搜尋關鍵字為必填',
+      'error.SEARCH_KEYWORD_REQUIRED': '請輸入搜尋關鍵字',
       'error.NOTHING_TO_UPDATE': '沒有可更新的欄位',
       'error.PAYLOAD_TOO_LARGE': '傳送的內容太大，請縮小後再試',
       'error.EMAIL_IMMUTABLE': 'Email 不可修改',
@@ -489,6 +490,7 @@ const i18n = (function () {
       'userPhotos.other': "{name}'s shared photos",
       'userPhotos.missingUserId': "Missing user ID. Can't load shared photos.",
       'userPhotos.ownEmpty': "You haven't shared any photos yet",
+      'userPhotos.shareFirst': 'Share your first photo',
       'userPhotos.otherEmpty': "This user hasn't shared any photos yet",
 
       'admin.heading': 'Admin panel',

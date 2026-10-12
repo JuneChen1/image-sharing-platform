@@ -2,6 +2,7 @@
   await window.partialsReady;
 
   const statusEl = document.getElementById('status');
+  const emptyShareCtaEl = document.getElementById('empty-share-cta');
   const resultsEl = document.getElementById('results');
   const paginationEl = document.getElementById('pagination');
   const titleEl = document.querySelector('main h1');
@@ -158,6 +159,10 @@
     }
   });
 
+  document.getElementById('empty-share-btn').addEventListener('click', () => {
+    window.openShareModal('');
+  });
+
   document.addEventListener('authchange', async () => {
     try {
       await fetchAndRenderPhotos(currentPage);
@@ -215,9 +220,12 @@
         isOwnPage ? i18n.t('userPhotos.ownEmpty') : i18n.t('userPhotos.otherEmpty'),
         false
       );
+      // 自己的頁面還沒有任何分享時，給一個直接分享的入口；別人的頁面不需要
+      emptyShareCtaEl.classList.toggle('d-none', !isOwnPage);
       return;
     }
 
+    emptyShareCtaEl.classList.add('d-none');
     currentPhotos = await Promise.all(body.data.map(withDimensions));
     renderMasonry(currentPhotos);
     const totalPages = Math.ceil(body.pagination.total / body.pagination.limit);
