@@ -162,7 +162,10 @@
     const photo = currentPhotos.find((p) => p.id === event.detail.photoId);
     if (!photo) return;
 
-    photo.favorites_count = (photo.favorites_count || 0) + 1;
+    // 人數是「不重複的人」：已經收藏過的人再放進別的收藏庫，不增加人數
+    if (!photo.is_collected) {
+      photo.favorites_count = (photo.favorites_count || 0) + 1;
+    }
     photo.is_collected = true;
     const badge = resultsEl.querySelector(
       `.photo-collect-badge[data-collect-id="${CSS.escape(photo.id)}"]`
