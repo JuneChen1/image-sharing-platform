@@ -130,6 +130,25 @@ body > main {
 #category-bar.is-scrollable {
   -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 2.5rem), transparent 100%);
   mask-image: linear-gradient(to right, #000 calc(100% - 2.5rem), transparent 100%);
+  cursor: grab;
+}
+
+/* 滑鼠拖曳中：顯示抓取游標、不要選到文字，也暫時關掉按鈕的 hover 效果避免閃爍 */
+#category-bar.is-dragging {
+  cursor: grabbing;
+  user-select: none;
+}
+
+#category-bar.is-dragging .btn {
+  pointer-events: none;
+}
+
+/* 分類太多或名稱很長時，讓分類列只佔「排序頁籤」以外的剩餘寬度、自己左右捲動；
+   否則它的內容寬度會把右邊的「最新／熱門」擠到下一行。手機版（<576px）本來就是排序在分類列下方，維持原樣 */
+@media (min-width: 576px) {
+  #category-bar {
+    flex: 1 1 0;
+  }
 }
 
 #profile-save-btn {

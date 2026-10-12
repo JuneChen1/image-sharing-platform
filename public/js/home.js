@@ -37,7 +37,77 @@
     }
   });
 
+  // 分類列的捲軸是隱藏的，原生只有觸控板橫向滑與手機觸控會捲；滑鼠使用者要靠下面兩個補強：
+  // 1) 滑鼠滾輪（垂直）在分類列上改成橫向捲動，捲到頭／尾時放行，頁面照常上下捲
+  categoryBarEl.addEventListener(
+    'wheel',
+    (event) => {
+      if (!categoryBarEl.classList.contains('is-scrollable')) return;
+      if (Math.abs(event.deltaY) <= Math.abs(event.deltaX)) return;
+
+      const maxScrollLeft = categoryBarEl.scrollWidth - categoryBarEl.clientWidth;
+      const atStart = categoryBarEl.scrollLeft <= 0 && event.deltaY < 0;
+      const atEnd = categoryBarEl.scrollLeft >= maxScrollLeft - 1 && event.deltaY > 0;
+      if (atStart || atEnd) return;
+
+      event.preventDefault();
+      categoryBarEl.scrollLeft += event.deltaY;
+    },
+    { passive: false }
+  );
+
+  // 2) 滑鼠按住拖曳。移動超過 5px 才算拖曳，單純點擊分類不受影響；拖完那一下不要當成點擊
+  const DRAG_THRESHOLD = 5;
+  let dragStartX = 0;
+  let dragStartScrollLeft = 0;
+  let isPointerDown = false;
+  let isDragging = false;
+  let suppressNextClick = false;
+
+  categoryBarEl.addEventListener('pointerdown', (event) => {
+    if (event.pointerType !== 'mouse' || event.button !== 0) return;
+    isPointerDown = true;
+    isDragging = false;
+    dragStartX = event.clientX;
+    dragStartScrollLeft = categoryBarEl.scrollLeft;
+  });
+
+  categoryBarEl.addEventListener('pointermove', (event) => {
+    if (!isPointerDown) return;
+
+    const dx = event.clientX - dragStartX;
+    if (!isDragging) {
+      if (Math.abs(dx) < DRAG_THRESHOLD) return;
+      isDragging = true;
+      categoryBarEl.classList.add('is-dragging');
+      categoryBarEl.setPointerCapture(event.pointerId);
+    }
+    categoryBarEl.scrollLeft = dragStartScrollLeft - dx;
+  });
+
+  function endDrag() {
+    if (!isPointerDown) return;
+    isPointerDown = false;
+    if (isDragging) {
+      isDragging = false;
+      suppressNextClick = true;
+      // 拖完的 click 會緊接著觸發；萬一瀏覽器沒送出 click，也不要把下一次真正的點擊吃掉
+      setTimeout(() => {
+        suppressNextClick = false;
+      }, 0);
+      categoryBarEl.classList.remove('is-dragging');
+    }
+  }
+
+  categoryBarEl.addEventListener('pointerup', endDrag);
+  categoryBarEl.addEventListener('pointercancel', endDrag);
+
   categoryBarEl.addEventListener('click', async (event) => {
+    if (suppressNextClick) {
+      suppressNextClick = false;
+      return;
+    }
+
     const button = event.target.closest('button[data-category]');
     if (!button || button.classList.contains('active')) return;
 
