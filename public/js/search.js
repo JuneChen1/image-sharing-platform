@@ -19,19 +19,31 @@
     statusEl.classList.toggle('text-muted', !isError);
   }
 
-  form.addEventListener('submit', async (event) => {
-    event.preventDefault();
-    const query = input.value.trim();
-    if (!query) return;
-
+  // 搜尋、換頁、網址帶入關鍵字共用同一套狀態文字，無結果時才不會留下一片空白
+  async function runSearch(query, page) {
     setStatus(i18n.t('common.searching'), false);
 
     try {
-      await fetchAndRenderPhotos(query, 1);
-      setStatus('', false);
+      await fetchAndRenderPhotos(query, page);
+      if (currentPhotos.length === 0) {
+        setStatus(i18n.t('search.noResults', { q: query }), false);
+      } else {
+        setStatus('', false);
+      }
     } catch (error) {
       setStatus(error.message || i18n.t('common.networkError'), true);
     }
+  }
+
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const query = input.value.trim();
+    if (!query) {
+      setStatus(i18n.t('search.keywordRequired'), true);
+      return;
+    }
+
+    await runSearch(query, 1);
   });
 
   paginationEl.addEventListener('click', async (event) => {
@@ -42,11 +54,7 @@
     const pageItem = link.closest('.page-item');
     if (pageItem.classList.contains('disabled') || pageItem.classList.contains('active')) return;
 
-    try {
-      await fetchAndRenderPhotos(currentQuery, Number(link.dataset.page));
-    } catch (error) {
-      setStatus(error.message || i18n.t('common.networkError'), true);
-    }
+    await runSearch(currentQuery, Number(link.dataset.page));
   });
 
   resultsEl.addEventListener('click', (event) => {
@@ -73,13 +81,7 @@
   const initialQuery = new URLSearchParams(window.location.search).get('q');
   if (initialQuery) {
     input.value = initialQuery;
-    setStatus(i18n.t('common.searching'), false);
-    try {
-      await fetchAndRenderPhotos(initialQuery, 1);
-      setStatus('', false);
-    } catch (error) {
-      setStatus(error.message || i18n.t('common.networkError'), true);
-    }
+    await runSearch(initialQuery, 1);
   }
 
   window.addEventListener(

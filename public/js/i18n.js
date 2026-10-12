@@ -107,6 +107,8 @@ const i18n = (function () {
 
       'search.heading': '從 Unsplash 搜尋',
       'search.placeholder': '關鍵字，例：Long-tailed Tit',
+      'search.keywordRequired': '請輸入搜尋關鍵字',
+      'search.noResults': '找不到「{q}」的相關照片，換個關鍵字試試吧',
 
       'auth.login': '登入',
       'auth.register': '註冊',
@@ -396,6 +398,8 @@ const i18n = (function () {
 
       'search.heading': 'Search Unsplash',
       'search.placeholder': 'Keyword, e.g. Long-tailed Tit',
+      'search.keywordRequired': 'Please enter a search keyword',
+      'search.noResults': 'No photos found for "{q}". Try a different keyword.',
 
       'auth.login': 'Log in',
       'auth.register': 'Sign up',
