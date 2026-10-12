@@ -121,6 +121,10 @@
     const email = document.getElementById('login-email').value.trim();
     const password = document.getElementById('login-password').value;
 
+    if (!email) {
+      loginAlert.show(i18n.t('auth.emailRequired'));
+      return;
+    }
     if (!isValidEmail(email)) {
       loginAlert.show(i18n.t('auth.invalidEmail'));
       return;
@@ -164,6 +168,10 @@
     }
     if (/[<>]/.test(name)) {
       registerAlert.show(i18n.t('auth.nameInvalidChars'));
+      return;
+    }
+    if (!email) {
+      registerAlert.show(i18n.t('auth.emailRequired'));
       return;
     }
     if (!isValidEmail(email)) {
@@ -211,6 +219,10 @@
     event.preventDefault();
     const email = document.getElementById('forgot-email').value.trim();
 
+    if (!email) {
+      forgotAlert.show(i18n.t('auth.emailRequired'));
+      return;
+    }
     if (!isValidEmail(email)) {
       forgotAlert.show(i18n.t('auth.invalidEmail'));
       return;
