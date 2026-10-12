@@ -100,6 +100,8 @@
   // 要和 config/constants.js 的 collectionNameMaxLength、輸入框的 maxlength 一致
   const COLLECTION_NAME_MAX_LENGTH = 100;
   let collectionCount = 0;
+  // 用網址 ?id= 還原詳情頁時，要靠這份列表查名稱（目前沒有單一收藏庫的 API）
+  let collectionsCache = [];
 
   async function loadCollections() {
     setListStatus(i18n.t('common.loading'), false);
@@ -116,6 +118,7 @@
       }
 
       collectionCount = body.data.length;
+      collectionsCache = body.data;
       if (body.data.length === 0) {
         collectionsGridEl.innerHTML = '';
         setListStatus(i18n.t('collections.emptyList'), false);
@@ -150,7 +153,11 @@
     }
   }
 
-  async function openCollectionDetail(collectionId, collectionName) {
+  // push 為 false 代表畫面是依網址（重新整理、上一頁）還原的，不要再多寫一筆歷史紀錄
+  async function openCollectionDetail(collectionId, collectionName, { push = true } = {}) {
+    if (push) {
+      history.pushState(null, '', `?id=${encodeURIComponent(collectionId)}`);
+    }
     currentCollection = { id: collectionId, name: collectionName };
     collectionDetailTitleEl.textContent = collectionName;
     breadcrumbCollectionNameEl.textContent = collectionName;
@@ -164,6 +171,21 @@
     detailViewEl.classList.add('d-none');
     listViewEl.classList.remove('d-none');
     window.scrollTo({ top: 0 });
+  }
+
+  // 依目前網址決定顯示列表或詳情；網址的收藏庫不存在（已刪除或不是自己的）就退回列表
+  async function syncViewWithUrl() {
+    const id = new URLSearchParams(window.location.search).get('id');
+    const collection = id && collectionsCache.find((c) => c.id === id);
+
+    if (!collection) {
+      if (id) history.replaceState(null, '', window.location.pathname);
+      closeCollectionDetail();
+      await loadCollections();
+      return;
+    }
+
+    await openCollectionDetail(collection.id, collection.name, { push: false });
   }
 
   async function loadCollectionPhotos() {
@@ -347,6 +369,8 @@
         return;
       }
 
+      // 這個網址已經失效，用 replace 取代掉，上一頁才不會回到已刪除的收藏庫
+      history.replaceState(null, '', window.location.pathname);
       closeCollectionDetail();
       await loadCollections();
     } catch (error) {
@@ -364,8 +388,10 @@
 
   breadcrumbCollectionsLink.addEventListener('click', (event) => {
     event.preventDefault();
-    closeCollectionDetail();
+    history.pushState(null, '', window.location.pathname);
+    syncViewWithUrl();
   });
+  window.addEventListener('popstate', syncViewWithUrl);
   editCollectionBtn.addEventListener('click', openEditCollectionModal);
   editCollectionForm.addEventListener('submit', renameCurrentCollection);
   editCollectionModalEl.addEventListener('shown.bs.modal', () => {
@@ -477,4 +503,8 @@
   });
 
   await loadCollections();
+  // 帶著 ?id= 進來（重新整理、分享連結、書籤）時，直接還原到該收藏庫的詳情
+  if (new URLSearchParams(window.location.search).has('id')) {
+    await syncViewWithUrl();
+  }
 })();
