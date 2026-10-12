@@ -25,8 +25,8 @@ module.exports = new EntitySchema({
       type: 'many-to-one',
       target: 'Collections',
       joinColumn: { name: 'collection_id' },
-      nullable: true,
-      onDelete: 'SET NULL'
+      nullable: false,
+      onDelete: 'CASCADE'
     },
     sharedPhotos: {
       type: 'many-to-one',
