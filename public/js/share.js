@@ -12,6 +12,8 @@
   const alertIconEl = document.getElementById('share-alert-icon');
   const alertMessageEl = document.getElementById('share-alert-message');
 
+  // 要和 config/constants.js 的 categoryMaxCount 一致
+  const CATEGORY_MAX_COUNT = 10;
   let categories = [];
   let isSubmitting = false;
   // 這次開啟彈窗期間有沒有分享成功：關閉時才通知頁面重新載入清單，避免開著時背景一直跳動
@@ -57,10 +59,16 @@
       return false;
     }
 
-    categoryInput.value = '';
     // 後端以不分大小寫去重，前端同步，避免出現 Animal 與 animal 兩個標籤
     const lowerName = name.toLowerCase();
-    if (!name || categories.some((c) => c.toLowerCase() === lowerName)) return true;
+    const isDuplicate = categories.some((c) => c.toLowerCase() === lowerName);
+    if (name && !isDuplicate && categories.length >= CATEGORY_MAX_COUNT) {
+      showAlert(i18n.t('share.categoryLimit', { max: CATEGORY_MAX_COUNT }));
+      return false;
+    }
+
+    categoryInput.value = '';
+    if (!name || isDuplicate) return true;
 
     categories.push(name);
     renderCategories();
