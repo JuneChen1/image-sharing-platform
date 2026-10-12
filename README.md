@@ -14,28 +14,39 @@
 
 ## 功能清單 (Features)
 
-* 探索 Unsplash 圖片： 首頁或探索頁可輸入關鍵字，即時向 Unsplash API 撈取高畫質攝影照片，方便使用者尋找想分享的圖片網址。
-* 分享照片至社群： 使用者貼上 **Unsplash 圖片網址**（目前僅限 Unsplash 來源），自行輸入一個或多個分類名稱後分享至本站首頁。
-* 照片分類篩選： 網站首頁提供標籤選單，供使用者依分類瀏覽他人分享的照片。
+* 探索 Unsplash 圖片： 在「找圖片」頁輸入關鍵字，即時向 Unsplash API 撈取高畫質攝影照片，方便使用者尋找想分享的圖片（未登入也能搜尋）。
+* 首頁瀏覽與篩選： 網站首頁提供標籤選單，供使用者依分類瀏覽他人分享的照片；搜尋框可搜尋站內照片的攝影師或分類，並可切換「最新／熱門」排序。
+* 帳號系統： 註冊、登入、登出、修改個人資料、忘記密碼和刪除帳號等功能。
+* 分享照片至社群： 登入後貼上 **Unsplash 圖片網址**（目前僅限 Unsplash 來源），自行輸入一個或多個分類名稱（最多 10 個）後分享至本站首頁。
 * 下載導流： 其他使用者在分享列表點擊「下載」時，本站不代為下載或代理圖片檔案，而是將使用者導向該張照片的原始 Unsplash 頁面。
-* 著作權致謝欄位： 每張照片皆清晰標示「Photo by [攝影師] on Unsplash」並附帶官方要求的導流連結。
+* 收藏庫： 可新增、改名、刪除。同一張照片可放進多個收藏庫，每人最多 10 個收藏庫。
+* 分享紀錄： 查看自己（或其他使用者）分享過的照片。
+* 管理後台： 僅管理員可進入。可搜尋與篩選使用者、停權／解除停權、強制刪除照片、匯出刪除紀錄 CSV，並查看 Unsplash API 剩餘額度。
+* 中英雙語介面： 繁體中文與 English 可隨時切換。
+* 著作權致謝欄位： 每張照片皆清晰標示攝影師並附帶官方要求的導流連結。
 
 ---
 
 ## 專案技術
-1. Node.js v24.12.0
+1. Node.js v24.x
 2. Express v5.2.1
 3. pg v8.22.0
 4. typeorm v1.1.0
 5. dotenv v17.4.2
 6. cors v2.8.6
 7. express-rate-limit v8.6.0
+8. bcrypt v6.0.0
+9. jsonwebtoken v9.0.3
+10. nodemailer v10.0.9
+11. Bootstrap v5.3.3（CDN）
+12. JavaScript（前端無框架）
 
 ---
 
 ## 第三方服務
 1. PostgreSQL
 2. Unsplash API
+3. SMTP 郵件服務（忘記密碼時寄送重設連結）
 
 
 🚀 取得 Unsplash API 憑證
@@ -54,17 +65,22 @@ git clone https://github.com/JuneChen1/image-sharing-platform.git
 cd image-sharing-platform
 ```
 
-3. 環境變數設定：將 `.env.example` 改成 `.env`，並填入相關欄位
-```env
-PORT=3000
-UNSPLASH_ACCESS_KEY=your_unsplash_access_key
-DATABASE_URL=postgresql://user:password@localhost:port/dbname
+3. 環境變數設定：將 `.env.example` 改成 `.env`，並填入相關欄位（各欄位的說明、必填與選填、範例值請見 `.env.example` 裡的註解）
 
-```
-
-4. 安裝套件並啟動專案：
+4. 安裝套件：
 ```bash
 npm install
+```
+
+5. 建立資料表與種子資料：
+```bash
+npm run migration:run
+npm run seed
+npm run seed:admin
+```
+
+6. 啟動專案：
+```bash
 npm start
 ```
 
