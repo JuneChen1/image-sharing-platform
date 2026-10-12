@@ -202,7 +202,7 @@ const getSharedImages = async (req, res, next) => {
 
         data = await dataSource.query(
           `
-          SELECT sp.*, u.name AS user_name, COUNT(f.id)::int AS favorites_count
+          SELECT sp.*, u.name AS user_name, COUNT(DISTINCT f.user_id)::int AS favorites_count
           FROM shared_photos sp
           JOIN users AS u ON u.id = sp.user_id
           LEFT JOIN favorites AS f ON f.shared_photo_id = sp.id
@@ -223,7 +223,7 @@ const getSharedImages = async (req, res, next) => {
 
         data = await dataSource.query(
           `
-          SELECT sp.*, u.name AS user_name, COUNT(f.id)::int AS favorites_count
+          SELECT sp.*, u.name AS user_name, COUNT(DISTINCT f.user_id)::int AS favorites_count
           FROM shared_photos sp
           JOIN users AS u ON u.id = sp.user_id
           LEFT JOIN favorites AS f ON f.shared_photo_id = sp.id

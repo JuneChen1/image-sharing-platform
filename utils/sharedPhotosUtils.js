@@ -31,7 +31,7 @@ async function attachFavoritesCount(photos) {
   if (photos.length === 0) return photos;
 
   const result = await dataSource.query(
-    `SELECT shared_photo_id, COUNT(*)::int AS count
+    `SELECT shared_photo_id, COUNT(DISTINCT user_id)::int AS count
      FROM favorites
      WHERE shared_photo_id = ANY($1)
      GROUP BY shared_photo_id`,
