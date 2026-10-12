@@ -170,6 +170,11 @@
     if (isCreatingCollection) return;
     const name = collectNewNameEl.value.trim();
     if (!name) return;
+    // 和收藏庫頁的新增／改名一致，在前端先擋下，不要等後端回「名稱格式錯誤」
+    if (/[<>]/.test(name)) {
+      showAlert(i18n.t('collections.nameInvalidChars'));
+      return;
+    }
 
     isCreatingCollection = true;
     collectNewBtn.disabled = true;
