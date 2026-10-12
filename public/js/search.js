@@ -82,6 +82,9 @@
   if (initialQuery) {
     input.value = initialQuery;
     await runSearch(initialQuery, 1);
+  } else {
+    // 還沒搜尋時給一句引導，進來才不會是一片空白；切換語言由 i18n 的 retranslateMessages 處理
+    setStatus(i18n.t('search.idleHint'), false);
   }
 
   window.addEventListener(
