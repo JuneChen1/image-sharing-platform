@@ -1,4 +1,4 @@
-const { emailMaxLength } = require('../config/constants');
+const { emailMaxLength, categoryMaxCount } = require('../config/constants');
 
 function verifyUnsplashImageId(unsplashId) {
   const unsplashIdPattern = /^[\w-]{5,20}$/;
@@ -6,7 +6,11 @@ function verifyUnsplashImageId(unsplashId) {
 }
 
 function verifyCustomCategories(customCategories) {
-  if (!Array.isArray(customCategories) || customCategories.length === 0) {
+  if (
+    !Array.isArray(customCategories) ||
+    customCategories.length === 0 ||
+    customCategories.length > categoryMaxCount
+  ) {
     return false;
   }
 
