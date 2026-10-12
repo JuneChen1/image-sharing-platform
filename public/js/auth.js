@@ -56,6 +56,12 @@
     localStorage.setItem(USER_NAME_KEY, userName);
   }
 
+  // 只改暱稱（例如個人資料頁儲存後）：導覽列上的名字只在載入時畫一次，要發事件讓它跟著更新
+  function setUserName(userName) {
+    localStorage.setItem(USER_NAME_KEY, userName);
+    document.dispatchEvent(new CustomEvent('usernamechange'));
+  }
+
   function clearSession() {
     localStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem(USER_NAME_KEY);
@@ -106,6 +112,7 @@
     isAdmin,
     isLoggedIn,
     setSession,
+    setUserName,
     clearSession,
     redirectToLogin,
     getAuthHeader
@@ -139,6 +146,10 @@
         mySharedPhotosLink.href = `/user-shared-photos.html?userId=${getUserId()}`;
       }
     }
+
+    document.addEventListener('usernamechange', () => {
+      if (isLoggedIn()) userNameEl.textContent = getUserName();
+    });
 
     logoutBtn.addEventListener('click', async () => {
       try {

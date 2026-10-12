@@ -101,7 +101,7 @@
         return;
       }
 
-      window.auth.setSession(window.auth.getToken(), body.data.user.name);
+      window.auth.setUserName(body.data.user.name);
       showAlert(i18n.t('profile.saved'), 'success');
     } catch (error) {
       showAlert(i18n.t('common.networkError'));
