@@ -22,7 +22,7 @@
   <main class="container" style="max-width: 480px;">
     <div id="profile-pane">
       <h1 class="h4 mb-4 text-center" data-i18n="profile.heading">個人資料</h1>
-      <form id="profile-form">
+      <form id="profile-form" novalidate>
         <div class="mb-3">
           <label for="profile-email" class="form-label">Email</label>
           <div class="position-relative">
@@ -79,7 +79,7 @@
           <h5 class="modal-title" id="deleteAccountModalLabel" data-i18n="profile.deleteAccount">刪除帳號</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="關閉" data-i18n-aria-label="common.close"></button>
         </div>
-        <form id="delete-account-form">
+        <form id="delete-account-form" novalidate>
           <div class="modal-body">
             <label for="delete-account-password" class="form-label" data-i18n="profile.confirmPassword">請輸入密碼以確認</label>
             <input type="password" id="delete-account-password" class="form-control" autocomplete="current-password" required />

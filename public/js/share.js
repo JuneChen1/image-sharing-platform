@@ -107,7 +107,10 @@
     if (isSubmitting) return;
 
     const url = shareInput.value.trim();
-    if (!url) return;
+    if (!url) {
+      showAlert(i18n.t('error.URL_REQUIRED'));
+      return;
+    }
 
     // 依表單由上而下的順序驗證：網址在分類上面，所以先擋格式錯誤的網址。
     // 規則和後端 getUnsplashImageId 一致（開頭必須是這串）；照片是否真的存在只有後端問得到，仍由後端回傳
