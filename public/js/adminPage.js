@@ -283,7 +283,7 @@
                 style="width: 64px; height: 64px; object-fit: cover; border-radius: 4px;"
               />
             </td>
-            <td data-label="${escapeHtml(i18n.t('admin.colCategories'))}">${(photo.categories || []).join(i18n.t('common.listSeparator'))}</td>
+            <td data-label="${escapeHtml(i18n.t('admin.colCategories'))}">${(photo.categories || []).map(escapeHtml).join(i18n.t('common.listSeparator'))}</td>
             <td data-label="${escapeHtml(i18n.t('admin.colSharer'))}">
               <a href="/user-shared-photos.html?userId=${escapeHtml(photo.user_id)}">${escapeHtml(photo.user_name)}</a>
             </td>
