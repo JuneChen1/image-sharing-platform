@@ -37,6 +37,7 @@
     collectId,
     sharerId,
     sharerName,
+    isOwnPhoto,
     onRemoveFromCollection
   }) => {
     lightboxImage.src = imageUrl;
@@ -50,7 +51,8 @@
     lightboxCollect.classList.toggle('d-none', !currentCollectId);
     if (window.auth.isLoggedIn()) lightboxCollect.removeAttribute('title');
     else lightboxCollect.title = i18n.t('lightbox.collectLogin');
-    lightboxShare.classList.toggle('d-none', !window.auth.isLoggedIn());
+    // 自己分享的照片不能再分享一次（後端會回「已經分享過」），不顯示分享鈕
+    lightboxShare.classList.toggle('d-none', !window.auth.isLoggedIn() || Boolean(isOwnPhoto));
     lightboxCategories.innerHTML = (categories || [])
       .map((name) => `<span class="tag-pill">${escapeHtml(name)}</span>`)
       .join('');

@@ -96,7 +96,8 @@
       photographerUrl: photo.photographer_url,
       downloadUrl: photo.unsplash_page_url,
       categories: photo.categories,
-      collectId: photo.id
+      collectId: photo.id,
+      isOwnPhoto: isOwnPage
     });
   });
 
@@ -325,11 +326,15 @@
           <div class="photo-overlay-top">
             ${
               window.auth.isLoggedIn()
-                ? `<button type="button" class="btn-icon" data-share-id="${escapeHtml(photo.id)}" title="${i18n.t('common.share')}" aria-label="${i18n.t('common.share')}">
+                ? `${
+                    isOwnPage
+                      ? ''
+                      : `<button type="button" class="btn-icon" data-share-id="${escapeHtml(photo.id)}" title="${i18n.t('common.share')}" aria-label="${i18n.t('common.share')}">
                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
                       <path d="M11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.5 2.5 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5"/>
                     </svg>
-                  </button>
+                  </button>`
+                  }
                   <button type="button" class="photo-collect-badge${photo.is_collected ? ' is-collected' : ''}" data-collect-id="${escapeHtml(photo.id)}" title="${collectBadgeTitle(photo)}" aria-label="${collectBadgeTitle(photo)}">
                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
                       <path d="M2 2v13.5a.5.5 0 0 0 .74.439L8 13.069l5.26 2.87A.5.5 0 0 0 14 15.5V2a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2z"/>
