@@ -51,7 +51,8 @@
       .join('');
   }
 
-  // 回傳 false 代表輸入的分類不合法（已顯示提示、文字保留在輸入框讓使用者修改），呼叫端不該繼續往下走
+  // 回傳 false 代表輸入的分類不合法（已顯示提示），呼叫端不該繼續往下走。
+  // 含 < > 時文字保留在輸入框讓使用者修改；超過上限時修改也沒用，直接清掉，之後才能直接按「分享」送出
   function addCategory() {
     const name = categoryInput.value.trim();
     if (/[<>]/.test(name)) {
@@ -63,6 +64,7 @@
     const lowerName = name.toLowerCase();
     const isDuplicate = categories.some((c) => c.toLowerCase() === lowerName);
     if (name && !isDuplicate && categories.length >= CATEGORY_MAX_COUNT) {
+      categoryInput.value = '';
       showAlert(i18n.t('share.categoryLimit', { max: CATEGORY_MAX_COUNT }));
       return false;
     }
