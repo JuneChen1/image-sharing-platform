@@ -106,7 +106,17 @@
   <div class="modal-dialog modal-dialog-centered modal-lg">
     <div class="modal-content">
       <h5 class="modal-title visually-hidden" id="lightboxModalLabel" data-i18n="lightbox.title">照片預覽</h5>
-      <a id="lightbox-photographer" href="" target="_blank" rel="noopener" class="lightbox-photographer-badge"></a>
+      <div class="lightbox-credit">
+        <a id="lightbox-photographer-avatar" href="" target="_blank" rel="noopener" class="lightbox-photographer-avatar" tabindex="-1" aria-hidden="true"></a>
+        <div class="lightbox-credit-text">
+          <a id="lightbox-photographer" href="" target="_blank" rel="noopener" class="lightbox-photographer-name"></a>
+          <span class="lightbox-credit-source">
+            <svg class="lightbox-credit-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
+            <span data-i18n="lightbox.fromUnsplash">來自</span>
+            <a id="lightbox-unsplash" href="https://unsplash.com/?utm_source=picshare&utm_medium=referral" target="_blank" rel="noopener">Unsplash<svg class="lightbox-credit-external" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg></a>
+          </span>
+        </div>
+      </div>
       <button type="button" class="btn-close lightbox-close" data-bs-dismiss="modal" aria-label="關閉" data-i18n-aria-label="common.close"></button>
       <div class="modal-body text-center">
         <div class="lightbox-image-wrap">

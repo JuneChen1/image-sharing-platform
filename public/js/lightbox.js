@@ -4,6 +4,7 @@
   const lightboxModalEl = document.getElementById('lightboxModal');
   const lightboxImage = document.getElementById('lightbox-image');
   const lightboxPhotographer = document.getElementById('lightbox-photographer');
+  const lightboxPhotographerAvatar = document.getElementById('lightbox-photographer-avatar');
   const lightboxDownload = document.getElementById('lightbox-download');
   const lightboxShare = document.getElementById('lightbox-share');
   const lightboxCollect = document.getElementById('lightbox-collect');
@@ -20,14 +21,6 @@
     return `<span class="person-name">${escapeHtml(name)}</span>`;
   }
 
-  function avatarLinkHTML(name) {
-    const initial = (name || '?').trim().charAt(0).toUpperCase();
-    return `
-      <span class="lightbox-photographer-avatar">${escapeHtml(initial)}</span>
-      <span class="person-name">${escapeHtml(name)}</span>
-    `;
-  }
-
   window.openLightbox = ({
     imageUrl,
     photographerName,
@@ -42,8 +35,11 @@
   }) => {
     lightboxImage.src = imageUrl;
     lightboxImage.alt = i18n.t('common.photoAlt', { name: photographerName });
-    lightboxPhotographer.innerHTML = avatarLinkHTML(photographerName);
-    lightboxPhotographer.href = withUtm(photographerUrl);
+    const photographerLink = withUtm(photographerUrl);
+    lightboxPhotographer.textContent = photographerName;
+    lightboxPhotographer.href = photographerLink;
+    lightboxPhotographerAvatar.textContent = (photographerName || '?').trim().charAt(0).toUpperCase();
+    lightboxPhotographerAvatar.href = photographerLink;
     lightboxDownload.href = withUtm(downloadUrl);
     // 分享視窗要原始網址：後端用網址最後 11 個字元當照片 ID，不能帶 utm
     currentShareUrl = downloadUrl;

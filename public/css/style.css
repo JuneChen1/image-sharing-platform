@@ -573,7 +573,8 @@ body > main {
   #new-collection-btn,
   .collection-edit-link,
   .collection-delete-link,
-  footer a[href^="mailto:"] {
+  footer a[href^="mailto:"],
+  footer .footer-link {
     display: inline-flex;
     align-items: center;
     min-height: 2.75rem;
@@ -761,7 +762,7 @@ body > main {
 
 .lightbox-image-wrap {
   position: relative;
-  margin-top: 1.75rem;
+  margin-top: 2.5rem;
 }
 
 #lightbox-image {
@@ -771,38 +772,90 @@ body > main {
   object-fit: contain;
 }
 
-.lightbox-photographer-badge {
+/* 致謝列：頭像在左，右邊兩行——上面攝影師名字、下面「來自 Unsplash」（Unsplash API 規定要同時標示兩者，且連結都要帶 utm） */
+.lightbox-credit {
   position: absolute;
   top: 0.75rem;
   left: 0.75rem;
+  right: 3rem;
   z-index: 1;
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  gap: 0.5rem;
-  text-decoration: none;
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: #212529;
+  gap: 0.625rem;
+  min-width: 0;
 }
 
-.lightbox-photographer-badge:hover .person-name {
+.lightbox-credit-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  line-height: 1.25;
+}
+
+.lightbox-photographer-name {
+  color: #212529;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lightbox-photographer-name:hover {
   text-decoration: underline;
 }
 
-.lightbox-photographer-badge .person-name {
+.lightbox-credit-source {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  color: #6b7280;
+  font-size: 0.75rem;
+  white-space: nowrap;
+}
+
+.lightbox-credit-source a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  color: #6b7280;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.lightbox-credit-source a:hover {
   color: #212529;
+  text-decoration: underline;
+}
+
+/* 副標題的圖示：比文字小一點、顏色更淡，不搶名字的視覺焦點 */
+.lightbox-credit-icon {
+  width: 0.625rem;
+  height: 0.625rem;
+  flex-shrink: 0;
+  margin-right: -0.0625rem; /* 相機和「來自」靠近一點（實際間距約 3px） */
+}
+
+.lightbox-credit-external {
+  width: 0.5625rem;
+  height: 0.5625rem;
+  flex-shrink: 0;
+  opacity: 0.7;
 }
 
 .lightbox-photographer-avatar {
-  width: 1.75rem;
-  height: 1.75rem;
+  width: 2.25rem;
+  height: 2.25rem;
   border-radius: 50%;
   background: #495057;
   color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 0.9375rem;
   font-weight: 600;
+  text-decoration: none;
   flex-shrink: 0;
 }
 
@@ -1142,3 +1195,27 @@ body > main {
   max-width: 380px;
 }
 
+
+/* 隱私權政策、使用者條款：中英文內容各寫一份，依 <html lang> 只顯示目前語言（i18n.setLang 會更新 lang） */
+html[lang="en"] .lang-zh,
+html:not([lang="en"]) .lang-en {
+  display: none;
+}
+
+.legal-page {
+  max-width: 760px;
+  line-height: 1.75;
+}
+
+.legal-page h2 {
+  margin-top: 1.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.legal-page ul {
+  padding-left: 1.25rem;
+}
+
+.legal-page li {
+  margin-bottom: 0.375rem;
+}

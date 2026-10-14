@@ -13,6 +13,8 @@ const i18n = (function () {
       'title.resetPassword': '重設密碼 | PicShare',
       'title.search': '搜尋 Unsplash 照片 | PicShare',
       'title.userPhotos': '使用者分享紀錄 | PicShare',
+      'title.privacy': '隱私權政策 | PicShare',
+      'title.terms': '使用者條款 | PicShare',
 
       'common.cancel': '取消',
       'common.close': '關閉',
@@ -59,6 +61,9 @@ const i18n = (function () {
       'nav.switchLangAria': '切換語言',
 
       'footer.contact': '聯絡我們：',
+      'footer.photosFrom': '照片來源：',
+      'footer.privacy': '隱私權政策',
+      'footer.terms': '使用者條款',
 
       'share.title': '分享 Unsplash 照片',
       'share.urlLabel': 'Unsplash 圖片網址',
@@ -77,6 +82,7 @@ const i18n = (function () {
       'lightbox.title': '照片預覽',
       'lightbox.removeFromCollection': '移出收藏',
       'lightbox.sharedBy': '分享者：',
+      'lightbox.fromUnsplash': '來自',
       'lightbox.collect': '收藏',
       'lightbox.collectLogin': '登入後即可收藏',
 
@@ -303,6 +309,8 @@ const i18n = (function () {
       'title.resetPassword': 'Reset Password | PicShare',
       'title.search': 'Search Unsplash Photos | PicShare',
       'title.userPhotos': 'Shared Photos | PicShare',
+      'title.privacy': 'Privacy Policy | PicShare',
+      'title.terms': 'Terms of Use | PicShare',
 
       'common.cancel': 'Cancel',
       'common.close': 'Close',
@@ -349,6 +357,9 @@ const i18n = (function () {
       'nav.switchLangAria': 'Switch language',
 
       'footer.contact': 'Contact us: ',
+      'footer.photosFrom': 'Photos from ',
+      'footer.privacy': 'Privacy Policy',
+      'footer.terms': 'Terms of Use',
 
       'share.title': 'Share an Unsplash photo',
       'share.urlLabel': 'Unsplash photo URL',
@@ -367,6 +378,7 @@ const i18n = (function () {
       'lightbox.title': 'Photo preview',
       'lightbox.removeFromCollection': 'Remove from collection',
       'lightbox.sharedBy': 'Shared by: ',
+      'lightbox.fromUnsplash': 'on',
       'lightbox.collect': 'Save',
       'lightbox.collectLogin': 'Log in to save',
 
