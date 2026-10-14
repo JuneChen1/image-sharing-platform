@@ -61,7 +61,7 @@ async function main() {
         'https://unsplash.com/photos/black-and-white-cat-lying-on-brown-bamboo-chair-inside-room-gKXKBY-C-Dk',
       image_url:
         'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
-      photographer_name: 'madhatterzone',
+      photographer_name: 'Manja Vitolic',
       photographer_url: 'https://unsplash.com/@madhatterzone',
       user: alice
     },
@@ -71,7 +71,7 @@ async function main() {
         'https://unsplash.com/photos/selective-focus-photography-of-orange-and-white-cat-on-brown-table-75715CVEJhI',
       image_url:
         'https://images.unsplash.com/photo-1573865526739-10659fec78a5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
-      photographer_name: 'sadmax',
+      photographer_name: 'Amber Kipp',
       photographer_url: 'https://unsplash.com/@sadmax',
       user: bob
     },
@@ -81,7 +81,7 @@ async function main() {
         'https://unsplash.com/photos/dog-running-on-beach-during-daytime-yihlaRCCvd4',
       image_url:
         'https://images.unsplash.com/photo-1530281700549-e82e7bf110d6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
-      photographer_name: 'o5ky',
+      photographer_name: 'Oscar Sutton',
       photographer_url: 'https://unsplash.com/@o5ky',
       user: alice
     },
@@ -91,7 +91,7 @@ async function main() {
         'https://unsplash.com/photos/green-and-gray-rock-formation-beside-body-of-water-under-cloudy-sky-during-daytime-m_uSWBJWr0s',
       image_url:
         'https://images.unsplash.com/photo-1621847468516-1ed5d0df56fe?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
-      photographer_name: 'daymnous',
+      photographer_name: 'Allyson Beaucourt',
       photographer_url: 'https://unsplash.com/@daymnous',
       user: bob
     },
@@ -101,7 +101,7 @@ async function main() {
         'https://unsplash.com/photos/green-mountains-under-blue-sky-during-daytime-Joo3UBw789Q',
       image_url:
         'https://images.unsplash.com/photo-1617634667039-8e4cb277ab46?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
-      photographer_name: 'danangele',
+      photographer_name: 'Daniel Angele',
       photographer_url: 'https://unsplash.com/@danangele',
       user: alice
     },
@@ -111,7 +111,7 @@ async function main() {
         'https://unsplash.com/photos/vegetable-and-meat-on-bowl-kcA-c3f_3FE',
       image_url:
         'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
-      photographer_name: 'pwign',
+      photographer_name: 'Anh Nguyen',
       photographer_url: 'https://unsplash.com/@pwign',
       user: bob
     },
@@ -121,7 +121,7 @@ async function main() {
         'https://unsplash.com/photos/pizza-on-chopping-board-MqT0asuoIcU',
       image_url:
         'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
-      photographer_name: 'briewilly',
+      photographer_name: 'Chad Montano',
       photographer_url: 'https://unsplash.com/@briewilly',
       user: alice
     },
@@ -131,7 +131,7 @@ async function main() {
         'https://unsplash.com/photos/low-angle-photo-of-city-high-rise-buildings-during-daytime-PhYq704ffdA',
       image_url:
         'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
-      photographer_name: 'seanpollock',
+      photographer_name: 'Sean Pollock',
       photographer_url: 'https://unsplash.com/@seanpollock',
       user: bob
     },
@@ -141,7 +141,7 @@ async function main() {
         'https://unsplash.com/photos/grayscale-photo-of-low-angle-view-of-building-K67sBVqLLuw',
       image_url:
         'https://images.unsplash.com/photo-1527576539890-dfa815648363?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
-      photographer_name: 'joakimnadell',
+      photographer_name: 'Joakim Nådell',
       photographer_url: 'https://unsplash.com/@joakimnadell',
       user: alice
     },
@@ -151,7 +151,7 @@ async function main() {
         'https://unsplash.com/photos/traffic-filled-highways-crisscross-a-city-at-golden-hour-72CrKMqbwkM',
       image_url:
         'https://images.unsplash.com/photo-1785788684002-f500e756047d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
-      photographer_name: 'jonasdegener',
+      photographer_name: 'Jonas Degener',
       photographer_url: 'https://unsplash.com/@jonasdegener',
       user: bob
     },
@@ -161,7 +161,7 @@ async function main() {
         'https://unsplash.com/photos/a-woman-sitting-on-a-bed-using-a-laptop-xSiQBSq-I0M',
       image_url:
         'https://images.unsplash.com/photo-1649972904349-6e44c42644a7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
-      photographer_name: 'surface',
+      photographer_name: 'Surface',
       photographer_url: 'https://unsplash.com/@surface',
       user: alice
     },
@@ -171,7 +171,7 @@ async function main() {
         'https://unsplash.com/photos/photo-of-outer-space-Q1p7bh3SHj8',
       image_url:
         'https://images.unsplash.com/photo-1451187580459-43490279c0fa?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
-      photographer_name: 'nasa',
+      photographer_name: 'NASA',
       photographer_url: 'https://unsplash.com/@nasa',
       user: bob
     },
@@ -181,7 +181,7 @@ async function main() {
         'https://unsplash.com/photos/ice-capped-mountain-at-daytime-xfngap_DToE',
       image_url:
         'https://images.unsplash.com/photo-1554629947-334ff61d85dc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
-      photographer_name: 'mvds',
+      photographer_name: 'Mads Schmidt Rasmussen',
       photographer_url: 'https://unsplash.com/@mvds',
       user: alice
     },
@@ -191,7 +191,7 @@ async function main() {
         'https://unsplash.com/photos/aerial-view-of-mountain-eUFfY6cwjSU',
       image_url:
         'https://images.unsplash.com/photo-1540979388789-6cee28a1cdc9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
-      photographer_name: 'borisbaldinger',
+      photographer_name: 'Boris Baldinger',
       photographer_url: 'https://unsplash.com/@borisbaldinger',
       user: bob
     },
@@ -201,7 +201,7 @@ async function main() {
         'https://unsplash.com/photos/cafe-late-on-table-zEdCT0qrodE',
       image_url:
         'https://images.unsplash.com/photo-1556742526-795a8eac090e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
-      photographer_name: 'nate_dumlao',
+      photographer_name: 'Nathan Dumlao',
       photographer_url: 'https://unsplash.com/@nate_dumlao',
       user: alice
     },
@@ -211,7 +211,7 @@ async function main() {
         'https://unsplash.com/photos/shallow-focus-photography-of-coffee-late-in-mug-on-table-zUNs99PGDg0',
       image_url:
         'https://images.unsplash.com/photo-1509042239860-f550ce710b93?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
-      photographer_name: 'nate_dumlao',
+      photographer_name: 'Nathan Dumlao',
       photographer_url: 'https://unsplash.com/@nate_dumlao',
       user: bob
     }
