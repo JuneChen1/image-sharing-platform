@@ -1196,6 +1196,64 @@ body > main {
 }
 
 
+/* 頁尾：連結橫向排成一列（窄螢幕自動換行），預設無底線、滑過才出現；版權字樣比連結淡。
+   顏色在頁面底色 #f8f9fa 上都符合 WCAG AA（一般文字 4.5:1）：連結 #4b5563 = 7.2:1、版權 #6b7280 = 4.6:1。
+   版權不能再更淡（#9ca3af 只有 2.4:1，不合格） */
+.site-footer {
+  color: #4b5563;
+}
+
+.footer-links {
+  column-gap: 0;
+  row-gap: 0.25rem;
+}
+
+.footer-links li {
+  display: inline-flex;
+  align-items: center;
+}
+
+/* 項目之間用淺灰細線分隔（手機換行後會變成開頭多一條線，所以窄螢幕改用間距） */
+.footer-links li + li::before {
+  content: '';
+  width: 1px;
+  height: 0.9em;
+  margin: 0 0.875rem;
+  background: #d1d5db;
+}
+
+.footer-link {
+  color: #4b5563;
+  text-decoration: none;
+}
+
+.footer-link:hover,
+.footer-link:focus-visible {
+  color: #212529;
+  text-decoration: underline;
+}
+
+.footer-link-mail {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.footer-copy {
+  color: #6b7280;
+  font-size: 0.8125rem;
+}
+
+@media (max-width: 575.98px) {
+  .footer-links {
+    column-gap: 1.25rem;
+  }
+
+  .footer-links li + li::before {
+    display: none;
+  }
+}
+
 /* 隱私權政策、使用者條款：中英文內容各寫一份，依 <html lang> 只顯示目前語言（i18n.setLang 會更新 lang） */
 html[lang="en"] .lang-zh,
 html:not([lang="en"]) .lang-en {
