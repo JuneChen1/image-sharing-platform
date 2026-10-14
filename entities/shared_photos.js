@@ -25,7 +25,7 @@ module.exports = new EntitySchema({
     },
     photographer_name: {
       type: 'varchar',
-      length: 50,
+      length: 255,
       nullable: false
     },
     photographer_url: {
