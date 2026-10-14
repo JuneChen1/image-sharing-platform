@@ -206,10 +206,13 @@
         />
         <div class="card-body">
           <p class="card-text">
-            <a href="${escapeHtml(withUtm(photo.user.links.html))}" target="_blank" rel="noopener" class="person-avatar-link">
-              <span class="photo-author-avatar">${escapeHtml(initial)}</span>
-              <span class="photo-author-name">${escapeHtml(photo.user.name)}</span>
-            </a>
+            <span class="photo-credit">
+              <a href="${escapeHtml(withUtm(photo.user.links.html))}" target="_blank" rel="noopener" class="person-avatar-link">
+                <span class="photo-author-avatar">${escapeHtml(initial)}</span>
+                <span class="photo-author-name">${escapeHtml(photo.user.name)}</span>
+              </a>
+              ${unsplashCreditHTML()}
+            </span>
           </p>
           <button type="button" class="btn btn-sm btn-dark w-100" data-share-url="${escapeHtml(photo.links.html)}">${i18n.t('common.share')}</button>
         </div>

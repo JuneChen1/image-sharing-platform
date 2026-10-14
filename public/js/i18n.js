@@ -83,6 +83,7 @@ const i18n = (function () {
       'lightbox.removeFromCollection': '移出收藏',
       'lightbox.sharedBy': '分享者：',
       'lightbox.fromUnsplash': '來自',
+      'common.fromUnsplash': '來自 Unsplash',
       'lightbox.collect': '收藏',
       'lightbox.collectLogin': '登入後即可收藏',
 
@@ -379,6 +380,7 @@ const i18n = (function () {
       'lightbox.removeFromCollection': 'Remove from collection',
       'lightbox.sharedBy': 'Shared by: ',
       'lightbox.fromUnsplash': 'on',
+      'common.fromUnsplash': 'on Unsplash',
       'lightbox.collect': 'Save',
       'lightbox.collectLogin': 'Log in to save',
 

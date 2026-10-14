@@ -354,10 +354,11 @@ body > main {
   right: 0;
   bottom: 0;
   padding: 0.75rem;
-  display: flex;
+  /* 第一列：作者（左）、下載鈕（右）；第二列：來自 Unsplash（卡片窄時放不進同一列） */
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
-  justify-content: space-between;
-  gap: 0.5rem;
+  gap: 0.25rem 0.5rem;
   background: linear-gradient(to top, rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0));
   opacity: 0;
   transition: opacity 0.15s ease;
@@ -418,6 +419,93 @@ body > main {
 
 .person-avatar-link:hover .photo-author-name {
   text-decoration: underline;
+}
+
+/* 卡片上的作者 + 「來自 Unsplash」致謝（Unsplash API 規定每次顯示照片都要標示 Unsplash 與攝影師）。
+   版面比照 LightBox：頭像在左，右邊兩行——名字在上、「來自 Unsplash」在下。
+   做法：.photo-credit 是 grid，作者連結 display: contents 拆掉，裡面的頭像、名字直接成為 grid 的格子（頭像跨兩列、垂直置中） */
+.photo-credit {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  column-gap: 0.5rem;
+  align-items: center;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.photo-credit > .person-avatar-link,
+.photo-credit > .photo-author {
+  display: contents;
+}
+
+.photo-credit .photo-author-avatar {
+  grid-column: 1;
+  grid-row: 1 / span 2;
+}
+
+.photo-credit .photo-author-name {
+  grid-column: 2;
+  grid-row: 1;
+  align-self: end;
+  justify-self: start; /* 只佔文字寬度，右邊空白處不會變成連結，點得到下面的照片 */
+  max-width: 100%;
+}
+
+.photo-credit-source {
+  grid-column: 2;
+  grid-row: 2;
+  align-self: start;
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.125rem 0;
+  color: #4b5563;
+  font-size: 0.75rem;
+  line-height: 1.2;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.photo-credit-source:hover {
+  color: #212529;
+  text-decoration: underline;
+}
+
+.photo-credit-icon {
+  width: 0.625rem;
+  height: 0.625rem;
+  flex-shrink: 0;
+}
+
+.photo-credit-external {
+  width: 0.5625rem;
+  height: 0.5625rem;
+  flex-shrink: 0;
+  opacity: 0.7;
+}
+
+/* 首頁／分享紀錄卡片（電腦版）：作者和下載鈕在第一列，致謝在第二列、靠左。
+   卡片窄（4 欄時只有約 160px）放不下「頭像 + 兩行」，所以拆掉 .photo-credit 這層，讓作者和致謝直接成為 overlay 的格子。
+   致謝蓋在圖片底部的深色漸層上，改用白字 */
+#results .photo-overlay-bottom .photo-credit {
+  display: contents;
+}
+
+#results .photo-overlay-bottom .photo-credit > .photo-author {
+  display: flex;
+}
+
+#results .photo-overlay-bottom .photo-credit-source {
+  grid-column: 1 / -1;
+  grid-row: auto;
+  padding: 0;
+  color: rgba(255, 255, 255, 0.9);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+#results .photo-overlay-bottom .photo-credit-source:hover {
+  color: #fff;
 }
 
 /* 收藏庫內的照片卡片：移除按鈕平時隱藏，滑過卡片或鍵盤聚焦時才出現在圖片右上角（風格比照首頁卡片的圓形圖示鈕）；觸控裝置沒有 hover，所以一直顯示 */
@@ -593,16 +681,55 @@ body > main {
     display: contents;
   }
 
-  #results .photo-author {
+  /* 手機版卡片：照片在第一列、按鈕在第二列（沒有 hover，按鈕不再蓋在照片上）。
+     作者與「來自 Unsplash」比照電腦版蓋在照片左下角，一直顯示：.photo-credit 和照片放同一格、貼底，底下墊深色漸層。
+     .photo-credit 本身不接收點擊（pointer-events: none），免得擋住「點照片開 LightBox」，只有頭像、名字、致謝連結可以點 */
+  .photo-credit {
+    min-height: 2.75rem;
+  }
+
+  #results .photo-overlay-bottom .photo-credit {
+    display: grid;
     grid-row: 1;
     grid-column: 1 / -1;
-    min-height: 2.75rem;
-    padding: 0 0.25rem;
-    color: #212529;
+    align-self: end;
+    z-index: 1;
+    min-height: 0;
+    padding: 1.75rem 0.75rem 0.5rem;
+    border-radius: 0 0 0.375rem 0.375rem;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0));
+    pointer-events: none;
+  }
+
+  #results .photo-overlay-bottom .photo-credit > .photo-author {
+    display: contents;
+  }
+
+  #results .photo-overlay-bottom .photo-author-avatar,
+  #results .photo-overlay-bottom .photo-author-name,
+  #results .photo-overlay-bottom .photo-credit-source {
+    pointer-events: auto;
+  }
+
+  #results .photo-overlay-bottom .photo-author-avatar {
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.55);
+  }
+
+  #results .photo-overlay-bottom .photo-author-name {
+    padding: 0.125rem 0;
+    color: #fff;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  }
+
+  #results .photo-overlay-bottom .photo-credit-source {
+    grid-column: 2;
+    grid-row: 2;
+    justify-self: start;
+    padding: 0.25rem 0.5rem 0.25rem 0;
   }
 
   #results .photo-media .card-img-top {
-    grid-row: 2;
+    grid-row: 1;
     grid-column: 1 / -1;
     border-radius: 0.375rem;
   }
@@ -610,7 +737,7 @@ body > main {
   #results .photo-overlay-top .btn-icon,
   #results .photo-collect-badge,
   #results .btn-download {
-    grid-row: 3;
+    grid-row: 2;
     min-height: 2.75rem;
     border: 1px solid #dee2e6;
     border-radius: 0.5rem;
