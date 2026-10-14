@@ -41,7 +41,7 @@ function getUnsplashImageInfo(result) {
     unsplash_id: id,
     unsplash_page_url: links.html,
     image_url: urls.regular,
-    photographer_name: user.username,
+    photographer_name: user.name || user.username,
     photographer_url: `https://unsplash.com/@${user.username}`
   };
 }
