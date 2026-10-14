@@ -872,6 +872,9 @@ body > main {
 
 #lightboxModal .modal-body {
   padding: 20px;
+  /* 內容真的放不下時，在視窗內捲動，不要把底部的按鈕擠出視窗外 */
+  min-height: 0;
+  overflow-y: auto;
 }
 
 #lightboxModal .modal-footer {
@@ -892,8 +895,10 @@ body > main {
   margin-top: 2.5rem;
 }
 
+/* 照片高度要扣掉其他部分（致謝列、分類、底部按鈕、內距，約 12rem），否則直式照片在視窗不高時會把按鈕擠出視窗。
+   14rem 留了一點空間給換行的分類標籤 */
 #lightbox-image {
-  max-height: 65vh;
+  max-height: min(65vh, calc(90vh - 14rem));
   width: auto;
   max-width: 100%;
   object-fit: contain;
