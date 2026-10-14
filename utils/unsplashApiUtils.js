@@ -87,10 +87,23 @@ async function fetchImagesWithKeyword(page, q) {
   return { success: true, data };
 }
 
+async function trackUnsplashDownload(downloadLocation) {
+  // 只接受 Unsplash API 回傳的網址
+  if (!downloadLocation?.startsWith(`${unsplashBaseUrl}/`)) return;
+  try {
+    const response = await fetch(downloadLocation, { headers });
+    if (!response.ok)
+      console.error('Unsplash download tracking failed:', response.status);
+  } catch (error) {
+    console.error('Unsplash download tracking failed:', error.message);
+  }
+}
+
 module.exports = {
   getUnsplashImageId,
   getUnsplashImageInfo,
   fetchUnsplashPhoto,
   fetchImagesWithKeyword,
-  getRateLimit
+  getRateLimit,
+  trackUnsplashDownload
 };
