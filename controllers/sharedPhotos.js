@@ -122,7 +122,7 @@ const shareImageWithUrl = async (req, res, next) => {
     });
 
     // 回報下載事件（Unsplash API 規定）：不等結果，失敗也不影響分享
-    trackUnsplashDownload(result.data.links?.download_location);
+    trackUnsplashDownload(result.data.links?.download_location, shareInfo);
 
     res.status(200).json({ status: 'success', data: shareInfo });
   } catch (error) {
