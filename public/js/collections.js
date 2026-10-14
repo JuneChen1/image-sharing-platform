@@ -245,7 +245,7 @@
               </div>
               <div class="card-body">
                 <p class="card-text mb-0">
-                  <a href="${escapeHtml(photo.photographer_url)}" target="_blank" rel="noopener" class="person-avatar-link">
+                  <a href="${escapeHtml(withUtm(photo.photographer_url))}" target="_blank" rel="noopener" class="person-avatar-link">
                     <span class="photo-author-avatar">${escapeHtml(initial)}</span>
                     <span class="photo-author-name">${escapeHtml(photo.photographer_name)}</span>
                   </a>

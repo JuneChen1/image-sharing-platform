@@ -206,7 +206,7 @@
         />
         <div class="card-body">
           <p class="card-text">
-            <a href="${escapeHtml(photo.user.links.html)}" target="_blank" rel="noopener" class="person-avatar-link">
+            <a href="${escapeHtml(withUtm(photo.user.links.html))}" target="_blank" rel="noopener" class="person-avatar-link">
               <span class="photo-author-avatar">${escapeHtml(initial)}</span>
               <span class="photo-author-name">${escapeHtml(photo.user.name)}</span>
             </a>

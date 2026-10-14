@@ -43,8 +43,9 @@
     lightboxImage.src = imageUrl;
     lightboxImage.alt = i18n.t('common.photoAlt', { name: photographerName });
     lightboxPhotographer.innerHTML = avatarLinkHTML(photographerName);
-    lightboxPhotographer.href = photographerUrl;
-    lightboxDownload.href = downloadUrl;
+    lightboxPhotographer.href = withUtm(photographerUrl);
+    lightboxDownload.href = withUtm(downloadUrl);
+    // 分享視窗要原始網址：後端用網址最後 11 個字元當照片 ID，不能帶 utm
     currentShareUrl = downloadUrl;
     currentCollectId = collectId || null;
     // 訪客也看得到收藏鈕，點下去會導向登入頁（openCollectModal 處理）
