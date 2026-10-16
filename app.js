@@ -33,7 +33,9 @@ async function main() {
   const errorBody = require('./utils/errorBody');
 
   const app = express();
-  app.set('trust proxy', 1);
+
+  const trustProxy = Number(process.env.TRUST_PROXY ?? 0);
+  app.set('trust proxy', trustProxy);
 
   app.use(cors());
   app.use(express.json());
