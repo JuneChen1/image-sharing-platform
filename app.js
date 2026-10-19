@@ -44,10 +44,12 @@ async function main() {
     next();
   });
   app.use(express.static('public'));
+
+  app.use('/health', healthRouter);
+
   app.use(globalLimiter);
   app.use(rejectNullBytes);
 
-  app.use('/health', healthRouter);
   app.use('/api/v1/shared-photos', sharedPhotosRouter);
   app.use('/api/v1/auth', authRouter);
   app.use('/api/v1/users/me/collections', collectionsRouter);
