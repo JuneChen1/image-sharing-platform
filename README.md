@@ -29,15 +29,15 @@
 
 ## 專案技術
 1. Node.js v24.x
-2. Express v5.2.1
-3. pg v8.22.0
-4. typeorm v1.1.0
+2. Express v5.3.0
+3. pg v8.23.1
+4. typeorm v1.1.2
 5. dotenv v17.4.2
 6. cors v2.8.6
-7. express-rate-limit v8.6.0
+7. express-rate-limit v8.7.2
 8. bcrypt v6.0.0
 9. jsonwebtoken v9.0.3
-10. nodemailer v10.0.9
+10. nodemailer v10.3.1
 11. Bootstrap v5.3.3（CDN）
 12. JavaScript（前端無框架）
 
