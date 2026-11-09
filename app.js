@@ -1,4 +1,5 @@
 require('dotenv').config();
+const path = require('path');
 
 const { getMissingEnvs } = require('./utils/env');
 
@@ -44,7 +45,7 @@ async function main() {
     if (req.body === undefined) req.body = {};
     next();
   });
-  app.use(express.static('public'));
+  app.use(express.static(path.join(__dirname, 'public')));
 
   app.use('/health', healthRouter);
 
