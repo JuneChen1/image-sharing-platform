@@ -1,9 +1,10 @@
 require('dotenv').config();
 
-const { hasRequiredEnvs } = require('./utils/env');
+const { getMissingEnvs } = require('./utils/env');
 
-if (!hasRequiredEnvs()) {
-  console.error(`缺少必要環境變數：UNSPLASH_ACCESS_KEY 或 DATABASE_URL`);
+const missingEnvs = getMissingEnvs();
+if (missingEnvs.length > 0) {
+  console.error(`缺少必要環境變數：${missingEnvs.join('、')}`);
   process.exit(1);
 }
 
