@@ -1,4 +1,8 @@
-const { unsplashBaseUrl, headers } = require('../config/constants');
+const {
+  unsplashBaseUrl,
+  unsplashTimeoutMs,
+  headers
+} = require('../config/constants');
 const appError = require('./appError');
 
 let lastRateLimit = { limit: null, remaining: null, checkedAt: null };
@@ -46,45 +50,55 @@ function getUnsplashImageInfo(result) {
   };
 }
 
-async function fetchUnsplashPhoto(unsplashId) {
-  const response = await fetch(`${unsplashBaseUrl}/photos/${unsplashId}`, {
-    headers
-  });
+// 對 Unsplash 發請求並整理結果。所有失敗（逾時、連不上、回應不是 JSON、HTTP 錯誤）
+// 都轉成 { success: false, status, unsplashMessage }，不丟例外，呼叫端只要看 success 與 status：
+// status 為 0 代表沒有收到任何回應（逾時或連不上），其餘是 Unsplash 回的 HTTP 狀態碼
+async function requestUnsplash(url) {
+  let response;
+  try {
+    response = await fetch(url, {
+      headers,
+      signal: AbortSignal.timeout(unsplashTimeoutMs)
+    });
+  } catch (error) {
+    return { success: false, status: 0, unsplashMessage: error.name };
+  }
 
   updateRateLimit(response);
 
-  const data = await response.json();
+  // 讀取內容也在逾時範圍內；回應不是 JSON（例如上游回 HTML 錯誤頁）時 data 維持 null
+  let data = null;
+  try {
+    data = await response.json();
+  } catch (error) {
+    // 交給下面依 response.ok 判斷
+  }
 
   if (!response.ok)
     return {
       success: false,
       status: response.status,
       unsplashMessage: data?.errors?.[0]
+    };
+
+  if (data === null)
+    return {
+      success: false,
+      status: response.status,
+      unsplashMessage: 'invalid JSON'
     };
 
   return { success: true, data };
 }
 
-async function fetchImagesWithKeyword(page, q) {
-  const response = await fetch(
-    `${unsplashBaseUrl}/search/photos?page=${page}&query=${encodeURIComponent(q)}`,
-    {
-      headers
-    }
+function fetchUnsplashPhoto(unsplashId) {
+  return requestUnsplash(`${unsplashBaseUrl}/photos/${unsplashId}`);
+}
+
+function fetchImagesWithKeyword(page, q) {
+  return requestUnsplash(
+    `${unsplashBaseUrl}/search/photos?page=${page}&query=${encodeURIComponent(q)}`
   );
-
-  updateRateLimit(response);
-
-  const data = await response.json();
-
-  if (!response.ok)
-    return {
-      success: false,
-      status: response.status,
-      unsplashMessage: data?.errors?.[0]
-    };
-
-  return { success: true, data };
 }
 
 async function trackUnsplashDownload(downloadLocation, photo = {}) {
@@ -98,7 +112,10 @@ async function trackUnsplashDownload(downloadLocation, photo = {}) {
   };
 
   try {
-    const response = await fetch(downloadLocation, { headers });
+    const response = await fetch(downloadLocation, {
+      headers,
+      signal: AbortSignal.timeout(unsplashTimeoutMs)
+    });
     if (!response.ok) {
       const body = await response.text().catch(() => '');
       // 單行 JSON：上 AWS 後 CloudWatch Logs Insights 才會自動解析出欄位
