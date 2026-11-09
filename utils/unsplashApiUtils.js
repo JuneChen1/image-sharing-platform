@@ -24,14 +24,23 @@ function getRateLimit() {
 }
 
 function getUnsplashImageId(url) {
-  if (!url.startsWith('https://unsplash.com/photos/')) {
-    return {
-      success: false
-    };
+  let parsed;
+  try {
+    parsed = new URL(url);
+  } catch (error) {
+    return { success: false };
   }
-  const imageId = url.slice(-11);
 
-  return { success: true, imageId };
+  if (parsed.protocol !== 'https:' || parsed.hostname !== 'unsplash.com') {
+    return { success: false };
+  }
+
+  const match = parsed.pathname.match(/^\/photos\/([^/]+)\/?$/);
+  if (!match || match[1].length < 11) {
+    return { success: false };
+  }
+
+  return { success: true, imageId: match[1].slice(-11) };
 }
 
 function getUnsplashImageInfo(result) {
