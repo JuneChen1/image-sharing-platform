@@ -198,7 +198,7 @@
 
   async function fetchAndRenderPhotos(page) {
     const response = await fetch(
-      `/api/v1/users/${userId}/shared-photos?page=${page}&limit=${LIMIT}`,
+      `/api/v1/users/${encodeURIComponent(userId)}/shared-photos?page=${page}&limit=${LIMIT}`,
       { headers: window.auth.getAuthHeader() }
     );
     const body = await response.json();

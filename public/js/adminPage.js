@@ -121,7 +121,7 @@
           : `<span class="admin-badge admin-badge-success">${i18n.t('admin.badgeActive')}</span>`;
         const roleCell = isAdminUser
           ? '<span class="admin-badge admin-badge-admin">ADMIN</span>'
-          : user.role;
+          : escapeHtml(user.role);
 
         let actionCell = '';
         if (!isAdminUser && !isSelf) {
