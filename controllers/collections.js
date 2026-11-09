@@ -3,7 +3,10 @@ const {
   isValidString,
   isValidUUID
 } = require('../utils/validUtils');
-const { collectionNameMaxLength } = require('../config/constants');
+const {
+  collectionNameMaxLength,
+  collectionMaxCount
+} = require('../config/constants');
 const appError = require('../utils/appError');
 const { attachCategories } = require('../utils/sharedPhotosUtils');
 const { dataSource } = require('../db/data-source');
@@ -72,7 +75,8 @@ const collectionsController = {
       const collectCount = await collectionsRepo.count({
         where: { user: { id: req.user.id } }
       });
-      if (collectCount >= 10) return next(appError('COLLECTION_LIMIT_REACHED'));
+      if (collectCount >= collectionMaxCount)
+        return next(appError('COLLECTION_LIMIT_REACHED'));
 
       const existing = await collectionsRepo.findOneBy({
         name: name.trim(),
