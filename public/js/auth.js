@@ -72,14 +72,27 @@
     return token ? { Authorization: `Bearer ${token}` } : {};
   }
 
-  // 被停權的用戶：後端對每個需要登入的請求都回 403 ACCOUNT_BANNED。
-  // 在這裡統一攔截 fetch：清掉 session、導去登入頁並顯示停權訊息，各頁就不必各自處理。
-  // 沒登入時的 403（例如停權帳號直接在登入頁登入）不攔截，照原本由登入頁顯示錯誤。
-  let handlingBan = false;
+  // 在這裡統一攔截 fetch 的「登入狀態失效」回應，各頁就不必各自處理。
+  // 沒登入時不攔截：停權帳號直接在登入頁登入的 403，照原本由登入頁顯示錯誤。
+  // - 401（token 過期、無效、密碼已更換）：清掉 session，導去登入頁並記下目前位置，登入後再回來
+  // - 403 ACCOUNT_BANNED（被停權）：清掉 session，導去登入頁並顯示停權訊息
+  let leavingPage = false;
   const originalFetch = window.fetch.bind(window);
   window.fetch = async (...args) => {
     const response = await originalFetch(...args);
-    if (response.status !== 403 || !isLoggedIn()) return response;
+    if (!isLoggedIn()) return response;
+
+    if (response.status === 401) {
+      if (!leavingPage) {
+        leavingPage = true;
+        clearSession();
+        redirectToLogin();
+      }
+      // 頁面即將離開，讓呼叫端不要繼續往下跑，避免在跳轉前閃出舊的錯誤畫面
+      return new Promise(() => {});
+    }
+
+    if (response.status !== 403) return response;
 
     let code = null;
     try {
@@ -89,12 +102,11 @@
     }
     if (code !== 'ACCOUNT_BANNED') return response;
 
-    if (!handlingBan) {
-      handlingBan = true;
+    if (!leavingPage) {
+      leavingPage = true;
       clearSession();
       window.location.replace('/auth.html?reason=banned');
     }
-    // 頁面即將離開，讓呼叫端不要繼續往下跑，避免在跳轉前閃出舊的錯誤畫面
     return new Promise(() => {});
   };
 

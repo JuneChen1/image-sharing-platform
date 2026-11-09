@@ -80,13 +80,6 @@
 
   editCollectionAlertEl.querySelector('.btn-close').addEventListener('click', hideEditCollectionAlert);
 
-  async function handleUnauthorized(response) {
-    if (response.status !== 401) return false;
-    window.auth.clearSession();
-    window.auth.redirectToLogin();
-    return true;
-  }
-
   function renderCollectionPreview(previewImageUrl) {
     if (!previewImageUrl) {
       return `<div class="collection-preview-empty">${i18n.t('collections.noPhotos')}</div>`;
@@ -111,7 +104,6 @@
       });
       const body = await response.json();
 
-      if (await handleUnauthorized(response)) return;
       if (!response.ok) {
         setListStatus(i18n.apiMessage(body, 'collections.loadFailed'), true);
         return;
@@ -198,7 +190,6 @@
       );
       const body = await response.json();
 
-      if (await handleUnauthorized(response)) return;
       if (!response.ok) {
         setPhotosStatus(i18n.apiMessage(body, 'collections.loadPhotosFailed'), true);
         return;
@@ -269,7 +260,6 @@
       );
       const body = await response.json();
 
-      if (await handleUnauthorized(response)) return;
       if (!response.ok) {
         setPhotosStatus(i18n.apiMessage(body, 'common.removeFailed'), true);
         return;
@@ -327,7 +317,6 @@
       });
       const body = await response.json();
 
-      if (await handleUnauthorized(response)) return;
       if (!response.ok) {
         showEditCollectionAlert(i18n.apiMessage(body, 'collections.renameFailed'));
         return;
@@ -362,7 +351,6 @@
       });
       const body = await response.json();
 
-      if (await handleUnauthorized(response)) return;
       if (!response.ok) {
         setPhotosStatus(i18n.apiMessage(body, 'common.deleteFailed'), true);
         return;
@@ -477,7 +465,6 @@
       });
       const body = await response.json();
 
-      if (await handleUnauthorized(response)) return;
       if (!response.ok) {
         showNewCollectionAlert(i18n.apiMessage(body, 'common.createFailed'));
         return;

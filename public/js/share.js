@@ -150,9 +150,6 @@
         renderCategories();
         hasShared = true;
         showAlert(i18n.t('share.success'), 'success');
-      } else if (response.status === 401) {
-        window.auth.clearSession();
-        window.auth.redirectToLogin();
       } else {
         showAlert(i18n.apiMessage(body, 'share.failed'));
       }

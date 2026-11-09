@@ -66,11 +66,6 @@
     );
     const body = await response.json();
 
-    if (response.status === 401) {
-      window.auth.clearSession();
-      window.auth.redirectToLogin();
-      return;
-    }
     if (!response.ok) {
       collectListEl.innerHTML = '';
       showAlert(i18n.apiMessage(body, 'collections.loadFailed'));
@@ -124,11 +119,6 @@
       );
       const body = await response.json();
 
-      if (response.status === 401) {
-        window.auth.clearSession();
-        window.auth.redirectToLogin();
-        return;
-      }
       if (response.ok) {
         showAlert(i18n.t('collect.added'), 'success');
         markAsAdded(collectionId);
@@ -190,11 +180,6 @@
       });
       const body = await response.json();
 
-      if (response.status === 401) {
-        window.auth.clearSession();
-        window.auth.redirectToLogin();
-        return;
-      }
       if (!response.ok) {
         showAlert(i18n.apiMessage(body, 'common.createFailed'));
         return;
