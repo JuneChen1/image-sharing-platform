@@ -4,6 +4,7 @@ const appError = require('../utils/appError');
 const { getPasswordVersion } = require('../utils/tokenUtils');
 
 async function isAuth(req, res, next) {
+  let decoded;
   try {
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -11,7 +12,15 @@ async function isAuth(req, res, next) {
     }
 
     const token = authHeader.split(' ')[1];
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    decoded = jwt.verify(token, process.env.JWT_SECRET);
+  } catch (error) {
+    if (error.name === 'TokenExpiredError')
+      return next(appError('TOKEN_EXPIRED'));
+
+    return next(appError('TOKEN_INVALID'));
+  }
+
+  try {
     const userRepo = dataSource.getRepository('Users');
     const user = await userRepo.findOneBy({ id: decoded.id });
 
@@ -25,10 +34,7 @@ async function isAuth(req, res, next) {
     req.user = user;
     next();
   } catch (error) {
-    if (error.name === 'TokenExpiredError')
-      return next(appError('TOKEN_EXPIRED'));
-
-    next(appError('TOKEN_INVALID'));
+    next(error);
   }
 }
 
