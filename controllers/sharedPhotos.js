@@ -141,6 +141,13 @@ const getSharedImages = async (req, res, next) => {
     return next(appError('INVALID_SORT'));
   }
 
+  if (
+    (category !== undefined && typeof category !== 'string') ||
+    (q !== undefined && typeof q !== 'string')
+  ) {
+    return next(appError('INVALID_FIELDS'));
+  }
+
   const skip = (pageNumber - 1) * limitNumber;
   const take = limitNumber;
 
