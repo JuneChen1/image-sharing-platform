@@ -61,6 +61,8 @@ const register = async (req, res, next) => {
       }
     });
   } catch (error) {
+    if (error.code === '23505') return next(appError('EMAIL_TAKEN'));
+
     next(error);
   }
 };
