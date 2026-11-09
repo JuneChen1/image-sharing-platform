@@ -24,8 +24,8 @@
       <div class="col-md-6 col-lg-4">
 
         <div id="login-pane">
-          <div class="card mx-auto" style="max-width: 400px;">
-            <div class="card-body" style="padding: 32px;">
+          <div class="card mx-auto auth-card">
+            <div class="card-body auth-card-body">
               <div id="login-alert" class="alert d-none alert-dismissible d-flex align-items-center mb-3" role="alert">
                 <svg id="login-alert-icon" width="16" height="16" fill="currentColor" class="flex-shrink-0 me-2" viewBox="0 0 16 16" role="img" aria-hidden="true"></svg>
                 <div id="login-alert-message" class="flex-grow-1"></div>
@@ -41,7 +41,7 @@
                   <label for="login-password" class="form-label" data-i18n="password.label">密碼</label>
                   <input type="password" id="login-password" class="form-control" autocomplete="current-password" required />
                 </div>
-                <button type="submit" class="btn btn-dark w-100" style="margin-top: 20px;" data-i18n="auth.login">登入</button>
+                <button type="submit" class="btn btn-dark w-100 auth-submit-btn" data-i18n="auth.login">登入</button>
               </form>
               <p class="text-center small mt-3 mb-0">
                 <span data-i18n="auth.noAccount">還沒有帳號？</span><a href="#" id="show-register-link" data-i18n="auth.register">註冊</a>
@@ -54,8 +54,8 @@
         </div>
 
         <div id="forgot-pane" class="d-none">
-          <div class="card mx-auto" style="max-width: 400px;">
-            <div class="card-body" style="padding: 32px;">
+          <div class="card mx-auto auth-card">
+            <div class="card-body auth-card-body">
               <div id="forgot-alert" class="alert d-none alert-dismissible d-flex align-items-center mb-3" role="alert">
                 <svg id="forgot-alert-icon" width="16" height="16" fill="currentColor" class="flex-shrink-0 me-2" viewBox="0 0 16 16" role="img" aria-hidden="true"></svg>
                 <div id="forgot-alert-message" class="flex-grow-1"></div>
@@ -68,7 +68,7 @@
                   <input type="email" id="forgot-email" class="form-control" autocomplete="email" required />
                   <div class="form-text" data-i18n="auth.forgotHint">我們會寄送重設密碼連結到此信箱</div>
                 </div>
-                <button type="submit" class="btn btn-dark w-100" style="margin-top: 20px;" data-i18n="auth.sendReset">寄送重設密碼信</button>
+                <button type="submit" class="btn btn-dark w-100 auth-submit-btn" data-i18n="auth.sendReset">寄送重設密碼信</button>
               </form>
               <p class="text-center small mt-3 mb-0">
                 <span data-i18n="auth.remembered">想起密碼了？</span><a href="#" id="show-login-from-forgot-link" data-i18n="password.backToLogin">返回登入</a>
@@ -78,8 +78,8 @@
         </div>
 
         <div id="register-pane" class="d-none">
-          <div class="card mx-auto" style="max-width: 400px;">
-            <div class="card-body" style="padding: 32px;">
+          <div class="card mx-auto auth-card">
+            <div class="card-body auth-card-body">
               <h5 class="card-title mb-3 text-center" data-i18n="auth.register">註冊</h5>
               <form id="register-form" novalidate>
                 <div class="mb-3">
@@ -105,7 +105,7 @@
                   <div id="register-alert-message" class="flex-grow-1"></div>
                   <button type="button" class="btn-close" aria-label="關閉" data-i18n-aria-label="common.close"></button>
                 </div>
-                <button type="submit" class="btn btn-dark w-100" style="margin-top: 20px;" data-i18n="auth.register">註冊</button>
+                <button type="submit" class="btn btn-dark w-100 auth-submit-btn" data-i18n="auth.register">註冊</button>
               </form>
               <p class="text-center small mt-3 mb-0">
                 <span data-i18n="auth.haveAccount">已經有帳號了？</span><a href="#" id="show-login-link" data-i18n="auth.login">登入</a>

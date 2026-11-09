@@ -279,8 +279,7 @@
                 src="${escapeHtml(photo.image_url)}"
                 alt="${escapeHtml(i18n.t('common.photoAlt', { name: photo.photographer_name }))}"
                 data-photo-id="${escapeHtml(photo.id)}"
-                class="lightbox-trigger"
-                style="width: 64px; height: 64px; object-fit: cover; border-radius: 4px;"
+                class="lightbox-trigger admin-photo-thumb"
               />
             </td>
             <td data-label="${escapeHtml(i18n.t('admin.colCategories'))}">${(photo.categories || []).map(escapeHtml).join(i18n.t('common.listSeparator'))}</td>
