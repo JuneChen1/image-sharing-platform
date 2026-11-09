@@ -78,29 +78,17 @@ const shareImageWithUrl = async (req, res, next) => {
       const categoriesRepo = manager.getRepository('Categories');
       const joinRepo = manager.getRepository('SharedPhotoCategories');
 
-      const foundCategories = await categoriesRepo.find({
+      // 分類名稱一次新增進 categories 表，遇到已經存在的就跳過，不報錯
+      await manager.query(
+        `INSERT INTO categories (name)
+        SELECT unnest($1::text[])
+        ON CONFLICT (name) DO NOTHING`,
+        [uniqueNames]
+      );
+
+      const categories = await categoriesRepo.find({
         where: { name: In(uniqueNames) }
       });
-      const exist = foundCategories.map((c) => c.name.toLowerCase());
-
-      const notExist = uniqueNames
-        .filter((c) => !exist.includes(c.toLowerCase()))
-        .map((n) => ({
-          name: n
-        }));
-
-      let createdCategories = [];
-      if (notExist.length > 0) {
-        createdCategories = await categoriesRepo.save(notExist).catch((err) => {
-          // 避免使用者連點兩次分享按鈕產生的 race condition
-          if (err.code === '23505') {
-            return categoriesRepo.find({
-              where: { name: In(notExist.map((n) => n.name)) }
-            });
-          }
-          throw err;
-        });
-      }
 
       const savedPhoto = await sharePhotosRepo
         .save({
@@ -115,9 +103,10 @@ const shareImageWithUrl = async (req, res, next) => {
           throw err;
         });
 
-      const links = [...foundCategories, ...createdCategories].map((category) =>
+      const links = categories.map((category) =>
         joinRepo.create({ sharedPhotos: savedPhoto, categories: category })
       );
+
       await joinRepo.save(links);
     });
 
