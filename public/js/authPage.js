@@ -12,38 +12,9 @@
   const registerForm = document.getElementById('register-form');
   const forgotForm = document.getElementById('forgot-form');
 
-  const ALERT_ICON_PATHS = {
-    success:
-      '<path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>',
-    danger:
-      '<path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5m.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>'
-  };
-
-  function makeAlert(prefix) {
-    const el = document.getElementById(`${prefix}-alert`);
-    const iconEl = document.getElementById(`${prefix}-alert-icon`);
-    const messageEl = document.getElementById(`${prefix}-alert-message`);
-
-    function hide() {
-      el.classList.add('d-none');
-    }
-
-    el.querySelector('.btn-close').addEventListener('click', hide);
-
-    return {
-      show(message, type = 'danger') {
-        iconEl.innerHTML = ALERT_ICON_PATHS[type] || '';
-        messageEl.textContent = message;
-        // 間距可由標記上的 data-alert-spacing 指定（例如放在送出鈕上方的註冊提示要 mb-0），預設 mb-3
-        el.className = `alert alert-dismissible d-flex align-items-center ${el.dataset.alertSpacing || 'mb-3'} alert-${type}`;
-      },
-      hide
-    };
-  }
-
-  const loginAlert = makeAlert('login');
-  const registerAlert = makeAlert('register');
-  const forgotAlert = makeAlert('forgot');
+  const loginAlert = createAlert('login');
+  const registerAlert = createAlert('register');
+  const forgotAlert = createAlert('forgot');
 
   function showTab(tab) {
     loginPane.classList.toggle('d-none', tab !== 'login');
@@ -114,10 +85,6 @@
 
   function isValidEmail(email) {
     return /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email);
-  }
-
-  function isValidPassword(password) {
-    return /^(?=.*[A-Za-z])(?=.*\d).{8,}$/.test(password);
   }
 
   loginForm.addEventListener('submit', async (event) => {

@@ -17,6 +17,10 @@
   let currentPhotos = [];
   let currentPage = 1;
   let categories = [];
+  // 連續操作（切分類、排序、翻頁）時可能同時有好幾個請求在跑，回來的順序不一定。
+  // 每次請求領一個序號，回來時發現已經有更新的請求就直接丟掉，不渲染也不顯示錯誤，避免舊結果蓋掉新結果。
+  // 要宣告在最上面：頁面載入時就會呼叫 fetchAndRenderPhotos
+  let latestRequestId = 0;
 
   function setStatus(text, isError) {
     statusEl.textContent = text;
@@ -283,14 +287,6 @@
     setStatus(error.message || i18n.t('common.networkError'), true);
   }
 
-  function debounce(fn, delay) {
-    let timeoutId;
-    return (...args) => {
-      clearTimeout(timeoutId);
-      timeoutId = setTimeout(() => fn(...args), delay);
-    };
-  }
-
   async function loadCategories() {
     const response = await fetch('/api/v1/categories');
     const body = await response.json();
@@ -341,10 +337,6 @@
       button.classList.toggle('active', button.dataset.sort === currentSort);
     });
   }
-
-  // 連續操作（切分類、排序、翻頁）時可能同時有好幾個請求在跑，回來的順序不一定。
-  // 每次請求領一個序號，回來時發現已經有更新的請求就直接丟掉，不渲染也不顯示錯誤，避免舊結果蓋掉新結果
-  let latestRequestId = 0;
 
   async function fetchAndRenderPhotos(page) {
     const requestId = ++latestRequestId;
@@ -399,81 +391,16 @@
     setStatus('', false);
   }
 
-  function withDimensions(photo) {
-    return new Promise((resolve) => {
-      const img = new Image();
-      img.onload = () =>
-        resolve({ ...photo, width: img.naturalWidth, height: img.naturalHeight });
-      img.onerror = () => resolve({ ...photo, width: 4, height: 3 });
-      img.src = photo.image_url;
-    });
-  }
-
-  function getColumnCount() {
-    if (window.innerWidth >= 768) return 4;
-    if (window.innerWidth >= 576) return 2;
-    return 1;
-  }
-
   function renderMasonry(photos) {
-    const columnCount = getColumnCount();
-    const columnWidth = resultsEl.clientWidth / columnCount;
-    const columns = Array.from({ length: columnCount }, () => ({
-      height: 0,
-      photos: []
-    }));
-
-    photos.forEach((photo) => {
-      const estimatedHeight =
-        (columnWidth * photo.height) / photo.width + CARD_TEXT_HEIGHT;
-      const shortestColumn = columns.reduce((shortest, column) =>
-        column.height < shortest.height ? column : shortest
-      );
-      shortestColumn.photos.push(photo);
-      shortestColumn.height += estimatedHeight;
+    renderMasonryColumns(resultsEl, photos, {
+      columnCount: getMasonryColumnCount(),
+      cardTextHeight: CARD_TEXT_HEIGHT,
+      renderCard: renderPhotoCard
     });
-
-    resultsEl.innerHTML = columns
-      .map(
-        (column) =>
-          `<div class="masonry-column">${column.photos.map(renderPhotoCard).join('')}</div>`
-      )
-      .join('');
   }
 
   function renderPagination(currentPage, totalPages) {
-    if (totalPages < 1) {
-      paginationEl.innerHTML = '';
-      return;
-    }
-
-    const maxButtons = 5;
-    let start = Math.max(1, currentPage - Math.floor(maxButtons / 2));
-    const end = Math.min(totalPages, start + maxButtons - 1);
-    start = Math.max(1, end - maxButtons + 1);
-
-    const pageItems = [];
-    for (let page = start; page <= end; page++) {
-      pageItems.push(`
-        <li class="page-item ${page === currentPage ? 'active' : ''}">
-          <a class="page-link" href="#" data-page="${page}">${page}</a>
-        </li>
-      `);
-    }
-
-    paginationEl.innerHTML = `
-      <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
-        <a class="page-link" href="#" data-page="${currentPage - 1}" aria-label="${i18n.t('common.previous')}">
-          <span aria-hidden="true">&laquo;</span>
-        </a>
-      </li>
-      ${pageItems.join('')}
-      <li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
-        <a class="page-link" href="#" data-page="${currentPage + 1}" aria-label="${i18n.t('common.next')}">
-          <span aria-hidden="true">&raquo;</span>
-        </a>
-      </li>
-    `;
+    paginationEl.innerHTML = buildPaginationHtml(currentPage, totalPages);
   }
 
   function renderPhotoCard(photo) {

@@ -10,6 +10,9 @@
   let currentQuery = '';
   let currentPhotos = [];
   const MAX_PAGES = 20;
+  // 連續搜尋或翻頁時，舊請求比較晚回來不能蓋掉新結果：每次請求領序號，過期的直接丟掉。
+  // 要宣告在最上面：網址帶 ?q= 時，頁面載入就會呼叫 fetchAndRenderPhotos
+  let latestRequestId = 0;
   const CARD_TEXT_HEIGHT = 100;
 
   function setStatus(text, isError) {
@@ -104,18 +107,7 @@
     }
   });
 
-  function debounce(fn, delay) {
-    let timeoutId;
-    return (...args) => {
-      clearTimeout(timeoutId);
-      timeoutId = setTimeout(() => fn(...args), delay);
-    };
-  }
-
-  // 連續搜尋或翻頁時，舊請求比較晚回來不能蓋掉新結果：每次請求領序號，過期的直接丟掉。
-  // 回傳 true 代表這次的結果已渲染，false 代表已過期
-  let latestRequestId = 0;
-
+  // 回傳 true 代表這次的結果已渲染，false 代表已過期（有更新的請求）
   async function fetchAndRenderPhotos(query, page) {
     const requestId = ++latestRequestId;
     const isStale = () => requestId !== latestRequestId;
@@ -143,72 +135,17 @@
     return true;
   }
 
-  function getColumnCount() {
-    if (window.innerWidth >= 992) return 5;
-    if (window.innerWidth >= 768) return 4;
-    if (window.innerWidth >= 576) return 2;
-    return 1;
-  }
-
   function renderMasonry(photos) {
-    const columnCount = getColumnCount();
-    const columnWidth = resultsEl.clientWidth / columnCount;
-    const columns = Array.from({ length: columnCount }, () => ({
-      height: 0,
-      photos: []
-    }));
-
-    photos.forEach((photo) => {
-      const estimatedHeight =
-        (columnWidth * photo.height) / photo.width + CARD_TEXT_HEIGHT;
-      const shortestColumn = columns.reduce((shortest, column) =>
-        column.height < shortest.height ? column : shortest
-      );
-      shortestColumn.photos.push(photo);
-      shortestColumn.height += estimatedHeight;
+    renderMasonryColumns(resultsEl, photos, {
+      columnCount: getMasonryColumnCount({ wide: true }),
+      cardTextHeight: CARD_TEXT_HEIGHT,
+      renderCard: renderPhotoCard
     });
-
-    resultsEl.innerHTML = columns
-      .map(
-        (column) =>
-          `<div class="masonry-column">${column.photos.map(renderPhotoCard).join('')}</div>`
-      )
-      .join('');
   }
 
+  // 搜尋結果只有一頁時不用顯示分頁
   function renderPagination(currentPage, totalPages) {
-    if (totalPages <= 1) {
-      paginationEl.innerHTML = '';
-      return;
-    }
-
-    const maxButtons = 5;
-    let start = Math.max(1, currentPage - Math.floor(maxButtons / 2));
-    const end = Math.min(totalPages, start + maxButtons - 1);
-    start = Math.max(1, end - maxButtons + 1);
-
-    const pageItems = [];
-    for (let page = start; page <= end; page++) {
-      pageItems.push(`
-        <li class="page-item ${page === currentPage ? 'active' : ''}">
-          <a class="page-link" href="#" data-page="${page}">${page}</a>
-        </li>
-      `);
-    }
-
-    paginationEl.innerHTML = `
-      <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
-        <a class="page-link" href="#" data-page="${currentPage - 1}" aria-label="${i18n.t('common.previous')}">
-          <span aria-hidden="true">&laquo;</span>
-        </a>
-      </li>
-      ${pageItems.join('')}
-      <li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
-        <a class="page-link" href="#" data-page="${currentPage + 1}" aria-label="${i18n.t('common.next')}">
-          <span aria-hidden="true">&raquo;</span>
-        </a>
-      </li>
-    `;
+    paginationEl.innerHTML = totalPages <= 1 ? '' : buildPaginationHtml(currentPage, totalPages);
   }
 
   function renderPhotoCard(photo) {

@@ -14,9 +14,6 @@
   const newCollectionModalEl = document.getElementById('newCollectionModal');
   const newCollectionForm = document.getElementById('new-collection-form');
   const newCollectionNameEl = document.getElementById('new-collection-name');
-  const newCollectionAlertEl = document.getElementById('new-collection-alert');
-  const newCollectionAlertIconEl = document.getElementById('new-collection-alert-icon');
-  const newCollectionAlertMessageEl = document.getElementById('new-collection-alert-message');
 
   const breadcrumbCollectionsLink = document.getElementById('breadcrumb-collections-link');
   const breadcrumbCollectionNameEl = document.getElementById('breadcrumb-collection-name');
@@ -25,9 +22,6 @@
   const editCollectionModalEl = document.getElementById('editCollectionModal');
   const editCollectionForm = document.getElementById('edit-collection-form');
   const editCollectionNameEl = document.getElementById('edit-collection-name');
-  const editCollectionAlertEl = document.getElementById('edit-collection-alert');
-  const editCollectionAlertIconEl = document.getElementById('edit-collection-alert-icon');
-  const editCollectionAlertMessageEl = document.getElementById('edit-collection-alert-message');
   const deleteCollectionBtn = document.getElementById('delete-collection-btn');
   const collectionPhotosStatusEl = document.getElementById('collection-photos-status');
   const collectionPhotosGridEl = document.getElementById('collection-photos-grid');
@@ -49,36 +43,10 @@
     collectionPhotosStatusEl.classList.toggle('text-muted', !isError);
   }
 
-  const ALERT_ICON_PATHS = {
-    success:
-      '<path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>',
-    danger:
-      '<path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5m.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>'
-  };
-
-  function showNewCollectionAlert(message, type = 'danger') {
-    newCollectionAlertIconEl.innerHTML = ALERT_ICON_PATHS[type] || '';
-    newCollectionAlertMessageEl.textContent = message;
-    newCollectionAlertEl.className = `alert alert-dismissible d-flex align-items-center mt-2 mb-0 alert-${type}`;
-  }
-
-  function hideNewCollectionAlert() {
-    newCollectionAlertEl.classList.add('d-none');
-  }
-
-  newCollectionAlertEl.querySelector('.btn-close').addEventListener('click', hideNewCollectionAlert);
-
-  function showEditCollectionAlert(message, type = 'danger') {
-    editCollectionAlertIconEl.innerHTML = ALERT_ICON_PATHS[type] || '';
-    editCollectionAlertMessageEl.textContent = message;
-    editCollectionAlertEl.className = `alert alert-dismissible d-flex align-items-center mt-2 mb-0 alert-${type}`;
-  }
-
-  function hideEditCollectionAlert() {
-    editCollectionAlertEl.classList.add('d-none');
-  }
-
-  editCollectionAlertEl.querySelector('.btn-close').addEventListener('click', hideEditCollectionAlert);
+  const { show: showNewCollectionAlert, hide: hideNewCollectionAlert } =
+    createAlert('new-collection', 'mt-2 mb-0');
+  const { show: showEditCollectionAlert, hide: hideEditCollectionAlert } =
+    createAlert('edit-collection', 'mt-2 mb-0');
 
   function renderCollectionPreview(previewImageUrl) {
     if (!previewImageUrl) {

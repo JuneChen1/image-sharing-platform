@@ -5,33 +5,13 @@
   const collectListEl = document.getElementById('collect-list');
   const collectNewNameEl = document.getElementById('collect-new-name');
   const collectNewBtn = document.getElementById('collect-new-btn');
-  const alertEl = document.getElementById('collect-alert');
-  const alertIconEl = document.getElementById('collect-alert-icon');
-  const alertMessageEl = document.getElementById('collect-alert-message');
 
   let currentPhotoId = null;
 
   // 每人的收藏庫上限，要和 controllers/collections.js 的 collectCount 檢查一致
   const COLLECTION_LIMIT = 10;
 
-  const ALERT_ICON_PATHS = {
-    success:
-      '<path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>',
-    danger:
-      '<path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5m.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>'
-  };
-
-  function showAlert(message, type = 'danger') {
-    alertIconEl.innerHTML = ALERT_ICON_PATHS[type] || '';
-    alertMessageEl.textContent = message;
-    alertEl.className = `alert alert-dismissible d-flex align-items-center mt-2 mb-0 alert-${type}`;
-  }
-
-  function hideAlert() {
-    alertEl.classList.add('d-none');
-  }
-
-  alertEl.querySelector('.btn-close').addEventListener('click', hideAlert);
+  const { show: showAlert, hide: hideAlert } = createAlert('collect', 'mt-2 mb-0');
 
   // 照片已在該收藏庫：打勾並停用
   function addedItemHtml(name) {
