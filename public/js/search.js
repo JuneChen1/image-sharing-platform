@@ -24,7 +24,9 @@
     setStatus(i18n.t('common.searching'), false);
 
     try {
-      await fetchAndRenderPhotos(query, page);
+      const rendered = await fetchAndRenderPhotos(query, page);
+      // 已經有更新的搜尋在跑，這次的結果和狀態文字都不用管，交給最新那次
+      if (!rendered) return;
       if (currentPhotos.length === 0) {
         setStatus(i18n.t('search.noResults', { q: query }), false);
       } else {
@@ -110,20 +112,35 @@
     };
   }
 
-  async function fetchAndRenderPhotos(query, page) {
-    const response = await fetch(
-      `/api/v1/photos?q=${encodeURIComponent(query)}&page=${page}`
-    );
-    const body = await response.json();
+  // 連續搜尋或翻頁時，舊請求比較晚回來不能蓋掉新結果：每次請求領序號，過期的直接丟掉。
+  // 回傳 true 代表這次的結果已渲染，false 代表已過期
+  let latestRequestId = 0;
 
-    if (!response.ok) {
-      throw new Error(i18n.apiMessage(body, 'common.networkError'));
+  async function fetchAndRenderPhotos(query, page) {
+    const requestId = ++latestRequestId;
+    const isStale = () => requestId !== latestRequestId;
+
+    let body;
+    try {
+      const response = await fetch(
+        `/api/v1/photos?q=${encodeURIComponent(query)}&page=${page}`
+      );
+      body = await response.json();
+      if (isStale()) return false;
+
+      if (!response.ok) {
+        throw new Error(i18n.apiMessage(body, 'common.networkError'));
+      }
+    } catch (error) {
+      if (isStale()) return false;
+      throw error;
     }
 
     currentQuery = query;
     currentPhotos = body.data.results;
     renderMasonry(currentPhotos);
     renderPagination(page, Math.min(body.data.total_pages, MAX_PAGES));
+    return true;
   }
 
   function getColumnCount() {

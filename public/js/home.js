@@ -342,22 +342,37 @@
     });
   }
 
+  // 連續操作（切分類、排序、翻頁）時可能同時有好幾個請求在跑，回來的順序不一定。
+  // 每次請求領一個序號，回來時發現已經有更新的請求就直接丟掉，不渲染也不顯示錯誤，避免舊結果蓋掉新結果
+  let latestRequestId = 0;
+
   async function fetchAndRenderPhotos(page) {
+    const requestId = ++latestRequestId;
+    const isStale = () => requestId !== latestRequestId;
+
     const categoryParam = currentCategory
       ? `&category=${encodeURIComponent(currentCategory)}`
       : '';
     const queryParam = currentQuery
       ? `&q=${encodeURIComponent(currentQuery)}`
       : '';
-    const response = await fetch(
-      `/api/v1/shared-photos?page=${page}&limit=${LIMIT}&sort=${currentSort}${categoryParam}${queryParam}`,
-      // 登入時帶 token，後端才會回傳每張照片自己是否已收藏（is_collected）；訪客不帶也能看
-      { headers: window.auth.getAuthHeader() }
-    );
-    const body = await response.json();
 
-    if (!response.ok) {
-      throw new Error(i18n.apiMessage(body, 'common.networkError'));
+    let body;
+    try {
+      const response = await fetch(
+        `/api/v1/shared-photos?page=${page}&limit=${LIMIT}&sort=${currentSort}${categoryParam}${queryParam}`,
+        // 登入時帶 token，後端才會回傳每張照片自己是否已收藏（is_collected）；訪客不帶也能看
+        { headers: window.auth.getAuthHeader() }
+      );
+      body = await response.json();
+      if (isStale()) return;
+
+      if (!response.ok) {
+        throw new Error(i18n.apiMessage(body, 'common.networkError'));
+      }
+    } catch (error) {
+      if (isStale()) return;
+      throw error;
     }
 
     currentPage = page;
@@ -374,7 +389,10 @@
       return;
     }
 
-    currentPhotos = await Promise.all(body.data.map(withDimensions));
+    const photosWithDimensions = await Promise.all(body.data.map(withDimensions));
+    if (isStale()) return;
+
+    currentPhotos = photosWithDimensions;
     renderMasonry(currentPhotos);
     const totalPages = Math.ceil(body.pagination.total / body.pagination.limit);
     renderPagination(page, totalPages);

@@ -196,15 +196,28 @@
     };
   }
 
-  async function fetchAndRenderPhotos(page) {
-    const response = await fetch(
-      `/api/v1/users/${encodeURIComponent(userId)}/shared-photos?page=${page}&limit=${LIMIT}`,
-      { headers: window.auth.getAuthHeader() }
-    );
-    const body = await response.json();
+  // 連續翻頁或觸發重新載入時，舊請求比較晚回來不能蓋掉新結果：每次請求領序號，過期的直接丟掉
+  let latestRequestId = 0;
 
-    if (!response.ok) {
-      throw new Error(i18n.apiMessage(body, 'common.networkError'));
+  async function fetchAndRenderPhotos(page) {
+    const requestId = ++latestRequestId;
+    const isStale = () => requestId !== latestRequestId;
+
+    let body;
+    try {
+      const response = await fetch(
+        `/api/v1/users/${encodeURIComponent(userId)}/shared-photos?page=${page}&limit=${LIMIT}`,
+        { headers: window.auth.getAuthHeader() }
+      );
+      body = await response.json();
+      if (isStale()) return;
+
+      if (!response.ok) {
+        throw new Error(i18n.apiMessage(body, 'common.networkError'));
+      }
+    } catch (error) {
+      if (isStale()) return;
+      throw error;
     }
 
     currentPage = page;
@@ -227,7 +240,10 @@
     }
 
     emptyShareCtaEl.classList.add('d-none');
-    currentPhotos = await Promise.all(body.data.map(withDimensions));
+    const photosWithDimensions = await Promise.all(body.data.map(withDimensions));
+    if (isStale()) return;
+
+    currentPhotos = photosWithDimensions;
     renderMasonry(currentPhotos);
     const totalPages = Math.ceil(body.pagination.total / body.pagination.limit);
     renderPagination(page, totalPages);
