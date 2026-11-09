@@ -203,7 +203,7 @@
             src="${escapeHtml(photo.urls.small)}"
             class="card-img-top lightbox-trigger"
             data-photo-id="${escapeHtml(photo.id)}"
-            alt="${photo.alt_description ?? ''}"
+            alt="${escapeHtml(photo.alt_description)}"
           />
           <div class="photo-credit">
             <a href="${escapeHtml(withUtm(photo.user.links.html))}" target="_blank" rel="noopener" class="person-avatar-link">

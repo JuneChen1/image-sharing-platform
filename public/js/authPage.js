@@ -87,17 +87,21 @@
     window.history.replaceState(null, '', cleanUrl);
   }
 
-  // 登入後要回去的頁面：只接受站內路徑，避免被導去外部網站（open redirect）
+  // 登入後要回去的頁面：只接受站內路徑，避免被導去外部網站（open redirect）。
+  // 不能只比對開頭字元：瀏覽器解析網址時會刪掉 Tab／換行（例如 "/\t/evil.com" 會變成 "//evil.com"），
+  // 所以改用 URL 解析後比對 origin，並回傳解析後的路徑
   function getRedirectTarget() {
     const target = params.get('redirect');
-    const isInternalPath =
-      target &&
-      target.startsWith('/') &&
-      !target.startsWith('//') &&
-      !target.startsWith('/\\');
+    if (!target) return '/';
 
-    if (!isInternalPath || target.startsWith('/auth.html')) return '/';
-    return target;
+    try {
+      const url = new URL(target, window.location.origin);
+      if (url.origin !== window.location.origin) return '/';
+      if (url.pathname.startsWith('/auth.html')) return '/';
+      return url.pathname + url.search + url.hash;
+    } catch (error) {
+      return '/';
+    }
   }
 
   // 瀏覽器原生驗證（必填、Email 格式）擋下送出時不會觸發 submit，上一次的提示會一直留著，
