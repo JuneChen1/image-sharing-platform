@@ -41,7 +41,7 @@
     lightboxPhotographerAvatar.textContent = (photographerName || '?').trim().charAt(0).toUpperCase();
     lightboxPhotographerAvatar.href = photographerLink;
     lightboxDownload.href = withUtm(downloadUrl);
-    // 分享視窗要原始網址：後端用網址最後 11 個字元當照片 ID，不能帶 utm
+    // 分享視窗帶原始網址（不加 utm）：utm 只用在顯示用的連結
     currentShareUrl = downloadUrl;
     currentCollectId = collectId || null;
     // 訪客也看得到收藏鈕，點下去會導向登入頁（openCollectModal 處理）

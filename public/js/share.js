@@ -95,7 +95,8 @@
     }
 
     // 依表單由上而下的順序驗證：網址在分類上面，所以先擋格式錯誤的網址。
-    // 規則和後端 getUnsplashImageId 一致（開頭必須是這串）；照片是否真的存在只有後端問得到，仍由後端回傳
+    // 這裡只做開頭的快速檢查，完整的網址格式與 ID 解析由後端 getUnsplashImageId 負責；
+    // 照片是否真的存在只有後端問得到，仍由後端回傳
     if (!url.startsWith('https://unsplash.com/photos/')) {
       showAlert(i18n.t('error.INVALID_URL'));
       return;

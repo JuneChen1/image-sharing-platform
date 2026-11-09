@@ -1,6 +1,6 @@
 // Unsplash API 規定：所有連回 Unsplash 的連結都要帶 utm_source=<App 名稱>&utm_medium=referral。
-// 只在「顯示連結」（href）時才加，資料庫與分享視窗用的網址維持原樣：
-// 後端 getUnsplashImageId 是取網址最後 11 個字元當照片 ID，網址後面多了 utm 參數會解析出錯誤的 ID。
+// 只在「顯示連結」（href）時才加，資料庫與分享視窗用的網址維持原樣（資料庫存的是乾淨的網址）。
+// 後端 getUnsplashImageId 會忽略網址後面的 query，所以使用者貼上帶 utm 的網址也能分享。
 const UNSPLASH_UTM_SOURCE = 'picshare';
 
 const withUtm = (url) => {
