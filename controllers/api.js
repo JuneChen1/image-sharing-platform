@@ -55,7 +55,7 @@ const getImagesWithKeyword = async (req, res, next) => {
   }
 
   try {
-    const result = await fetchImagesWithKeyword(page, q);
+    const result = await fetchImagesWithKeyword(pageNumber, q);
 
     if (!result.success) {
       const status = result.status === 404 ? 404 : 502;
