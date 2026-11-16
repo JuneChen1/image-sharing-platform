@@ -21,6 +21,12 @@ services:
       timeout: 5s
       retries: 3
       start_period: 15s
+    # 限制日誌大小，避免主機的小硬碟被 Docker 日誌慢慢塞滿
+    logging:
+      driver: json-file
+      options:
+        max-size: '10m'
+        max-file: '3'
 
   # Cloudflare Tunnel：主機主動連到 Cloudflare，不用開入站埠。
   # 只有 .env 設了 COMPOSE_PROFILES=tunnel 才會啟動（EC2 用），本機開發不受影響。
@@ -34,3 +40,8 @@ services:
     depends_on:
       app:
         condition: service_healthy
+    logging:
+      driver: json-file
+      options:
+        max-size: '10m'
+        max-file: '3'
