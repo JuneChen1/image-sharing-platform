@@ -39,7 +39,11 @@ async function main() {
   const trustProxy = Number(process.env.TRUST_PROXY ?? 0);
   app.set('trust proxy', trustProxy);
 
-  app.use(cors());
+  const allowedOrigins = process.env.FRONTEND_URL
+    ? [new URL(process.env.FRONTEND_URL).origin]
+    : [];
+
+  app.use(cors({ origin: allowedOrigins }));
   app.use(express.json());
   app.use((req, res, next) => {
     if (req.body === undefined) req.body = {};
