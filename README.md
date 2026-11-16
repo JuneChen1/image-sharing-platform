@@ -2,6 +2,8 @@
 
 一個基於 [Unsplash API](https://unsplash.com/documentation) 開發的圖片分享與收藏社群網站。本專案為架站與全端開發練習作品，旨在練習第三方 API 串接、前後端代理整合、資料庫設計（CRUD）以及符合著作權規範的網頁呈現。
 
+🔗 前往網頁：<https://picshare.junenaga.com>
+
 ---
 
 ## 專案特點
@@ -9,6 +11,7 @@
 * 版權友善設計： 本站不代管、不代理下載圖片檔案，僅儲存圖片網址與分類等中繼資料。其他使用者點擊「下載」時，一律導向該張照片的原始 Unsplash 頁面，由使用者在 Unsplash 完成下載。
 * API 金鑰保護： 實作後端代理層（Proxy Layer），前端不直接暴露 Unsplash Access Key，提升網站安全性。
 * 資料庫輕量化： 資料庫僅儲存圖片 ID、CDN 網址與必要元數據（Metadata），不佔用伺服器儲存空間。
+* 容器化與雲端部署： 以 Docker Compose 打包，部署在 AWS（EC2＋RDS），透過 Cloudflare Tunnel 對外提供 HTTPS，主機不對外開放任何入站埠。
 
 ---
 
@@ -24,6 +27,14 @@
 * 管理後台： 僅管理員可進入。可搜尋與篩選使用者、停權／解除停權、強制刪除照片、匯出刪除紀錄 CSV，並查看 Unsplash API 剩餘額度。
 * 中英雙語介面： 繁體中文與 English 可隨時切換。
 * 著作權致謝欄位： 每張照片皆清晰標示攝影師並附帶官方要求的導流連結。
+* 隱私權政策與使用者條款： 站內提供兩份頁面，說明收集的資料、第三方服務與使用規範。
+
+---
+
+## 安全設計
+* 帳號安全：密碼只存 bcrypt 雜湊值，以 JWT 驗證登入，並對登入與註冊等敏感操作做請求限流。
+* 輸入與輸出：後端做輸入驗證，前端輸出做 escape，降低注入與 XSS 風險。
+* 機密與依賴：API 金鑰只存在後端環境變數，前端載入的 CDN 檔案加上 SRI 完整性檢查。
 
 ---
 
@@ -40,13 +51,15 @@
 10. nodemailer v10.3.1
 11. Bootstrap v5.3.3（CDN）
 12. JavaScript（前端無框架）
+13. Docker、Docker Compose
 
 ---
 
 ## 第三方服務
 1. PostgreSQL
 2. Unsplash API
-3. SMTP 郵件服務（忘記密碼時寄送重設連結）
+3. SMTP 郵件服務（忘記密碼時寄送重設連結；使用 Brevo，以自己的網域寄信）
+4. 部署：AWS（EC2、RDS）、Cloudflare（DNS、Tunnel）
 
 
 🚀 取得 Unsplash API 憑證
@@ -65,24 +78,51 @@ git clone https://github.com/JuneChen1/image-sharing-platform.git
 cd image-sharing-platform
 ```
 
-3. 環境變數設定：將 `.env.example` 改成 `.env`，並填入相關欄位（各欄位的說明、必填與選填、範例值請見 `.env.example` 裡的註解）
+3. 環境變數設定：將 `.env.example` 改成 `.env`，並填入相關欄位（各欄位的說明、必填與選填、範例值請見 `.env.example` 裡的註解；部署用的變數如 `DATABASE_SSL`、`TRUST_PROXY`、`TUNNEL_TOKEN` 也在裡面，本機開發不用設）
 
 4. 安裝套件：
 ```bash
 npm install
 ```
 
-5. 建立資料表與種子資料：
+5. 建立資料表：
 ```bash
 npm run migration:run
+```
+
+6. （選用）種子資料與管理員帳號：
+```bash
 npm run seed
 npm run seed:admin
 ```
+> ⚠️ `npm run seed` 會**先清空所有資料表**，再寫入示範用的分類、帳號與照片，**只能在空的開發資料庫執行**。`npm run seed:admin` 會用 `.env` 的 `ADMIN_USERNAME`、`ADMIN_EMAIL`、`ADMIN_PASSWORD` 建立管理員，對已存在的帳號只會設定角色，不會清空資料或改密碼。
 
-6. 啟動專案：
+7. 啟動專案：
 ```bash
 npm start
 ```
+
+---
+
+## 使用 Docker 執行（選用）
+
+資料庫放在容器外面（本機或雲端的 PostgreSQL），Compose 只啟動後端。
+
+1. 依上方步驟設定好 `.env`。資料庫在**本機**時，另外在 `.env` 加 `DOCKER_DATABASE_URL`（主機名要用 `host.docker.internal`，說明見 `.env.example`）；連雲端資料庫（例如 RDS）直接用 `DATABASE_URL` 即可。
+
+2. 建立映像檔並啟動：
+```bash
+docker compose up --build
+```
+
+3. 建立資料表（不會自動執行）：
+```bash
+docker compose run --rm app npm run migration:run
+```
+
+4. 開啟 <http://localhost:3000>，健康檢查在 <http://localhost:3000/health>。
+
+> 容器的 3000 埠只綁在本機（`127.0.0.1`），不會對區域網路開放。
 
 ---
 
