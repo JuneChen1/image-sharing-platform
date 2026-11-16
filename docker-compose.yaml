@@ -3,7 +3,8 @@ services:
     build: .
     image: picshare:local
     ports:
-      - '3000:3000'
+      # 只綁本機：部署時流量走 cloudflared，不從外面直連 3000
+      - '127.0.0.1:3000:3000'
     env_file: .env
     environment:
       DATABASE_URL: ${DOCKER_DATABASE_URL:-${DATABASE_URL}}
@@ -20,3 +21,16 @@ services:
       timeout: 5s
       retries: 3
       start_period: 15s
+
+  # Cloudflare Tunnel：主機主動連到 Cloudflare，不用開入站埠。
+  # 只有 .env 設了 COMPOSE_PROFILES=tunnel 才會啟動（EC2 用），本機開發不受影響。
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    profiles: ['tunnel']
+    command: tunnel --no-autoupdate run
+    environment:
+      TUNNEL_TOKEN: ${TUNNEL_TOKEN:-}
+    restart: unless-stopped
+    depends_on:
+      app:
+        condition: service_healthy
