@@ -11,6 +11,8 @@
 
   // 要和 config/constants.js 的 categoryMaxCount 一致
   const CATEGORY_MAX_COUNT = 10;
+  // 單一分類的長度上限，要和 utils/validUtils.js 的 verifyCustomCategories 一致
+  const CATEGORY_MAX_LENGTH = 100;
   let categories = [];
   let isSubmitting = false;
   // 這次開啟彈窗期間有沒有分享成功：關閉時才通知頁面重新載入清單，避免開著時背景一直跳動
@@ -32,29 +34,44 @@
   }
 
   // 回傳 false 代表輸入的分類不合法（已顯示提示），呼叫端不該繼續往下走。
-  // 含 < > 時文字保留在輸入框讓使用者修改；超過上限時修改也沒用，直接清掉，之後才能直接按「分享」送出
+  // 一次可以輸入多個分類，用空白（含全形空白）分隔，所以分類名稱本身不能含空白。
+  // 含 < > 或單一分類太長時，整批都不加入、文字保留在輸入框讓使用者修改；
+  // 超過數量上限時修改也沒用，能加幾個加幾個，其餘丟掉並清空輸入框，之後才能直接按「分享」送出
   function addCategory() {
-    const name = categoryInput.value.trim();
-    if (/[<>]/.test(name)) {
+    const names = categoryInput.value.split(/\s+/).filter(Boolean);
+    if (names.some((name) => /[<>]/.test(name))) {
       showAlert(i18n.t('share.categoryInvalidChars'));
       return false;
     }
-
-    // 後端以不分大小寫去重，前端同步，避免出現 Animal 與 animal 兩個標籤
-    const lowerName = name.toLowerCase();
-    const isDuplicate = categories.some((c) => c.toLowerCase() === lowerName);
-    if (name && !isDuplicate && categories.length >= CATEGORY_MAX_COUNT) {
-      categoryInput.value = '';
-      showAlert(i18n.t('share.categoryLimit', { max: CATEGORY_MAX_COUNT }));
+    if (names.some((name) => name.length > CATEGORY_MAX_LENGTH)) {
+      showAlert(i18n.t('share.categoryTooLong', { max: CATEGORY_MAX_LENGTH }));
       return false;
     }
 
-    categoryInput.value = '';
-    if (!name || isDuplicate) return true;
+    let added = false;
+    let hitLimit = false;
+    names.forEach((name) => {
+      // 後端以不分大小寫去重，前端同步，避免出現 Animal 與 animal 兩個標籤
+      const lowerName = name.toLowerCase();
+      const isDuplicate = categories.some((c) => c.toLowerCase() === lowerName);
+      if (isDuplicate) return;
+      if (categories.length >= CATEGORY_MAX_COUNT) {
+        hitLimit = true;
+        return;
+      }
+      categories.push(name);
+      added = true;
+    });
 
-    categories.push(name);
-    renderCategories();
-    hideAlert();
+    categoryInput.value = '';
+    if (added) {
+      renderCategories();
+      hideAlert();
+    }
+    if (hitLimit) {
+      showAlert(i18n.t('share.categoryLimit', { max: CATEGORY_MAX_COUNT }));
+      return false;
+    }
     return true;
   }
 

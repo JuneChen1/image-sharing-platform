@@ -73,15 +73,15 @@
             required
           />
 
-          <label for="category-input" class="form-label" data-i18n="share.categoryLabel">分類（至少一個）</label>
+          <label for="category-input" class="form-label" data-i18n="share.categoryLabel">分類（以空白分隔）</label>
           <div class="d-flex gap-2 mb-2">
             <input
               type="text"
               id="category-input"
               class="form-control"
-              placeholder="輸入分類名稱"
+              placeholder="例：貓 狗 鳥"
               data-i18n-placeholder="share.categoryPlaceholder"
-              maxlength="100"
+              maxlength="1100"
             />
             <button type="button" id="category-add-btn" class="btn btn-outline-dark text-nowrap" data-i18n="share.add">新增</button>
           </div>
