@@ -13,12 +13,25 @@
   const lightboxSharerLink = document.getElementById('lightbox-sharer-link');
   const lightboxRemoveFromCollection = document.getElementById('lightbox-remove-from-collection');
 
+  const lightboxShareLabel = lightboxShare.querySelector('span');
+
   let currentShareUrl = '';
   let currentCollectId = null;
   let currentOnRemoveFromCollection = null;
 
   function personLinkHTML(name) {
     return `<span class="person-name">${escapeHtml(name)}</span>`;
+  }
+
+  // 已經分享過的照片：分享鈕變灰、不能按，文字改成「已分享」。
+  // 文字用 data-i18n 管理，切換語言時才會跟著翻
+  function setShareButtonShared(shared) {
+    lightboxShare.disabled = shared;
+    lightboxShare.classList.toggle('btn-outline-dark', !shared);
+    lightboxShare.classList.toggle('btn-outline-secondary', shared);
+    const key = shared ? 'common.shared' : 'common.share';
+    lightboxShareLabel.dataset.i18n = key;
+    lightboxShareLabel.textContent = i18n.t(key);
   }
 
   window.openLightbox = ({
@@ -31,6 +44,7 @@
     sharerId,
     sharerName,
     isOwnPhoto,
+    alreadyShared,
     onRemoveFromCollection
   }) => {
     lightboxImage.src = imageUrl;
@@ -50,6 +64,7 @@
     else lightboxCollect.title = i18n.t('lightbox.collectLogin');
     // 自己分享的照片不能再分享一次（後端會回「已經分享過」），不顯示分享鈕
     lightboxShare.classList.toggle('d-none', !window.auth.isLoggedIn() || Boolean(isOwnPhoto));
+    setShareButtonShared(Boolean(alreadyShared));
     lightboxCategories.innerHTML = (categories || [])
       .map((name) => `<span class="tag-pill">${escapeHtml(name)}</span>`)
       .join('');

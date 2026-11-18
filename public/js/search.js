@@ -65,6 +65,7 @@
   resultsEl.addEventListener('click', (event) => {
     const button = event.target.closest('button[data-share-url]');
     if (button) {
+      if (button.disabled) return;
       window.openShareModal(button.dataset.shareUrl);
       return;
     }
@@ -79,7 +80,23 @@
       imageUrl: photo.urls.regular,
       photographerName: photo.user.name,
       photographerUrl: photo.user.links.html,
-      downloadUrl: photo.links.html
+      downloadUrl: photo.links.html,
+      alreadyShared: photo.already_shared
+    });
+  });
+
+  // 在這個頁面剛分享成功的照片：把資料和畫面上的按鈕都改成「已分享」，不用重新搜尋
+  document.addEventListener('photoshared', (event) => {
+    const urls = (event.detail && event.detail.urls) || [];
+    urls.forEach((url) => {
+      const photo = currentPhotos.find((p) => p.links.html === url);
+      if (!photo) return;
+      photo.already_shared = true;
+      const button = resultsEl.querySelector(`button[data-share-url="${CSS.escape(url)}"]`);
+      if (!button) return;
+      button.disabled = true;
+      button.className = 'btn btn-sm btn-secondary w-100';
+      button.textContent = i18n.t('common.shared');
     });
   });
 
@@ -150,6 +167,10 @@
 
   function renderPhotoCard(photo) {
     const initial = (photo.user.name || '?').trim().charAt(0).toUpperCase();
+    // already_shared 由後端依登入者回傳；已分享的照片按鈕灰掉、不能按
+    const shareButton = photo.already_shared
+      ? `<button type="button" class="btn btn-sm btn-secondary w-100" data-share-url="${escapeHtml(photo.links.html)}" disabled>${i18n.t('common.shared')}</button>`
+      : `<button type="button" class="btn btn-sm btn-dark w-100" data-share-url="${escapeHtml(photo.links.html)}">${i18n.t('common.share')}</button>`;
     return `
       <div class="card">
         <div class="photo-image-wrap">
@@ -168,7 +189,7 @@
           </div>
         </div>
         <div class="card-body">
-          <button type="button" class="btn btn-sm btn-dark w-100" data-share-url="${escapeHtml(photo.links.html)}">${i18n.t('common.share')}</button>
+          ${shareButton}
         </div>
       </div>
     `;

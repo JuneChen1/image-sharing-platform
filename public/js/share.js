@@ -17,6 +17,8 @@
   let isSubmitting = false;
   // 這次開啟彈窗期間有沒有分享成功：關閉時才通知頁面重新載入清單，避免開著時背景一直跳動
   let hasShared = false;
+  // 這次開著視窗期間成功分享的網址，視窗關閉時隨 photoshared 事件帶出去（搜尋頁用來把對應按鈕變灰）
+  let sharedUrls = [];
 
   const { show: showAlert, hide: hideAlert } = createAlert('share', 'mt-2 mb-0');
 
@@ -97,7 +99,9 @@
 
     if (hasShared) {
       hasShared = false;
-      document.dispatchEvent(new CustomEvent('photoshared'));
+      const urls = sharedUrls;
+      sharedUrls = [];
+      document.dispatchEvent(new CustomEvent('photoshared', { detail: { urls } }));
     }
   });
 
@@ -147,6 +151,7 @@
         categories = [];
         renderCategories();
         hasShared = true;
+        sharedUrls.push(url);
         showAlert(i18n.t('share.success'), 'success');
       } else {
         showAlert(i18n.apiMessage(body, 'share.failed'));
