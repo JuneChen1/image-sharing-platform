@@ -13,19 +13,26 @@
 
   const { show: showAlert, hide: hideAlert } = createAlert('collect', 'mt-2 mb-0');
 
-  // 照片已在該收藏庫：打勾並停用
+  // 每一列：名稱靠左，狀態圖示固定在最右邊（還沒加入是「＋」，已加入是「打勾」），兩種狀態圖示在同一個位置
+  const ICON_ADD = `
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="collect-item-icon text-secondary" viewBox="0 0 16 16" aria-hidden="true">
+                <path d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2"/>
+              </svg>`;
+  const ICON_ADDED = `
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="collect-item-icon text-success" viewBox="0 0 16 16" aria-hidden="true">
+                <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0"/>
+              </svg>`;
+
+  // 照片已在該收藏庫：右側打勾並停用
   function addedItemHtml(name) {
     return `
             <button
               type="button"
-              class="list-group-item list-group-item-added d-flex align-items-center gap-2"
+              class="list-group-item list-group-item-added collect-item"
               title="${escapeHtml(name)}"
               disabled
             >
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="text-success flex-shrink-0" viewBox="0 0 16 16">
-                <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0"/>
-              </svg>
-              <span class="text-truncate">${escapeHtml(name)}</span>
+              <span class="text-truncate">${escapeHtml(name)}</span>${ICON_ADDED}
             </button>
           `;
   }
@@ -72,11 +79,11 @@
           : `
             <button
               type="button"
-              class="list-group-item list-group-item-action text-truncate"
+              class="list-group-item list-group-item-action collect-item"
               data-collection-id="${escapeHtml(collection.id)}"
               title="${escapeHtml(collection.name)}"
             >
-              ${escapeHtml(collection.name)}
+              <span class="text-truncate">${escapeHtml(collection.name)}</span>${ICON_ADD}
             </button>
           `
       )

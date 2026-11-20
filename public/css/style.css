@@ -1343,6 +1343,18 @@ body > main {
   overflow-y: auto;
 }
 
+/* 名稱靠左（過長省略）、狀態圖示（＋ 或 打勾）固定靠右不縮 */
+#collect-list .collect-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+#collect-list .collect-item-icon {
+  flex-shrink: 0;
+}
+
 #collect-list .list-group-item-added {
   background-color: #fff;
   color: #212529;
