@@ -8,6 +8,7 @@ const {
   isValidString
 } = require('../utils/validUtils');
 const appError = require('../utils/appError');
+const { attachAlreadyShared } = require('../utils/sharedPhotosUtils');
 const { dataSource } = require('../db/data-source');
 
 const getOneImageInfo = async (req, res, next) => {
@@ -70,7 +71,16 @@ const getImagesWithKeyword = async (req, res, next) => {
       return next(appError(errorCode, { status }));
     }
 
-    res.status(200).json({ status: 'success', data: result.data });
+    // 登入者才補 already_shared（訪客沒有 req.user，原樣回傳）
+    const results = await attachAlreadyShared(
+      result.data.results,
+      req.user?.id
+    );
+
+    res.status(200).json({
+      status: 'success',
+      data: { ...result.data, results }
+    });
   } catch (error) {
     next(error);
   }

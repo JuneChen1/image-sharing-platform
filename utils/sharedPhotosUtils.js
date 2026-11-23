@@ -67,6 +67,26 @@ async function attachIsCollected(photos, userId) {
   }));
 }
 
+// 替 Unsplash 搜尋結果補上 already_shared：這個使用者是否已經分享過該照片。
+// photo.id 是 Unsplash 的照片 ID（對應 shared_photos.unsplash_id）；訪客（沒有 userId）不處理
+async function attachAlreadyShared(photos, userId) {
+  if (!userId || photos.length === 0) return photos;
+
+  const result = await dataSource.query(
+    `SELECT unsplash_id
+     FROM shared_photos
+     WHERE user_id = $1 AND unsplash_id = ANY($2)`,
+    [userId, photos.map((photo) => photo.id)]
+  );
+
+  const sharedIds = new Set(result.map((r) => r.unsplash_id));
+
+  return photos.map((photo) => ({
+    ...photo,
+    already_shared: sharedIds.has(photo.id)
+  }));
+}
+
 // category / q 篩選條件。用 EXISTS 比對分類而不是 JOIN，JOIN 會讓一張照片重複出現
 function buildPhotoFilter(category, q) {
   const params = [];
@@ -102,5 +122,6 @@ module.exports = {
   attachCategories,
   attachFavoritesCount,
   attachIsCollected,
+  attachAlreadyShared,
   buildPhotoFilter
 };
