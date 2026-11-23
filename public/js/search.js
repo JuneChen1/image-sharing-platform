@@ -131,8 +131,10 @@
 
     let body;
     try {
+      // 帶上登入憑證：後端才知道是誰在搜尋，登入者的結果會多一個 already_shared；訪客沒有憑證，行為不變
       const response = await fetch(
-        `/api/v1/photos?q=${encodeURIComponent(query)}&page=${page}`
+        `/api/v1/photos?q=${encodeURIComponent(query)}&page=${page}`,
+        { headers: { ...window.auth.getAuthHeader() } }
       );
       body = await response.json();
       if (isStale()) return false;
