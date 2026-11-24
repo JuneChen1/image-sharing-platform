@@ -57,6 +57,32 @@ module.exports = {
   ALREADY_IN_COLLECTION: { status: 409, message: '不可重複加入' },
   ALREADY_SHARED: { status: 409, message: '你已經分享過這張照片了' },
 
+  // 上傳圖片
+  FILE_REQUIRED: { status: 400, message: '請選擇要上傳的圖片' },
+  FILE_TOO_LARGE: { status: 413, message: '圖片不可超過 5 MB' },
+  INVALID_FILE_TYPE: {
+    status: 400,
+    message: '只能上傳 JPEG、PNG 或 WebP 圖片'
+  },
+  IMAGE_DIMENSIONS_TOO_LARGE: {
+    status: 400,
+    message: '圖片尺寸太大，請縮小後再上傳'
+  },
+  ORIGIN_URL_REQUIRED: { status: 400, message: '非原創作品請填寫來源連結' },
+  INVALID_ORIGIN_URL: {
+    status: 400,
+    message: '來源連結必須是 https:// 開頭的有效網址'
+  },
+  INVALID_NOTE: { status: 400, message: '備註不可超過 500 字，且不可含 < >' },
+  UPLOAD_DAILY_LIMIT_REACHED: {
+    status: 429,
+    message: '24 小時內的上傳數量已達上限，請稍後再試'
+  },
+  UPLOAD_TOTAL_LIMIT_REACHED: {
+    status: 400,
+    message: '你上傳的照片已達上限，請先刪除舊的再上傳'
+  },
+
   // Unsplash 上游（查單張照片回 404 用 UNSPLASH_PHOTO_NOT_FOUND；其他路徑上游回 404 時呼叫端會用 { status: 404 } 覆寫）
   UNSPLASH_PHOTO_NOT_FOUND: { status: 404, message: '找不到這張圖片' },
   UNSPLASH_BUSY: { status: 502, message: '圖片服務目前較忙碌，請稍後再試' },
