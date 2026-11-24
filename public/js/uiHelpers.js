@@ -113,6 +113,43 @@ function renderMasonryColumns(container, photos, { columnCount, cardTextHeight, 
     .join('');
 }
 
+// ---------- 列表頁 ⇄ 照片詳情頁 ----------
+const LIST_SCROLL_KEY = 'picshare_list_scroll';
+
+// 點照片前往詳情頁。Ctrl／⌘／Shift 點擊另開分頁；一般點擊先記住目前捲動位置，按「上一頁」回來時還原
+function openPhotoPage(photoId, event) {
+  const url = `/photos/${encodeURIComponent(photoId)}`;
+  if (event && (event.ctrlKey || event.metaKey || event.shiftKey)) {
+    window.open(url, '_blank', 'noopener');
+    return;
+  }
+
+  try {
+    sessionStorage.setItem(
+      LIST_SCROLL_KEY,
+      JSON.stringify({ href: window.location.pathname + window.location.search, y: window.scrollY })
+    );
+  } catch {
+    // 瀏覽器不給用 sessionStorage 時只是少了還原捲動位置，不影響前往詳情頁
+  }
+  window.location.href = url;
+}
+
+// 列表頁載入完第一批照片後呼叫：只有「從詳情頁按上一頁回來」、而且網址和離開時一樣，才捲回原本的位置。
+// 瀏覽器自己的捲動還原在內容還沒載入時就會跑（高度不夠、捲不動），所以列表頁要把 history.scrollRestoration 設成 manual 自己處理
+function restoreListScroll() {
+  try {
+    const saved = JSON.parse(sessionStorage.getItem(LIST_SCROLL_KEY) || 'null');
+    sessionStorage.removeItem(LIST_SCROLL_KEY);
+    const navigation = performance.getEntriesByType('navigation')[0];
+    if (!saved || !navigation || navigation.type !== 'back_forward') return;
+    if (saved.href !== window.location.pathname + window.location.search) return;
+    window.scrollTo(0, saved.y);
+  } catch {
+    // 讀不到就維持在頁面最上方
+  }
+}
+
 // 先載入圖片取得實際寬高（瀑布流要用）；載入失敗就用 4:3 當預設
 function withDimensions(photo) {
   return new Promise((resolve) => {

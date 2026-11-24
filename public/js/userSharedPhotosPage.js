@@ -17,8 +17,20 @@
   // 要宣告在最上面：頁面載入時就會呼叫 fetchAndRenderPhotos
   let latestRequestId = 0;
 
-  const userId = new URLSearchParams(window.location.search).get('userId');
+  // 從照片詳情頁按「上一頁」回來時，自己還原捲動位置（見 uiHelpers.js 的 restoreListScroll）
+  if ('scrollRestoration' in window.history) window.history.scrollRestoration = 'manual';
+
+  const initialParams = new URLSearchParams(window.location.search);
+  const userId = initialParams.get('userId');
+  const initialPage = Number(initialParams.get('page'));
   const isOwnPage = Boolean(userId) && userId === window.auth.getUserId();
+
+  // 頁碼記在網址上（?userId=…&page=2），從詳情頁回來、重新整理才會停在同一頁；第 1 頁不寫
+  function syncUrl(page) {
+    const params = new URLSearchParams({ userId });
+    if (page > 1) params.set('page', String(page));
+    window.history.replaceState(null, '', `?${params.toString()}`);
+  }
 
   function setStatus(text, isError) {
     statusEl.textContent = text;
@@ -93,15 +105,7 @@
     const photo = currentPhotos.find((p) => p.id === img.dataset.photoId);
     if (!photo) return;
 
-    window.openLightbox({
-      imageUrl: photo.image_url,
-      photographerName: photo.photographer_name,
-      photographerUrl: photo.photographer_url,
-      downloadUrl: photo.unsplash_page_url,
-      categories: photo.categories,
-      collectId: photo.id,
-      isOwnPhoto: isOwnPage
-    });
+    openPhotoPage(photo.id, event);
   });
 
   paginationEl.addEventListener('click', async (event) => {
@@ -186,7 +190,8 @@
 
   setStatus(i18n.t('common.loading'), false);
   try {
-    await fetchAndRenderPhotos(1);
+    await fetchAndRenderPhotos(Number.isInteger(initialPage) && initialPage >= 1 ? initialPage : 1);
+    restoreListScroll();
   } catch (error) {
     setStatus(error.message || i18n.t('common.networkError'), true);
   }
@@ -212,7 +217,13 @@
       throw error;
     }
 
+    // 網址上的頁碼超過實際頁數（例如照片被取消分享而變少），退回第 1 頁
+    if (body.data.length === 0 && page > 1) {
+      return fetchAndRenderPhotos(1);
+    }
+
     currentPage = page;
+    syncUrl(page);
 
     if (!isOwnPage && body.user) {
       sharerName = body.user.name;
