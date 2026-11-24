@@ -1,6 +1,8 @@
 (function () {
   const TOKEN_KEY = 'picshare_token';
   const USER_NAME_KEY = 'picshare_user_name';
+  // 導覽列的「找圖片」入口是否顯示（目前關閉，原因見 renderAuthUI）
+  const SEARCH_ENTRY_ENABLED = false;
   // 登出後不該再停留的頁面
   const LOGIN_REQUIRED_PAGES = [
     '/auth.html',
@@ -150,7 +152,8 @@
       guestEl.classList.toggle('d-none', loggedIn || onAuthPage);
       userEl.classList.toggle('d-none', !loggedIn);
       shareBtn.classList.toggle('d-none', !loggedIn);
-      searchLink.classList.toggle('d-none', onAuthPage || onSearchPage);
+      // 「找圖片」入口暫時隱藏（2026-11-24：Unsplash 停用了 API App，搜尋目前無法使用）。要恢復時把 SEARCH_ENTRY_ENABLED 改成 true
+      searchLink.classList.toggle('d-none', !SEARCH_ENTRY_ENABLED || onAuthPage || onSearchPage);
       adminPanelLink.classList.toggle('d-none', !loggedIn || !isAdmin());
       langSwitchNav.classList.toggle('d-none', loggedIn);
       if (loggedIn) {
