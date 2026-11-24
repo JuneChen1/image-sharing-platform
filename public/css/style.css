@@ -1343,6 +1343,67 @@ body > main {
   overflow-y: auto;
 }
 
+/* 照片詳情頁（photo.html）。致謝列的頭像、名字、「來自 Unsplash」沿用 lightbox 的樣式（.lightbox-credit-text 等）；
+   lightbox 的致謝是絕對定位蓋在彈窗上，這裡改成一般排版 */
+/* 整個內容區（致謝、照片、分類、按鈕）用框框起來，像原本的彈窗，窄長的照片不會孤零零地飄在頁面中間。
+   框線顏色和分享者標籤（.person-link）的灰一致 */
+.photo-detail {
+  max-width: 960px;
+  margin: 0 auto 2rem;
+  padding: 1.25rem;
+  background-color: #fcfcfd;
+  border: 2px solid #5c636a;
+  border-radius: 0.75rem;
+}
+
+@media (max-width: 575.98px) {
+  .photo-detail {
+    padding: 0.75rem;
+  }
+}
+
+.photo-detail-credit {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  min-width: 0;
+  margin-bottom: 0.75rem;
+}
+
+.photo-detail-image-wrap {
+  text-align: center;
+}
+
+.photo-detail-image {
+  max-width: 100%;
+  max-height: 80vh;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: 0.375rem;
+}
+
+.photo-detail-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #dee2e6;
+}
+
+/* 分類標籤在詳情頁是連結（點了回首頁並套用該分類） */
+a.tag-pill {
+  text-decoration: none;
+}
+
+a.tag-pill:hover {
+  background-color: rgba(108, 117, 125, 0.22);
+  color: #212529;
+}
+
 /* 名稱靠左（過長省略）、狀態圖示（＋ 或 打勾）固定靠右不縮 */
 #collect-list .collect-item {
   display: flex;

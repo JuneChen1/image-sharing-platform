@@ -9,11 +9,20 @@
   const searchFormEl = document.getElementById('home-search-form');
   const searchInputEl = document.getElementById('home-search-input');
 
+  // 從照片詳情頁按「上一頁」回來時，自己還原捲動位置（見 uiHelpers.js 的 restoreListScroll）
+  if ('scrollRestoration' in window.history) window.history.scrollRestoration = 'manual';
+
   const LIMIT = 20;
   const CARD_TEXT_HEIGHT = 16;
-  let currentCategory = undefined;
-  let currentQuery = '';
-  let currentSort = 'latest';
+  // 分類、關鍵字、排序、頁碼都記在網址上（?category=…&q=…&sort=popular&page=2）：
+  // 從詳情頁回來、重新整理或分享連結時，才會停在同一個畫面
+  const initialParams = new URLSearchParams(window.location.search);
+  const initialPage = Number(initialParams.get('page'));
+  let currentCategory = initialParams.get('category') || undefined;
+  let currentQuery = (initialParams.get('q') || '').trim();
+  let currentSort = ['latest', 'popular'].includes(initialParams.get('sort'))
+    ? initialParams.get('sort')
+    : 'latest';
   let currentPhotos = [];
   let currentPage = 1;
   let categories = [];
@@ -28,6 +37,21 @@
     statusEl.classList.toggle('fw-bold', isError);
     statusEl.classList.toggle('text-muted', !isError);
   }
+
+  // 把目前的篩選狀態寫回網址（用 replaceState：切分類、翻頁不會在「上一頁」裡留下一堆紀錄）；預設值不寫
+  function syncUrl(page) {
+    const params = new URLSearchParams();
+    if (currentCategory) params.set('category', currentCategory);
+    if (currentQuery) params.set('q', currentQuery);
+    if (currentSort !== 'latest') params.set('sort', currentSort);
+    if (page > 1) params.set('page', String(page));
+    const queryString = params.toString();
+    window.history.replaceState(null, '', queryString ? `?${queryString}` : window.location.pathname);
+  }
+
+  // 網址帶進來的關鍵字與排序，要反映在搜尋框和排序鈕上
+  searchInputEl.value = currentQuery;
+  renderSortBarActive();
 
   searchFormEl.addEventListener('submit', async (event) => {
     event.preventDefault();
@@ -188,17 +212,7 @@
     const photo = currentPhotos.find((p) => p.id === img.dataset.photoId);
     if (!photo) return;
 
-    window.openLightbox({
-      imageUrl: photo.image_url,
-      photographerName: photo.photographer_name,
-      photographerUrl: photo.photographer_url,
-      downloadUrl: photo.unsplash_page_url,
-      categories: photo.categories,
-      collectId: photo.id,
-      sharerId: photo.user_id,
-      sharerName: photo.user_name,
-      isOwnPhoto: Boolean(photo.user_id) && photo.user_id === window.auth.getUserId()
-    });
+    openPhotoPage(photo.id, event);
   });
 
   paginationEl.addEventListener('click', async (event) => {
@@ -282,7 +296,8 @@
   setStatus(i18n.t('common.loading'), false);
   try {
     await loadCategories();
-    await fetchAndRenderPhotos(1);
+    await fetchAndRenderPhotos(Number.isInteger(initialPage) && initialPage >= 1 ? initialPage : 1);
+    restoreListScroll();
   } catch (error) {
     setStatus(error.message || i18n.t('common.networkError'), true);
   }
@@ -367,7 +382,13 @@
       throw error;
     }
 
+    // 網址上的頁碼超過實際頁數（例如照片被取消分享而變少），退回第 1 頁
+    if (body.data.length === 0 && page > 1) {
+      return fetchAndRenderPhotos(1);
+    }
+
     currentPage = page;
+    syncUrl(page);
 
     if (body.data.length === 0 && page === 1) {
       resultsEl.innerHTML = '';
