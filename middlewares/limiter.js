@@ -1,6 +1,8 @@
 const { rateLimit } = require('express-rate-limit');
 const errors = require('../config/errors');
 const errorBody = require('../utils/errorBody');
+const { uploadRequestsPerHourDefault } = require('../config/constants');
+const { getPositiveIntEnv } = require('../utils/env');
 
 const globalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
@@ -18,6 +20,21 @@ const shareLimiter = rateLimit({
   standardHeaders: 'draft-8',
   legacyHeaders: false,
   ipv6Subnet: 56,
+  statusCode: errors.TOO_MANY_REQUESTS.status,
+  message: errorBody('TOO_MANY_REQUESTS')
+});
+
+// 上傳圖片：每個使用者每小時的請求次數（含失敗的），保護伺服器的 CPU 與記憶體（sharp 處理圖片很吃資源）。
+// 和「每天最多幾張」是兩回事：那個在控制器裡查資料庫。放在 isAuth 之後，所以用使用者 id 計數
+const uploadLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  limit: getPositiveIntEnv(
+    'UPLOAD_REQUESTS_PER_HOUR',
+    uploadRequestsPerHourDefault
+  ),
+  keyGenerator: (req) => req.user.id,
+  standardHeaders: 'draft-8',
+  legacyHeaders: false,
   statusCode: errors.TOO_MANY_REQUESTS.status,
   message: errorBody('TOO_MANY_REQUESTS')
 });
@@ -65,6 +82,7 @@ const accountLimiter = createAuthLimiter({
 module.exports = {
   globalLimiter,
   shareLimiter,
+  uploadLimiter,
   loginLimiter,
   registerLimiter,
   passwordResetLimiter,
