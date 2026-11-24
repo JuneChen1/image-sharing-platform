@@ -14,6 +14,8 @@ module.exports = {
   uploadRequestsPerHourDefault: 30, // 每人每小時最多幾次上傳請求（含失敗的）
   uploadDailyLimitDefault: 10, // 每人 24 小時內最多上傳幾張，可用 UPLOAD_DAILY_LIMIT 覆寫
   uploadTotalLimitDefault: 100, // 每人最多保留幾張上傳的照片，可用 UPLOAD_TOTAL_LIMIT 覆寫
+  uploadBrowserCacheSeconds: 60 * 60, // 上傳圖片：瀏覽器快取 1 小時
+  uploadEdgeCacheSeconds: 24 * 60 * 60, // 上傳圖片：Cloudflare 邊緣快取 1 天（下架後舊副本最多留這麼久）
   unsplashBaseUrl: 'https://api.unsplash.com',
   unsplashTimeoutMs: 10000, // 對 Unsplash 的請求最多等幾毫秒，超過就當成失敗
   headers: {

@@ -25,6 +25,7 @@ async function main() {
   const { globalLimiter } = require('./middlewares/limiter');
   const healthRouter = require('./routes/health');
   const pagesRouter = require('./routes/pages');
+  const uploadsRouter = require('./routes/uploads');
   const sharedPhotosRouter = require('./routes/sharedPhotos');
   const apiRouter = require('./routes/api');
   const authRouter = require('./routes/auth');
@@ -52,6 +53,7 @@ async function main() {
   });
   app.use(express.static(path.join(__dirname, 'public')));
   app.use('/photos', pagesRouter);
+  app.use('/uploads', uploadsRouter);
 
   app.use('/health', healthRouter);
 
