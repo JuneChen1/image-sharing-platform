@@ -409,6 +409,9 @@ const cancelSharedPhoto = async (req, res, next) => {
       await manager.getRepository('SharedPhotos').delete({ id: data.id });
     });
 
+    // 資料庫刪成功之後才清實體檔案（上傳來源才有 file_key，Unsplash 來源是 null 會略過）
+    await storage.removeMany([data.file_key]);
+
     res.status(200).json({
       status: 'success',
       message: '刪除成功'

@@ -45,6 +45,20 @@ async function remove(key) {
   return driver.remove(key);
 }
 
+// 一次刪多個檔案，用在「資料庫已經刪掉照片之後」順手清掉實體檔案。
+// null／undefined（Unsplash 來源的照片沒有 file_key）會略過；單一檔案刪除失敗只記日誌，不丟錯：
+// 資料已經刪成功了，不能因為清檔案失敗而讓整個請求變成失敗（最壞的結果是留下一個孤兒檔案，不會再有網址指向它）
+async function removeMany(keys) {
+  const validKeys = keys.filter((key) => key !== null && key !== undefined);
+  await Promise.all(
+    validKeys.map((key) =>
+      remove(key).catch((error) => {
+        console.error(`刪除上傳檔案失敗（key：${key}）：`, error);
+      })
+    )
+  );
+}
+
 module.exports = {
   CONTENT_TYPE,
   isValidKey,
@@ -52,5 +66,6 @@ module.exports = {
   publicUrl,
   save,
   read,
-  remove
+  remove,
+  removeMany
 };
