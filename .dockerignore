@@ -4,5 +4,6 @@ node_modules
 *.log
 develop
 .claude
+uploads
 Dockerfile
 docker-compose.yaml
