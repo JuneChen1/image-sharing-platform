@@ -145,6 +145,8 @@ const adminController = {
 
         if (deleted) {
           await manager.getRepository('DeletedSharedPhotos').save({
+            // 來源類型一定要帶：上傳的照片沒有 Unsplash 欄位，不帶會吃到預設值 'unsplash' 而被 CHECK 擋下
+            source_type: photo.source_type,
             unsplash_id: photo.unsplash_id,
             unsplash_page_url: photo.unsplash_page_url,
             photographer_name: photo.photographer_name,
@@ -172,6 +174,7 @@ const adminController = {
         .find({ order: { deleted_at: 'DESC' } });
 
       const columns = [
+        'source_type',
         'unsplash_id',
         'unsplash_page_url',
         'photographer_name',
