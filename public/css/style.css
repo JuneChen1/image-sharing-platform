@@ -1404,6 +1404,105 @@ a.tag-pill:hover {
   color: #212529;
 }
 
+/* 分享視窗底部的「同意條款」：電腦版靠左、和右邊的按鈕同一行；手機寬度放不下，獨佔一行放在按鈕上方（不然兩個按鈕會被擠成上下兩排） */
+@media (max-width: 575.98px) {
+  #share-consent {
+    flex: 0 0 100%;
+    margin-bottom: 0.25rem !important;
+  }
+}
+
+/* 分享視窗：拖放／點擊選圖的區塊。檔案輸入框蓋滿整個區塊（透明），點哪裡都會開啟選檔 */
+.share-dropzone {
+  position: relative;
+  padding: 1.25rem 1rem;
+  border: 2px dashed #adb5bd;
+  border-radius: 0.5rem;
+  background-color: #f8f9fa;
+  color: #6c757d;
+  text-align: center;
+  font-size: 0.9375rem;
+  transition: border-color 0.15s ease, background-color 0.15s ease, color 0.15s ease;
+}
+
+.share-dropzone.is-dragover {
+  border-color: #212529;
+  background-color: #e9ecef;
+  color: #212529;
+}
+
+.share-dropzone:focus-within {
+  outline: 2px solid #86b7fe;
+  outline-offset: 2px;
+}
+
+.share-dropzone-input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+/* 選好圖片之後的預覽區：右上角有移除鈕，下面是檔名 */
+.share-selected-frame {
+  position: relative;
+  display: inline-block;
+  max-width: 100%;
+}
+
+.share-remove-btn {
+  position: absolute;
+  top: 0.375rem;
+  right: 0.375rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.92);
+  color: #212529;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+}
+
+.share-remove-btn:hover {
+  background-color: #fff;
+  color: #dc3545;
+}
+
+.share-selected-name {
+  margin-top: 0.375rem;
+  color: #6c757d;
+  font-size: 0.8125rem;
+  overflow-wrap: anywhere;
+}
+
+/* 分享視窗：選了檔案後的預覽 */
+.share-preview {
+  display: block;
+  max-width: 100%;
+  max-height: 200px;
+  object-fit: contain;
+  border-radius: 0.375rem;
+  border: 1px solid #dee2e6;
+}
+
+/* 「原創作品」這種沒有連結的致謝文字：不是連結，滑過時不要有底線 */
+.photo-credit-plain:hover {
+  text-decoration: none;
+}
+
+/* 詳情頁的備註：保留使用者輸入的換行 */
+.photo-detail-note {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  margin: 0.75rem 0 0;
+}
+
 /* 名稱靠左（過長省略）、狀態圖示（＋ 或 打勾）固定靠右不縮 */
 #collect-list .collect-item {
   display: flex;
