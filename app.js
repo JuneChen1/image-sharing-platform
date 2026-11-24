@@ -24,6 +24,7 @@ async function main() {
   const cors = require('cors');
   const { globalLimiter } = require('./middlewares/limiter');
   const healthRouter = require('./routes/health');
+  const pagesRouter = require('./routes/pages');
   const sharedPhotosRouter = require('./routes/sharedPhotos');
   const apiRouter = require('./routes/api');
   const authRouter = require('./routes/auth');
@@ -50,6 +51,7 @@ async function main() {
     next();
   });
   app.use(express.static(path.join(__dirname, 'public')));
+  app.use('/photos', pagesRouter);
 
   app.use('/health', healthRouter);
 

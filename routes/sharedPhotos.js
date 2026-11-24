@@ -13,5 +13,10 @@ router.post(
 );
 router.delete('/:sharedId', isAuth, sharedPhotosController.cancelSharedPhoto);
 router.get('/', optionalAuth, sharedPhotosController.getSharedImages);
+router.get(
+  '/:sharedId',
+  optionalAuth,
+  sharedPhotosController.getSharedImageById
+);
 
 module.exports = router;

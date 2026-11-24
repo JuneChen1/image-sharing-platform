@@ -250,6 +250,38 @@ const getSharedImages = async (req, res, next) => {
   }
 };
 
+// 單張照片（詳情頁用）
+const getSharedImageById = async (req, res, next) => {
+  const { sharedId } = req.params;
+  if (!isValidUUID(sharedId)) {
+    return next(appError('INVALID_ID'));
+  }
+
+  try {
+    const rows = await dataSource.query(
+      `
+      SELECT sp.*, u.name AS user_name
+      FROM shared_photos sp
+      JOIN users AS u ON u.id = sp.user_id
+      WHERE sp.id = $1
+      `,
+      [sharedId]
+    );
+
+    if (rows.length === 0) {
+      return next(appError('NOT_FOUND'));
+    }
+
+    let data = await attachFavoritesCount(rows);
+    data = await attachCategories(data);
+    data = await attachIsCollected(data, req.user?.id);
+
+    res.status(200).json({ status: 'success', data: data[0] });
+  } catch (error) {
+    next(error);
+  }
+};
+
 const cancelSharedPhoto = async (req, res, next) => {
   const { sharedId } = req.params;
   if (!isValidUUID(sharedId)) {
@@ -292,5 +324,6 @@ const cancelSharedPhoto = async (req, res, next) => {
 module.exports = {
   shareImageWithUrl,
   getSharedImages,
+  getSharedImageById,
   cancelSharedPhoto
 };
