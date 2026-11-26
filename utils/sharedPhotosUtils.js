@@ -102,10 +102,16 @@ function buildPhotoFilter(category, q) {
     `);
   }
   if (q) {
+    // 比對「作者」或分類。作者：Unsplash 來源是攝影師；上傳的照片沒有攝影師，作者就是上傳的人。
+    // 上傳者名稱用 EXISTS 子查詢，計算總數的那個查詢沒有 JOIN users 也能用
     params.push(escapeLike(q));
     conditions.push(`
       AND (
         sp.photographer_name ILIKE '%' || $${params.length} || '%'
+        OR (sp.source_type = 'upload' AND EXISTS (
+          SELECT 1 FROM users uploader
+          WHERE uploader.id = sp.user_id AND uploader.name ILIKE '%' || $${params.length} || '%'
+        ))
         OR EXISTS (
           SELECT 1 FROM shared_photo_categories spc
           JOIN categories c ON c.id = spc.category_id

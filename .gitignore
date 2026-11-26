@@ -4,3 +4,5 @@ node_modules
 .env
 /develop
 .claude/
+# 上傳的圖片（本機磁碟驅動存放處），不進 git
+/uploads

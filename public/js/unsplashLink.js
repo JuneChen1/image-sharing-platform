@@ -3,6 +3,11 @@
 // 後端 getUnsplashImageId 會忽略網址後面的 query，所以使用者貼上帶 utm 的網址也能分享。
 const UNSPLASH_UTM_SOURCE = 'picshare';
 
+// 「貼 Unsplash 連結分享」是否開放（目前關閉：2026-11-24 Unsplash 停用了 API App，分享要用金鑰查照片資料，送出一定失敗）。
+// 關閉時：分享視窗只有「上傳圖片」，照片卡片上不顯示「分享別人的 Unsplash 照片」的圖示。
+// Unsplash 恢復後把它改成 true，分享視窗會多出「貼上 Unsplash 連結」的分頁
+const UNSPLASH_SHARE_ENABLED = false;
+
 const withUtm = (url) => {
   try {
     const u = new URL(url);

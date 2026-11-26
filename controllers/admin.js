@@ -7,6 +7,7 @@ const {
 const appError = require('../utils/appError');
 const { getRateLimit } = require('../utils/unsplashApiUtils');
 const { escapeLike } = require('../utils/sqlUtils');
+const storage = require('../utils/storage');
 const { dataSource } = require('../db/data-source');
 
 const adminController = {
@@ -124,6 +125,7 @@ const adminController = {
         : null;
 
       let deleted = false;
+      let fileKey = null;
       await dataSource.transaction(async (manager) => {
         const photo = await manager.getRepository('SharedPhotos').findOne({
           where: { id },
@@ -131,6 +133,7 @@ const adminController = {
         });
 
         if (!photo) return;
+        fileKey = photo.file_key;
 
         await manager
           .getRepository('SharedPhotoCategories')
@@ -145,6 +148,8 @@ const adminController = {
 
         if (deleted) {
           await manager.getRepository('DeletedSharedPhotos').save({
+            // 來源類型一定要帶：上傳的照片沒有 Unsplash 欄位，不帶會吃到預設值 'unsplash' 而被 CHECK 擋下
+            source_type: photo.source_type,
             unsplash_id: photo.unsplash_id,
             unsplash_page_url: photo.unsplash_page_url,
             photographer_name: photo.photographer_name,
@@ -159,6 +164,9 @@ const adminController = {
 
       if (!deleted) return next(appError('NOT_FOUND'));
 
+      // 稽核紀錄已寫入、照片已刪除之後，才清實體檔案（下架後圖片就真的不在了；Cloudflare 的快取副本最多再留 1 天）
+      await storage.removeMany([fileKey]);
+
       res.status(200).json({ status: 'success', data: null });
     } catch (error) {
       next(error);
@@ -172,6 +180,7 @@ const adminController = {
         .find({ order: { deleted_at: 'DESC' } });
 
       const columns = [
+        'source_type',
         'unsplash_id',
         'unsplash_page_url',
         'photographer_name',

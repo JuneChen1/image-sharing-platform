@@ -63,6 +63,15 @@ function getUnsplashImageInfo(result) {
 // 都轉成 { success: false, status, unsplashMessage }，不丟例外，呼叫端只要看 success 與 status：
 // status 為 0 代表沒有收到任何回應（逾時或連不上），其餘是 Unsplash 回的 HTTP 狀態碼
 async function requestUnsplash(url) {
+  // 沒設定金鑰（Unsplash 功能停用）：不對外發請求，直接回失敗
+  if (!process.env.UNSPLASH_ACCESS_KEY) {
+    return {
+      success: false,
+      status: 0,
+      unsplashMessage: 'UNSPLASH_ACCESS_KEY 未設定'
+    };
+  }
+
   let response;
   try {
     response = await fetch(url, {

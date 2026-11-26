@@ -37,12 +37,33 @@
     document.title = BRAND;
   }
 
+  // 致謝的第二行：Unsplash 來源是「來自 Unsplash」（Unsplash API 規定要標示，連結帶 utm）；
+  // 上傳來源是「原創作品」，非原創則是指向出處的「來源」連結
+  function creditSourceHtml(item) {
+    if (!isUploadPhoto(item)) {
+      return `<span class="lightbox-credit-source">
+            <svg class="lightbox-credit-icon" ${SVG_ATTRS}><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
+            <span>${escapeHtml(i18n.t('lightbox.fromUnsplash'))}</span>
+            <a href="${escapeHtml(withUtm('https://unsplash.com/'))}" target="_blank" rel="noopener">Unsplash<svg class="lightbox-credit-external" ${SVG_ATTRS}><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg></a>
+          </span>`;
+    }
+
+    if (item.is_original) {
+      return `<span class="lightbox-credit-source"><span>${escapeHtml(i18n.t('common.originalWork'))}</span></span>`;
+    }
+
+    return `<span class="lightbox-credit-source"><a href="${escapeHtml(item.origin_url)}" ${originLinkAttrs}>${escapeHtml(i18n.t('common.source'))}<svg class="lightbox-credit-external" ${SVG_ATTRS}><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg></a></span>`;
+  }
+
   function render() {
     const isOwnPhoto = Boolean(photo.user_id) && photo.user_id === window.auth.getUserId();
     const loggedIn = window.auth.isLoggedIn();
-    const name = photo.photographer_name;
+    const isUpload = isUploadPhoto(photo);
+    // 作者：Unsplash 來源是攝影師（連到 Unsplash）；上傳來源是上傳的人（連到站內他的分享紀錄頁）
+    const name = photoAuthorName(photo);
     const initial = (name || '?').trim().charAt(0).toUpperCase();
-    const photographerLink = escapeHtml(withUtm(photo.photographer_url));
+    const photographerLink = escapeHtml(photoAuthorHref(photo));
+    const authorAttrs = photoAuthorLinkAttrs(photo);
     const favoritesCount = photo.favorites_count || 0;
 
     const categoriesHtml = (photo.categories || [])
@@ -60,20 +81,22 @@
 
     detailEl.innerHTML = `
       <div class="photo-detail-credit">
-        <a href="${photographerLink}" target="_blank" rel="noopener" class="lightbox-photographer-avatar" tabindex="-1" aria-hidden="true">${escapeHtml(initial)}</a>
+        <a href="${photographerLink}" ${authorAttrs} class="lightbox-photographer-avatar" tabindex="-1" aria-hidden="true">${escapeHtml(initial)}</a>
         <div class="lightbox-credit-text">
-          <a href="${photographerLink}" target="_blank" rel="noopener" class="lightbox-photographer-name">${escapeHtml(name)}</a>
-          <span class="lightbox-credit-source">
-            <svg class="lightbox-credit-icon" ${SVG_ATTRS}><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
-            <span>${escapeHtml(i18n.t('lightbox.fromUnsplash'))}</span>
-            <a href="${escapeHtml(withUtm('https://unsplash.com/'))}" target="_blank" rel="noopener">Unsplash<svg class="lightbox-credit-external" ${SVG_ATTRS}><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg></a>
-          </span>
+          <a href="${photographerLink}" ${authorAttrs} class="lightbox-photographer-name">${escapeHtml(name)}</a>
+          ${creditSourceHtml(photo)}
         </div>
       </div>
       <div class="photo-detail-image-wrap">
         <img src="${escapeHtml(photo.image_url)}" class="photo-detail-image" alt="${escapeHtml(i18n.t('common.photoAlt', { name }))}" />
       </div>
       ${categoriesHtml ? `<div class="d-flex flex-wrap gap-2 mt-3">${categoriesHtml}</div>` : ''}
+      ${isUpload && photo.note ? `<p class="photo-detail-note">${escapeHtml(photo.note)}</p>` : ''}
+      ${
+        isUpload && photo.is_original && photo.origin_url
+          ? `<p class="small mt-2 mb-0">${escapeHtml(i18n.t('photo.relatedLink'))}：<a href="${escapeHtml(photo.origin_url)}" ${originLinkAttrs}>${escapeHtml(photo.origin_url)}</a></p>`
+          : ''
+      }
       <div class="photo-detail-footer">
         <div class="d-flex flex-column gap-1">
           <span>${escapeHtml(i18n.t('lightbox.sharedBy'))}<a href="/user-shared-photos.html?userId=${encodeURIComponent(photo.user_id)}" class="person-link"><span class="person-name">${escapeHtml(photo.user_name)}</span></a></span>
@@ -84,7 +107,8 @@
             ${ICON_BOOKMARK}<span>${escapeHtml(i18n.t('lightbox.collect'))}</span>
           </button>
           ${
-            loggedIn && !isOwnPhoto
+            // 上傳的照片沒有 Unsplash 網址、不能這樣分享；「貼連結分享」關閉時也不顯示
+            loggedIn && !isOwnPhoto && !isUpload && UNSPLASH_SHARE_ENABLED
               ? `<button type="button" id="photo-share" class="btn btn-outline-dark rounded-pill d-inline-flex align-items-center gap-1">${ICON_SHARE}<span>${escapeHtml(i18n.t('common.share'))}</span></button>`
               : ''
           }
@@ -93,7 +117,7 @@
               ? `<button type="button" id="photo-unshare" class="btn btn-outline-danger rounded-pill">${escapeHtml(i18n.t('home.unshare'))}</button>`
               : ''
           }
-          <a href="${escapeHtml(withUtm(photo.unsplash_page_url))}" target="_blank" rel="noopener" class="btn btn-dark rounded-pill d-inline-flex align-items-center gap-1">${ICON_DOWNLOAD}<span>${escapeHtml(i18n.t('common.download'))}</span></a>
+          <a href="${escapeHtml(photoDownloadHref(photo))}" ${photoDownloadAttrs(photo)} class="btn btn-dark rounded-pill d-inline-flex align-items-center gap-1">${ICON_DOWNLOAD}<span>${escapeHtml(i18n.t('common.download'))}</span></a>
         </div>
       </div>
     `;

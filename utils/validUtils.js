@@ -36,6 +36,18 @@ function isSafeText(value, maxLength) {
   );
 }
 
+// 只接受 https 網址（擋 javascript:、data:、http:），不接受帶帳號密碼的網址（https://user:pass@host）
+function isHttpsUrl(value, maxLength) {
+  if (typeof value !== 'string' || value.length > maxLength) return false;
+
+  try {
+    const url = new URL(value);
+    return url.protocol === 'https:' && !url.username && !url.password;
+  } catch {
+    return false;
+  }
+}
+
 function isValidUUID(value) {
   return (
     typeof value === 'string' &&
@@ -71,6 +83,7 @@ module.exports = {
   isPositiveInteger,
   isValidString,
   isSafeText,
+  isHttpsUrl,
   isValidUUID,
   isValidEmail,
   isValidPassword

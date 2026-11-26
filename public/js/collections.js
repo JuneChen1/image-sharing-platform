@@ -179,7 +179,7 @@
   function renderPhotosGrid() {
     collectionPhotosGridEl.innerHTML = currentPhotos
       .map((photo) => {
-        const initial = (photo.photographer_name || '?').trim().charAt(0).toUpperCase();
+        const initial = (photoAuthorName(photo) || '?').trim().charAt(0).toUpperCase();
         return `
           <div class="col-md-3 col-sm-6 col-12">
             <div class="card h-100 collection-photo-card">
@@ -188,7 +188,7 @@
                   src="${escapeHtml(photo.image_url)}"
                   class="card-img-top lightbox-trigger"
                   data-photo-id="${escapeHtml(photo.id)}"
-                  alt="${escapeHtml(i18n.t('common.photoAlt', { name: photo.photographer_name }))}"
+                  alt="${escapeHtml(i18n.t('common.photoAlt', { name: photoAuthorName(photo) }))}"
                 />
                 <button
                   type="button"
@@ -202,11 +202,11 @@
                   </svg>
                 </button>
                 <div class="photo-credit">
-                  <a href="${escapeHtml(withUtm(photo.photographer_url))}" target="_blank" rel="noopener" class="person-avatar-link">
+                  <a href="${escapeHtml(photoAuthorHref(photo))}" ${photoAuthorLinkAttrs(photo)} class="person-avatar-link">
                     <span class="photo-author-avatar">${escapeHtml(initial)}</span>
-                    <span class="photo-author-name">${escapeHtml(photo.photographer_name)}</span>
+                    <span class="photo-author-name">${escapeHtml(photoAuthorName(photo))}</span>
                   </a>
-                  ${unsplashCreditHTML()}
+                  ${photoSourceLineHTML(photo)}
                 </div>
               </div>
             </div>
@@ -373,9 +373,7 @@
 
     window.openLightbox({
       imageUrl: photo.image_url,
-      photographerName: photo.photographer_name,
-      photographerUrl: photo.photographer_url,
-      downloadUrl: photo.unsplash_page_url,
+      photo,
       categories: photo.categories,
       collectId: photo.id,
       onRemoveFromCollection: () => removePhotoFromCollection(photo.id)

@@ -224,10 +224,16 @@ const collectionsController = {
           user: { id: req.user.id },
           collections: { id: collectionId }
         },
-        relations: { sharedPhotos: true }
+        relations: { sharedPhotos: { user: true } }
       });
 
-      const rawData = photos.map((item) => item.sharedPhotos);
+      // 上傳來源的照片，作者就是上傳的人，所以要帶出 user_id、user_name（和列表 API 的欄位一致）；
+      // 只取這兩個欄位，不能把整個 user（含密碼雜湊）回傳出去
+      const rawData = photos.map(({ sharedPhotos: { user, ...photo } }) => ({
+        ...photo,
+        user_id: user.id,
+        user_name: user.name
+      }));
       const data = await attachCategories(rawData);
 
       res.status(200).json({ status: 'success', data });

@@ -266,7 +266,7 @@
   }
 
   function renderPhotoCard(photo) {
-    const initial = (photo.photographer_name || '?').trim().charAt(0).toUpperCase();
+    const initial = (photoAuthorName(photo) || '?').trim().charAt(0).toUpperCase();
     const favoritesCount = photo.favorites_count || 0;
     return `
       <div class="card">
@@ -275,13 +275,14 @@
             src="${escapeHtml(photo.image_url)}"
             class="card-img-top lightbox-trigger"
             data-photo-id="${escapeHtml(photo.id)}"
-            alt="${escapeHtml(i18n.t('common.photoAlt', { name: photo.photographer_name }))}"
+            alt="${escapeHtml(i18n.t('common.photoAlt', { name: photoAuthorName(photo) }))}"
           />
           <div class="photo-overlay-top">
             ${
               window.auth.isLoggedIn()
                 ? `${
-                    isOwnPage
+                    // 「分享別人的 Unsplash 照片」只在開放貼連結時才有；上傳的照片沒有 Unsplash 網址，不能這樣分享
+                    isOwnPage || isUploadPhoto(photo) || !UNSPLASH_SHARE_ENABLED
                       ? ''
                       : `<button type="button" class="btn-icon" data-share-id="${escapeHtml(photo.id)}" title="${i18n.t('common.share')}" aria-label="${i18n.t('common.share')}">
                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
@@ -305,13 +306,13 @@
           </div>
           <div class="photo-overlay-bottom">
             <div class="photo-credit">
-              <a href="${escapeHtml(withUtm(photo.photographer_url))}" target="_blank" rel="noopener" class="photo-author">
+              <a href="${escapeHtml(photoAuthorHref(photo))}" ${photoAuthorLinkAttrs(photo)} class="photo-author">
                 <span class="photo-author-avatar">${escapeHtml(initial)}</span>
-                <span class="photo-author-name">${escapeHtml(photo.photographer_name)}</span>
+                <span class="photo-author-name">${escapeHtml(photoAuthorName(photo))}</span>
               </a>
-              ${unsplashCreditHTML()}
+              ${photoSourceLineHTML(photo)}
             </div>
-            <a href="${escapeHtml(withUtm(photo.unsplash_page_url))}" target="_blank" rel="noopener" class="btn-download">
+            <a href="${escapeHtml(photoDownloadHref(photo))}" ${photoDownloadAttrs(photo)} class="btn-download">
               <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
                 <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"/>
                 <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z"/>

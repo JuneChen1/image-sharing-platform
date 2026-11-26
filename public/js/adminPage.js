@@ -217,7 +217,7 @@
             <td data-label="${escapeHtml(i18n.t('admin.colPhoto'))}">
               <img
                 src="${escapeHtml(photo.image_url)}"
-                alt="${escapeHtml(i18n.t('common.photoAlt', { name: photo.photographer_name }))}"
+                alt="${escapeHtml(i18n.t('common.photoAlt', { name: photoAuthorName(photo) }))}"
                 data-photo-id="${escapeHtml(photo.id)}"
                 class="lightbox-trigger admin-photo-thumb"
               />
@@ -320,9 +320,7 @@
 
       window.openLightbox({
         imageUrl: photo.image_url,
-        photographerName: photo.photographer_name,
-        photographerUrl: photo.photographer_url,
-        downloadUrl: photo.unsplash_page_url,
+        photo,
         categories: photo.categories,
         sharerId: photo.user_id,
         sharerName: photo.user_name

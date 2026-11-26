@@ -11,7 +11,7 @@
         data-bs-target="#shareModal"
         data-i18n="nav.share"
       >
-        分享
+        分享圖片
       </button>
       <div id="auth-guest" class="d-flex gap-2">
         <a href="/auth.html" class="btn btn-outline-light" data-i18n="nav.login">登入</a>
@@ -58,20 +58,76 @@
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="shareModalLabel" data-i18n="share.title">分享 Unsplash 照片</h5>
+        <h5 class="modal-title" id="shareModalLabel" data-i18n="share.title">分享照片</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="關閉" data-i18n-aria-label="common.close"></button>
       </div>
       <form id="share-form" novalidate>
         <div class="modal-body">
-          <label for="share-input" class="form-label" data-i18n="share.urlLabel">Unsplash 圖片網址</label>
-          <input
-            type="text"
-            id="share-input"
-            class="form-control mb-3"
-            placeholder="例：https://unsplash.com/photos/xxx"
-            data-i18n-placeholder="share.urlPlaceholder"
-            required
-          />
+          <!-- 分頁只有在開放「貼 Unsplash 連結」時才顯示（見 unsplashLink.js 的 UNSPLASH_SHARE_ENABLED），關閉時只有上傳 -->
+          <div id="share-mode-tabs" class="sort-tabs mb-3 d-none" role="tablist">
+            <button type="button" class="sort-tab active" data-mode="upload" data-i18n="share.modeUpload">上傳圖片</button>
+            <button type="button" class="sort-tab" data-mode="unsplash" data-i18n="share.modeUnsplash">貼上 Unsplash 連結</button>
+          </div>
+
+          <div id="share-upload-fields">
+            <label for="share-file" class="form-label" data-i18n="share.fileLabel">圖片</label>
+            <!-- 檔案輸入框蓋滿整個框（透明）：點擊任何地方都會開啟選檔；拖放由 share.js 處理 -->
+            <div id="share-dropzone" class="share-dropzone mb-3">
+              <input
+                type="file"
+                id="share-file"
+                class="share-dropzone-input"
+                accept="image/jpeg,image/png,image/webp"
+                title=" "
+                aria-label="選擇圖片"
+                data-i18n-aria-label="share.fileAria"
+              />
+              <span id="share-drop-hint" data-i18n="share.dropHint">拖放圖片到這裡，或點擊選擇檔案（支援 JPEG、PNG、WebP，最大 5 MB）</span>
+              <span id="share-drop-active" class="d-none" data-i18n="share.dropActive">放開以加入圖片</span>
+            </div>
+
+            <!-- 選好圖片之後：隱藏上面的拖放框，改顯示預覽、檔名和「移除」鈕（只能傳一張，要換就先移除再選） -->
+            <div id="share-selected" class="share-selected d-none mb-3">
+              <div class="share-selected-frame">
+                <img id="share-preview" class="share-preview" alt="" />
+                <button type="button" id="share-remove-file" class="share-remove-btn" title="移除圖片" aria-label="移除圖片" data-i18n-title="share.removeFile" data-i18n-aria-label="share.removeFile">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true"><path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/></svg>
+                </button>
+              </div>
+              <div id="share-file-name" class="share-selected-name"></div>
+            </div>
+
+            <div class="form-check form-switch mb-3">
+              <input class="form-check-input" type="checkbox" role="switch" id="share-original" />
+              <label class="form-check-label" for="share-original" data-i18n="share.original">這是我的原創作品</label>
+            </div>
+
+            <label for="share-origin-url" class="form-label">
+              <span id="origin-label-required" data-i18n="share.originLabelRequired">來源連結（必填）</span>
+              <span id="origin-label-optional" class="d-none" data-i18n="share.originLabelOptional">作品集或其他連結（選填）</span>
+            </label>
+            <input type="url" id="share-origin-url" class="form-control mb-1" placeholder="https://" inputmode="url" />
+            <div id="share-declaration" class="form-text mb-3" data-i18n="share.declaration">若這不是你的原創作品，請填寫來源連結，並確認你已獲得轉載作品著作權人的合法授權並標明出處。</div>
+
+            <label for="share-note" class="form-label" data-i18n="share.noteLabel">備註（選填）</label>
+            <textarea
+              id="share-note"
+              class="form-control mb-3"
+              rows="2"
+              maxlength="500"
+            ></textarea>
+          </div>
+
+          <div id="share-unsplash-fields" class="d-none">
+            <label for="share-input" class="form-label" data-i18n="share.urlLabel">Unsplash 圖片網址</label>
+            <input
+              type="text"
+              id="share-input"
+              class="form-control mb-3"
+              placeholder="例：https://unsplash.com/photos/xxx"
+              data-i18n-placeholder="share.urlPlaceholder"
+            />
+          </div>
 
           <label for="category-input" class="form-label" data-i18n="share.categoryLabel">分類（以空白分隔）</label>
           <div class="d-flex gap-2 mb-2">
@@ -94,6 +150,8 @@
           </div>
         </div>
         <div class="modal-footer">
+          <!-- 同意條款的說明：原創、非原創（以及貼 Unsplash 連結）都一樣，靠左，和右邊的按鈕同一行（太窄放不下時會自動換行） -->
+          <div id="share-consent" class="me-auto form-text mb-0"><span data-i18n="share.consent">送出即表示你同意</span><a href="/terms.html" target="_blank" rel="noopener" data-i18n="share.termsLink">《使用者條款》</a><span data-i18n="share.consentEnd">。</span></div>
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-i18n="common.cancel">取消</button>
           <button type="submit" id="share-submit-btn" class="btn btn-dark" data-i18n="common.share">分享</button>
         </div>
@@ -110,7 +168,8 @@
         <a id="lightbox-photographer-avatar" href="" target="_blank" rel="noopener" class="lightbox-photographer-avatar" tabindex="-1" aria-hidden="true"></a>
         <div class="lightbox-credit-text">
           <a id="lightbox-photographer" href="" target="_blank" rel="noopener" class="lightbox-photographer-name"></a>
-          <span class="lightbox-credit-source">
+          <span id="lightbox-credit-upload" class="lightbox-credit-source d-none"></span>
+          <span id="lightbox-credit-unsplash" class="lightbox-credit-source">
             <svg class="lightbox-credit-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
             <span data-i18n="lightbox.fromUnsplash">來自</span>
             <a id="lightbox-unsplash" href="https://unsplash.com/?utm_source=picshare&utm_medium=referral" target="_blank" rel="noopener">Unsplash<svg class="lightbox-credit-external" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg></a>
@@ -123,6 +182,7 @@
           <img id="lightbox-image" src="" alt="" class="img-fluid rounded" />
         </div>
         <div id="lightbox-categories" class="d-flex flex-wrap justify-content-start gap-2 mt-3"></div>
+        <p id="lightbox-note" class="photo-detail-note text-start text-muted small d-none"></p>
       </div>
       <div class="modal-footer d-flex align-items-center justify-content-between">
         <div class="d-flex align-items-center gap-2">

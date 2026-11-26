@@ -20,6 +20,14 @@ const {
 } = require('../utils/sharedPhotosUtils');
 const { dataSource } = require('../db/data-source');
 const { In } = require('typeorm');
+const { parseUploadFields } = require('../utils/uploadUtils');
+const { processUploadedImage } = require('../utils/imageUtils');
+const storage = require('../utils/storage');
+const { getPositiveIntEnv } = require('../utils/env');
+const {
+  uploadDailyLimitDefault,
+  uploadTotalLimitDefault
+} = require('../config/constants');
 
 const shareImageWithUrl = async (req, res, next) => {
   const { url, customCategories } = req.body;
@@ -250,6 +258,26 @@ const getSharedImages = async (req, res, next) => {
   }
 };
 
+// 單張照片的完整資料（和列表的一筆同格式）：sp.* + user_name + favorites_count + categories，登入者另有 is_collected。找不到回傳 null
+const loadSharedPhotoDetail = async (sharedId, userId) => {
+  const rows = await dataSource.query(
+    `
+    SELECT sp.*, u.name AS user_name
+    FROM shared_photos sp
+    JOIN users AS u ON u.id = sp.user_id
+    WHERE sp.id = $1
+    `,
+    [sharedId]
+  );
+
+  if (rows.length === 0) return null;
+
+  let data = await attachFavoritesCount(rows);
+  data = await attachCategories(data);
+  data = await attachIsCollected(data, userId);
+  return data[0];
+};
+
 // 單張照片（詳情頁用）
 const getSharedImageById = async (req, res, next) => {
   const { sharedId } = req.params;
@@ -258,26 +286,95 @@ const getSharedImageById = async (req, res, next) => {
   }
 
   try {
-    const rows = await dataSource.query(
-      `
-      SELECT sp.*, u.name AS user_name
-      FROM shared_photos sp
-      JOIN users AS u ON u.id = sp.user_id
-      WHERE sp.id = $1
-      `,
-      [sharedId]
+    const photo = await loadSharedPhotoDetail(sharedId, req.user?.id);
+    if (!photo) return next(appError('NOT_FOUND'));
+
+    res.status(200).json({ status: 'success', data: photo });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// 上傳自己的圖片。處理順序（先便宜、後貴）：欄位驗證 → 檢查上限 → 處理圖片 → 存檔 → 寫資料庫（失敗要把檔案刪掉）。
+// 規格見 develop/upload-api-spec.md
+const uploadSharedPhoto = async (req, res, next) => {
+  const user = req.user;
+  let key = null;
+
+  try {
+    if (!req.file) return next(appError('FILE_REQUIRED'));
+    const { customCategories, isOriginal, originUrl, note } = parseUploadFields(
+      req.body
     );
 
-    if (rows.length === 0) {
-      return next(appError('NOT_FOUND'));
+    // 數目前的列數：總量（保留中的上傳）與 24 小時內新增的數量。
+    // 已知缺口：上傳後取消分享會讓列數減少，所以可以「上傳→取消→再上傳」繞過；每小時請求次數的限流會限制速度
+    const [{ total, daily }] = await dataSource.query(
+      `
+      SELECT COUNT(*)::int AS total,
+             COUNT(*) FILTER (WHERE created_at > now() - interval '24 hours')::int AS daily
+      FROM shared_photos
+      WHERE user_id = $1 AND source_type = 'upload'
+      `,
+      [user.id]
+    );
+    if (
+      total >= getPositiveIntEnv('UPLOAD_TOTAL_LIMIT', uploadTotalLimitDefault)
+    ) {
+      return next(appError('UPLOAD_TOTAL_LIMIT_REACHED'));
+    }
+    if (
+      daily >= getPositiveIntEnv('UPLOAD_DAILY_LIMIT', uploadDailyLimitDefault)
+    ) {
+      return next(appError('UPLOAD_DAILY_LIMIT_REACHED'));
     }
 
-    let data = await attachFavoritesCount(rows);
-    data = await attachCategories(data);
-    data = await attachIsCollected(data, req.user?.id);
+    const imageBuffer = await processUploadedImage(req.file.buffer);
 
-    res.status(200).json({ status: 'success', data: data[0] });
+    key = storage.newKey(user.id);
+    await storage.save(key, imageBuffer);
+
+    const savedPhoto = await dataSource.transaction(async (manager) => {
+      // 分類一次新增進 categories 表，已經存在的跳過（作法同 shareImageWithUrl）
+      await manager.query(
+        `INSERT INTO categories (name)
+        SELECT unnest($1::text[])
+        ON CONFLICT (name) DO NOTHING`,
+        [customCategories]
+      );
+      const categories = await manager
+        .getRepository('Categories')
+        .find({ where: { name: In(customCategories) } });
+
+      const photo = await manager.getRepository('SharedPhotos').save({
+        source_type: 'upload',
+        file_key: key,
+        image_url: storage.publicUrl(key),
+        is_original: isOriginal,
+        origin_url: originUrl,
+        note,
+        user: { id: user.id }
+      });
+
+      const joinRepo = manager.getRepository('SharedPhotoCategories');
+      await joinRepo.save(
+        categories.map((category) =>
+          joinRepo.create({ sharedPhotos: photo, categories: category })
+        )
+      );
+
+      return photo;
+    });
+
+    const data = await loadSharedPhotoDetail(savedPhoto.id, user.id);
+    res.status(201).json({ status: 'success', data });
   } catch (error) {
+    // 已經存了檔案但後面失敗：把檔案刪掉，不留孤兒檔案（刪除失敗只記日誌，不蓋掉原本的錯誤）
+    if (key) {
+      await storage.remove(key).catch((removeError) => {
+        console.error('清除上傳失敗後的孤兒檔案時出錯：', removeError);
+      });
+    }
     next(error);
   }
 };
@@ -312,6 +409,9 @@ const cancelSharedPhoto = async (req, res, next) => {
       await manager.getRepository('SharedPhotos').delete({ id: data.id });
     });
 
+    // 資料庫刪成功之後才清實體檔案（上傳來源才有 file_key，Unsplash 來源是 null 會略過）
+    await storage.removeMany([data.file_key]);
+
     res.status(200).json({
       status: 'success',
       message: '刪除成功'
@@ -325,5 +425,6 @@ module.exports = {
   shareImageWithUrl,
   getSharedImages,
   getSharedImageById,
+  uploadSharedPhoto,
   cancelSharedPhoto
 };

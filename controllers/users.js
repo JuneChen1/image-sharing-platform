@@ -14,6 +14,7 @@ const {
   attachFavoritesCount,
   attachIsCollected
 } = require('../utils/sharedPhotosUtils');
+const storage = require('../utils/storage');
 const { dataSource } = require('../db/data-source');
 
 const userController = {
@@ -113,11 +114,14 @@ const userController = {
 
       const userId = req.user.id;
 
+      // 刪帳號前先記下這個人所有上傳檔案的 key，資料庫刪成功之後再清實體檔案
+      let fileKeys = [];
       await dataSource.transaction(async (manager) => {
         const ownPhotos = await manager.getRepository('SharedPhotos').find({
           where: { user: { id: userId } },
-          select: { id: true }
+          select: { id: true, file_key: true }
         });
+        fileKeys = ownPhotos.map((photo) => photo.file_key);
 
         if (ownPhotos.length > 0) {
           const ownPhotoIds = ownPhotos.map((photo) => photo.id);
@@ -142,6 +146,8 @@ const userController = {
           .delete({ user: { id: userId } });
         await manager.getRepository('Users').delete({ id: userId });
       });
+
+      await storage.removeMany(fileKeys);
 
       res.status(200).json({
         status: 'success',
