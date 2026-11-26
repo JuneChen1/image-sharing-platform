@@ -50,7 +50,7 @@ const i18n = (function () {
       'password.backToLogin': '返回登入',
       'user.nickname': '暱稱',
 
-      'nav.share': '分享',
+      'nav.share': '分享圖片',
       'nav.findPhotos': '找圖片',
       'nav.login': '登入',
       'nav.register': '註冊',
@@ -387,7 +387,7 @@ const i18n = (function () {
       'password.backToLogin': 'Back to log in',
       'user.nickname': 'Nickname',
 
-      'nav.share': 'Share',
+      'nav.share': 'Share photo',
       'nav.findPhotos': 'Find photos',
       'nav.login': 'Log in',
       'nav.register': 'Sign up',
