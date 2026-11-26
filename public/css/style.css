@@ -1542,8 +1542,6 @@ a.tag-pill:hover {
 .footer-links li {
   display: inline-flex;
   align-items: center;
-  /* flex 項目結尾的空白會被吃掉，「Photos from」和後面的連結要靠 gap 隔開 */
-  gap: 0.25em;
 }
 
 /* 項目之間用淺灰細線分隔（手機換行後會變成開頭多一條線，所以窄螢幕改用間距） */

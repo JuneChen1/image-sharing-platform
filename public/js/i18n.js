@@ -63,7 +63,6 @@ const i18n = (function () {
       'nav.switchLangAria': '切換語言',
 
       'footer.contact': '聯絡我們：',
-      'footer.photosFrom': '照片來源：',
       'footer.privacy': '隱私權政策',
       'footer.terms': '使用者條款',
 
@@ -400,7 +399,6 @@ const i18n = (function () {
       'nav.switchLangAria': 'Switch language',
 
       'footer.contact': 'Contact us: ',
-      'footer.photosFrom': 'Photos from ',
       'footer.privacy': 'Privacy Policy',
       'footer.terms': 'Terms of Use',
 
