@@ -1,5 +1,5 @@
+// UNSPLASH_ACCESS_KEY 是選填：沒設定時 Unsplash 功能停用（見 unsplashApiUtils.js），其他功能照常
 const REQUIRED_ENVS = [
-  'UNSPLASH_ACCESS_KEY',
   'DATABASE_URL',
   'JWT_SECRET',
   'JWT_EXPIRES_DAY'
