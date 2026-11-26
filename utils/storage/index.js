@@ -1,9 +1,11 @@
 const crypto = require('crypto');
 
 // 上傳圖片的儲存層。其他程式（上傳 API、讀取路由、刪除）只呼叫這裡，不知道底下用哪個驅動。
-// STORAGE_DRIVER=local（預設，存在本機磁碟）；之後會加 s3，介面一樣：save、read、remove
+// STORAGE_DRIVER=local（預設，存在本機磁碟）或 s3（線上用，需要 S3_BUCKET），介面一樣：save、read、remove。
+// s3 驅動載入時才 require，用本機磁碟時不會載入 AWS SDK
 const DRIVERS = {
-  local: () => require('./local')
+  local: () => require('./local'),
+  s3: () => require('./s3').createS3DriverFromEnv()
 };
 
 const driverName = process.env.STORAGE_DRIVER || 'local';
@@ -30,7 +32,7 @@ const publicUrl = (key) => `/uploads/${key}`;
 
 async function save(key, buffer) {
   if (!isValidKey(key)) throw new Error('不合法的儲存 key');
-  await driver.save(key, buffer);
+  await driver.save(key, buffer, CONTENT_TYPE);
 }
 
 // 回傳 { stream, size }；key 格式不對或檔案不存在回傳 null
